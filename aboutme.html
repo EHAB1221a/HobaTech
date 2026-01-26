@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me | HOBA TECH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Cairo', sans-serif;
+            background: #050505;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(0, 68, 204, 0.3);
+            width: 350px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .info-card h2 {
+            color: #0044cc;
+            margin-bottom: 15px;
+        }
+
+        .info-card p {
+            font-size: 14px;
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            background: #0044cc;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px #0044cc;
+        }
+
+        .social-icons a {
+            margin: 0 5px;
+            color: white;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="info-card">
+        <h2>مرحباً بك في HOBA TECH</h2>
+        <p>هذه المنصة تقدم لك كل المحاضرات، الكتب، والامتحانات الخاصة بكل الفرق الدراسية.</p>
+        <p>للتواصل معي:</p>
+        <div class="social-icons">
+            <a href="https://wa.me/201129813193" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.facebook.com/ayhab.ahmd.698715" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/h_o_b_a_cr7" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://t.me/ehab2155" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+        </div>
+        <button class="btn" onclick="window.location.href='التسجيل.html'">ابدأ الآن</button>
+    </div>
+
+</body>
+</html>

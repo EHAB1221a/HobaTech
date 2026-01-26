@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المكتبة الرقمية | HOBA TECH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        :root {
+            --glow-color: #0044cc;
+            --bg-dark: #08090a;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: #050505; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: transparent; color: white; overflow-x: hidden; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: -1; }
+
+        /* زر القائمة */
+        .menu-toggle {
+            position: fixed; top: 20px; right: 20px; font-size: 25px;
+            color: white; cursor: pointer; z-index: 1001;
+            background: var(--glow-color); width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; box-shadow: 0 0 15px var(--glow-color); transition: 0.3s;
+        }
+        .menu-toggle:hover { transform: scale(1.1); box-shadow: 0 0 25px var(--glow-color); }
+
+        /* السايد بار */
+        .sidebar {
+            position: fixed; top: 0; right: -300px; width: 280px; height: 100vh;
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(0, 68, 204, 0.3); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 80px 20px; z-index: 1000;
+        }
+        .sidebar.active { right: 0; box-shadow: -10px 0 30px rgba(0, 68, 204, 0.2); }
+
+        .nav-link {
+            padding: 15px; margin-bottom: 10px; border-radius: 12px;
+            color: white; text-decoration: none; display: flex; align-items: center; gap: 12px;
+            transition: 0.3s; font-weight: 700; border: 1px solid transparent; cursor: pointer;
+        }
+        .nav-link:hover, .nav-link.active { background: rgba(0, 68, 204, 0.2); border-color: var(--glow-color); color: var(--glow-color); }
+
+        .container { padding: 100px 50px; transition: 0.5s; }
+
+        /* ستايل الأقسام والبطاقات */
+        .section-card { background: var(--glass); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); max-width: 900px; margin: 0 auto; }
+        
+        /* الرئيسية */
+        .dashboard-header { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-bottom: 50px; }
+        .progress-radar { background: rgba(0, 68, 204, 0.05); border: 2px solid rgba(0, 68, 204, 0.2); border-radius: 30px; padding: 30px; text-align: center; }
+        .circle-wrap { width: 130px; height: 130px; background: #111; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; border: 4px solid var(--glow-color); box-shadow: 0 0 20px var(--glow-color); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 35px var(--glow-color); } }
+        .status-card { background: var(--glass); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        .stats-row { display: flex; justify-content: space-around; margin-top: 20px; }
+        .stat-box span { display: block; font-size: 28px; font-weight: 900; color: var(--glow-color); }
+
+        /* المكتبة */
+        .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .lib-card { background: rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; transition: 0.4s; cursor: pointer; position: relative; }
+        .lib-card:hover { transform: translateY(-5px); border-color: var(--glow-color); background: rgba(0, 68, 204, 0.05); }
+        .lib-card i { font-size: 40px; color: var(--glow-color); margin-bottom: 15px; }
+        .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .lib-card {
+            background: rgba(255, 255, 255, 0.02); border-radius: 25px; padding: 40px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;
+            transition: 0.4s; position: relative; cursor: pointer;
+        }
+        .lib-card:hover {
+            transform: translateY(-10px); border-color: var(--glow-color);
+            box-shadow: 0 0 30px rgba(0, 68, 204, 0.4), inset 0 0 15px rgba(0, 68, 204, 0.2);
+            background: rgba(0, 68, 204, 0.05);
+        }
+        .lib-card i { font-size: 50px; color: var(--glow-color); margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--glow-color)); }
+        .badge { background: #333; padding: 5px 15px; border-radius: 8px; font-size: 11px; position: absolute; top: 20px; left: 20px; }
+
+        /* القوائم (أعضاء/طلبات) */
+        .list-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px 20px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,68,204,0.1); }
+        .btn-accept { background: #0088ff; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        .btn-reject { background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-right: 5px; }
+
+        /* الإعدادات */
+        .setting-group { margin-bottom: 15px; }
+        .setting-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 13px; }
+        .setting-group input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
+        .setting-group input:focus { border-color: var(--glow-color); }
+        .profile-img-section { text-align: center; margin-bottom: 25px; }
+        .profile-img-section img { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--glow-color); }
+
+        .btn-save { background: var(--glow-color); color: white; border: none; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-logout { background: transparent; color: #ff4444; border: 1px solid #ff4444; width: 100%; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; }
+
+        /* الأنيميشن والأقسام */
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 2000; display: none; padding: 50px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="text-align: center; color: var(--glow-color); margin-bottom: 30px;">HOBA TECH</h3>
+        <div class="nav-link active" onclick="showPage('home')"><i class="fas fa-home"></i> الرئيسية</div>
+        <div class="nav-link" onclick="showPage('library')"><i class="fas fa-book"></i> المكتبة</div>
+        <div class="nav-link" onclick="showPage('requests')"><i class="fas fa-user-plus"></i> طلبات الانضمام</div>
+        <div class="nav-link" onclick="showPage('members')"><i class="fas fa-users"></i> الأعضاء المشتركين</div>
+        <div class="nav-link" onclick="showPage('settings')"><i class="fas fa-cog"></i> الإعدادات</div>
+        <div class="nav-link" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> خروج</div>
+    </div>
+
+    <div class="container">
+        <div id="home" class="page-section active">
+            <div class="dashboard-header">
+                <div class="progress-radar">
+                    <div class="circle-wrap"><h2 style="margin:0; color:var(--glow-color);">65%</h2></div>
+                    <h3>مستوى الإنجاز</h3>
+                    <p style="font-size: 12px; opacity:0.6;">طبت وطاب ممشاك يا مستشار</p>
+                </div>
+                <div class="status-card">
+                    <h2 style="margin:0;">أهلاً، إيهاب الدرديري ⚖️</h2>
+                    <p style="color:var(--glow-color); font-weight:bold;">المهمة الحالية: تاريخ النظم القانونية</p>
+                    <div class="stats-row">
+                        <div class="stat-box"><span>12</span><small>محاضرة</small></div>
+                        <div class="stat-box"><span>150</span><small>سؤال</small></div>
+                        <div class="stat-box"><span>#1</span><small>الترتيب</small></div>
+                    </div>
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border-right: 5px solid var(--glow-color);">
+                <h3><i class="fas fa-lightbulb" style="color: gold;"></i> معلومة قانونية</h3>
+                <p>"قانون حمورابي هو أول مجموعة قوانين مكتوبة في التاريخ، وكان يهدف لتحقيق العدالة.. تماماً مثل هدفك اليوم!"</p>
+            </div>
+        </div>
+
+        <div id="library" class="page-section">
+            <h1 style="text-align: center;">حقيبة المواد</h1>
+            <div class="library-grid">
+                <div class="lib-card" onclick="openSubject('تاريخ النظم القانونية')">
+                    <i class="fas fa-balance-scale"></i>
+                    <h3>تاريخ النظم القانونية</h3>
+                    <p>10 محاضرات | PDF</p>
+                </div>
+                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-university"></i><h3>القانون المدني</h3><p>قريباً..</p></div>
+                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-university"></i><h3>القانون المدني</h3><p>قريباً..</p></div>
+                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-user-shield"></i><h3>الهكر الأخلاقي</h3><p>قريباً..</p></div>
+                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-scroll"></i><h3>الشريعة الإسلامية</h3><p>قريباً..</p></div>
+                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-globe"></i><h3>القانون الدولي</h3><p>قريباً..</p></div>
+                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-users"></i><h3>علم الاجتماع</h3><p>قريباً..</p></div>
+               
+            </div>
+        </div>
+
+        <div id="requests" class="page-section">
+            <h1 style="text-align: center;">طلبات الانضمام</h1>
+            <div class="section-card">
+                <div class="list-item">
+                    <span>أحمد محمد (دفع 2023)</span>
+                    <div><button class="btn-accept">قبول</button><button class="btn-reject">رفض</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="members" class="page-section">
+            <h1 style="text-align: center;">الأعضاء المشتركين</h1>
+            <div class="section-card">
+                <div class="list-item">
+                    <span>إيهاب الدرديري (المالك)</span>
+                    <span style="color: #00ff00; font-size: 12px;">متصل</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings" class="page-section">
+            <h1 style="text-align: center;">الإعدادات</h1>
+            <div class="section-card">
+                <div class="setting-group">
+                    <label>الاسم بالكامل</label>
+                    <input type="text" value="إيهاب أحمد حامد الدردير">
+                </div>
+                <div class="profile-img-section">
+                    <img src="https://via.placeholder.com/90" id="prof-img">
+                    <br><label for="up-img" style="cursor:pointer; color:var(--glow-color); font-size:13px;">تغيير صورة الملف الشخصي</label>
+                    <input type="file" id="up-img" hidden onchange="updateImg(event)">
+                </div>
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+                <div class="setting-group"><label>كلمة السر الحالية</label><input type="password" placeholder="********"></div>
+                <div class="setting-group"><label>كلمة السر الجديدة</label><input type="password" placeholder="كلمة السر الجديدة"></div>
+                <div class="setting-group"><label>تأكيد كلمة السر</label><input type="password" placeholder="تأكيد الكلمة"></div>
+                <button class="btn-save" onclick="alert('تم الحفظ')">تأكيد التغييرات</button>
+                <button style="background:none; border:none; color:var(--glow-color); display:block; margin: 10px auto; cursor:pointer; text-decoration:underline;">نسيت كلمة السر؟</button>
+                <button class="btn-logout" onclick="location.reload()">تسجيل الخروج</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay">
+        <div style="cursor:pointer; color:var(--glow-color);" onclick="closeSubject()"><i class="fas fa-arrow-right"></i> عودة</div>
+        <h1 id="sub-title"></h1>
+        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px;">
+            <span>1. مدخل تاريخ النظم</span>
+            <i class="fas fa-play-circle" style="float:left; color:var(--glow-color);"></i>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            if(event) event.currentTarget.classList.add('active');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        function openSubject(name) {
+            document.getElementById('sub-title').innerText = name;
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeSubject() { document.getElementById('overlay').style.display = 'none'; }
+
+        function updateImg(e) {
+            const reader = new FileReader();
+            reader.onload = function() { document.getElementById('prof-img').src = reader.result; }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        // كود الخلفية المتحركة
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
+            }
+            draw() { ctx.fillStyle = '#0044cc'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        function init() { for (let i = 0; i < 80; i++) particles.push(new Particle()); }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        init(); animate();
+    </script>
+</body>
+</html>

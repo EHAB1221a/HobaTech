@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOBA TECH | هوبا تيك</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Lato:wght@900&display=swap');
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Cairo', sans-serif;
+            color: white;
+            /* استدعاء الخلفية الأصلية الخاصة بك */
+            background: #1a1c1e url('54303c4f-2a6c-4581-aa81-33c737acd762.png') no-repeat center center fixed;
+            background-size: cover;
+            overflow-x: hidden;
+        }
+
+        /* طبقة تعتيم فوق الخلفية عشان الشغل يبان */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); 
+            z-index: -1;
+        }
+
+        .container { width: 90%; margin: auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            direction: ltr; 
+        }
+
+        .logo-area { display: flex; flex-direction: column; align-items: center; }
+        .logo-area img { width: 60px; margin-bottom: 5px; }
+        .logo-text { font-family: 'Lato', sans-serif; font-weight: 900; font-size: 22px; color: #fff; line-height: 1; }
+        .slogan-sub { font-size: 9px; letter-spacing: 3px; opacity: 0.7; }
+
+        nav a { color: white; text-decoration: none; margin-left: 25px; font-weight: bold; opacity: 0.8; }
+
+        .hero {
+            display: flex;
+            align-items: right;
+            justify-content: space-between;
+            padding: 60px 0 100px 0;
+            min-height: 80vh;
+            direction: ltr; 
+        }
+
+        .hero-text { flex: 1; text-align: left; }
+        .hero-text h1 { 
+            font-family: 'Lato', sans-serif;
+            font-size: clamp(40px, 7vw, 85px); 
+            font-weight: 900; 
+            line-height: 0.9; 
+            margin: 0;
+        }
+        
+        .tagline-box {
+            background-color: #0044cc;
+            display: inline-block;
+            padding: 12px 25px;
+            margin: 35px 0;
+            direction: rtl; 
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(37, 75, 151, 0.3);
+        }
+
+
+        .btn-contact {
+            display: inline-block;
+            background: white;
+            color: #0044cc;
+            padding: 14px 50px;
+            text-decoration: none;
+            font-weight: 900;
+            border-radius: 4px;
+        }
+
+        /* --- برواز الميزان البروفيشنال --- */
+        .hero-image { 
+            flex: 1.2; 
+            display: flex; 
+            justify-content: flex-end;
+        }
+        
+        .img-wrapper {
+            position: relative;
+            padding: 15px;
+            /* البرواز الخارجي الشفاف */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        .img-wrapper img { 
+            width: 100%; 
+            max-width: 550px; 
+            display: block;
+            border-radius: 10px;
+            filter: brightness(1.1);
+            transition: 0.5s;
+        }
+
+        .img-wrapper:hover img { transform: scale(1.02); }
+
+        /* القسم الأزرق */
+        .blue-section {
+            background: rgba(0, 61, 181, 0.9);
+            padding: 80px 8%;
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            direction: ltr; 
+        }
+
+        .about-content { flex: 1; text-align: left; }
+        .about-content h4 { direction: rtl; text-align: right; margin-bottom: 15px; }
+        .about-content p { font-size: 24px; font-weight: 700; line-height: 1.4; }
+
+        .abstract-box { width: 300px; height: 300px; border-radius: 25px; overflow: hidden; }
+        .abstract-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .footer-cta { background-color: #0f1112; padding: 60px 0; text-align: center; }
+        .footer-cta h2 { font-family: 'Lato', sans-serif; font-size: 40px; font-weight: 900; }
+
+        .footer-bottom {
+            background-color: #0044cc;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            direction: rtl;
+        }
+        .copy-text { font-size: 13px; font-weight: bold; }
+        .social-icons { display: flex; gap: 15px; direction: ltr; }
+        .social-icons a { color: white; font-size: 18px; }
+
+        @media (max-width: 768px) {
+            .hero, .blue-section { flex-direction: column; text-align: center; }
+            .hero-image { justify-content: center; margin-top: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <img src="تنزيل.png" alt="HOBA TECH">
+                <div class="logo-text">HOBA TECH</div>
+                <div class="slogan-sub">TOWARDS THE BEST</div>
+            </div>
+            <nav>
+                <a href="هوبا تيك واجه تسجيل الدخول.html" class="">Home</a>
+                <a href="aboutme.html" class="">about me</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Together<br>Towards<br>Better</h1>
+                <div class="tagline-box">HOBA TECH | وجهتــك الأولــى للتميــز</div>
+                <br>
+                <a href="التسجيل.html" class="btn-contact">ابدأ الان</a>
+            </div>
+
+            <div class="hero-image">
+                <div class="img-wrapper">
+                    <img src="photo_6026008793725995865_y.jpg" alt="الميزان">
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="blue-section">
+        <div class="abstract-box">
+             <img src="84243edd-96b5-4dc0-9b1a-187948e8d786.png" alt="Abstract">
+        </div>
+        <div class="about-content">
+            <h4>نبذه عن الموقع</h4>
+            <p>"HOBA TECH | Leading the future of Tech and Legal education. Innovative learning for a better tomorrow. Towards the Best."</p>
+            <a href="#" class="btn-contact" style="background: transparent; color: white; border: 1px solid white; margin-top: 20px;">Learn More</a>
+        </div>
+    </section>
+
+    <footer class="footer-cta">
+        <h2>Contact HOBA TECH Platform</h2>
+    </footer>
+
+    <div class="footer-bottom">
+        <div class="copy-text">© 2026 جميع الحقوق محفوظة HOBA TECH |</div>
+        <div class="social-icons">
+            <a href="https://www.facebook.com/ayhab.ahmd.698715?mibextid=ZbWKwL" target="_blank" title="Facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            
+            <a href="https://www.instagram.com/h_o_b_a_cr7?igsh=djd1Mm9ld2V1OXBl" target="_blank" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            
+            <a href="https://t.me/ehab2155" target="_blank" title="Telegram">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
+            
+            <a href="https://wa.me/201129813193?text=صلي علي النبي" target="_blank" title="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+        <script>
+        document.getElementById('btn-about me').addEventListener('click', function() {
+            window.location.href = "aboutme.html"; // اسم الصفحة اللي عملتها
+        });
+        </script>
+</body>
+</html>
