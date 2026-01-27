@@ -7,58 +7,23 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-html { scroll-behavior: smooth; }
-:root {
-  --glow-color: #0044cc;
-  --bg-dark: #050505;
-  --glass: rgba(255, 255, 255, 0.05);
-}
 body {
-  margin: 0; padding: 0;
-  font-family: 'Cairo', sans-serif;
-  background: var(--bg-dark);
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  color: white;
+  margin:0; padding:0; font-family:'Cairo',sans-serif;
+  background:#050505; color:white; display:flex; justify-content:center; align-items:center; height:100vh;
 }
-.bg-glow {
-  position: absolute; width: 300px; height: 300px;
-  background: var(--glow-color); filter: blur(150px);
-  border-radius: 50%; z-index: -1; opacity: 0.3;
-  animation: move 10s infinite alternate;
-}
-@keyframes move { from { transform: translate(-50%, -50%); } to { transform: translate(50%, 50%); } }
-.auth-card {
-  background: var(--glass); padding: 30px;
-  border-radius: 25px; border: 1px solid rgba(0,68,204,0.3);
-  width: 350px; text-align: center; backdrop-filter: blur(20px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-.auth-card h2 { color: var(--glow-color); font-size: 28px; margin-bottom: 10px; letter-spacing: 2px; }
-.auth-card p { font-size: 14px; color: #bbb; margin-bottom: 20px; }
-input, select {
-  width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
-  outline: none; box-sizing: border-box; transition: 0.3s; font-family: 'Cairo';
-}
-input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,68,204,0.1); }
-.btn-auth {
-  width: 100%; padding: 12px; background: var(--glow-color);
-  border: none; color: white; border-radius: 12px; font-weight: bold; font-size: 16px;
-  cursor: pointer; transition: 0.3s; margin-top: 10px;
-}
-.btn-auth:hover { box-shadow: 0 0 20px var(--glow-color); transform: scale(1.02); }
-.switch-text { margin-top: 20px; font-size: 13px; }
-.switch-text span { color: var(--glow-color); cursor: pointer; font-weight: bold; text-decoration: underline; }
-#error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; }
+.auth-card { background: rgba(255,255,255,0.05); padding:30px; border-radius:25px; width:350px; text-align:center; backdrop-filter:blur(20px); }
+.auth-card h2 { color:#0044cc; font-size:28px; margin-bottom:10px; letter-spacing:2px; }
+.auth-card p { font-size:14px; color:#bbb; margin-bottom:20px; }
+input, select { width:100%; padding:12px 15px; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:white; outline:none; margin-top:10px; }
+input:focus, select:focus { border-color:#0044cc; background: rgba(0,68,204,0.1); }
+.btn-auth { width:100%; padding:12px; background:#0044cc; border:none; color:white; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px; }
+.btn-auth:hover { box-shadow:0 0 20px #0044cc; transform:scale(1.02); }
+.switch-text { margin-top:20px; font-size:13px; }
+.switch-text span { color:#0044cc; cursor:pointer; font-weight:bold; text-decoration:underline; }
+#error-msg { color:#ff4444; font-size:12px; margin-top:10px; min-height:18px; }
 </style>
 </head>
 <body>
-
-<div class="bg-glow"></div>
 
 <div class="auth-card">
 <h2>HOBA TECH</h2>
@@ -67,43 +32,43 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 <!-- Login Form -->
 <div id="login-form">
   <input type="email" id="l-email" placeholder="البريد الإلكتروني">
-  <div style="height: 10px;"></div>
   <input type="password" id="l-pass" placeholder="كلمة السر">
   <button class="btn-auth" id="login-btn">دخول</button>
+  <button class="btn-auth" id="phone-login-btn">تسجيل دخول برقم الهاتف</button>
   <p class="switch-text">ليس لديك حساب؟ <span onclick="toggleMode()">أنشئ حسابك الآن</span></p>
-  <p class="switch-text"><span onclick="showForgotPassword()">نسيت كلمة السر؟</span></p>
 </div>
 
 <!-- Signup Form -->
-<div id="signup-form" style="display: none;">
+<div id="signup-form" style="display:none;">
   <input type="text" id="s-name" placeholder="الاسم الكامل">
-  <input type="tel" id="s-phone" placeholder="رقم الموبايل" style="margin-top: 10px;">
-  <select id="s-group" style="margin-top: 10px;">
-      <option value="" disabled selected>اختر الفرقة</option>
-      <option>الفرقة الأولى</option>
-      <option>الفرقة الثانية</option>
-      <option>الفرقة الثالثة</option>
-      <option>الفرقة الرابعة</option>
+  <input type="tel" id="s-phone" placeholder="رقم الهاتف">
+  <select id="s-group">
+    <option value="" disabled selected>اختر الفرقة</option>
+    <option>الفرقة الأولى</option>
+    <option disabled>الفرقة الثانية (مقفلة)</option>
+    <option disabled>الفرقة الثالثة (مقفلة)</option>
+    <option disabled>الفرقة الرابعة (مقفلة)</option>
   </select>
-  <input type="email" id="s-email" placeholder="البريد الإلكتروني" style="margin-top: 10px;">
-  <input type="password" id="s-pass" placeholder="كلمة السر" style="margin-top: 10px;">
-  <button class="btn-auth" id="signup-btn" style="margin-top:10px;">تأكيد الاشتراك</button>
+  <input type="email" id="s-email" placeholder="البريد الإلكتروني">
+  <input type="password" id="s-pass" placeholder="كلمة السر">
+  <button class="btn-auth" id="signup-btn">تأكيد الاشتراك</button>
   <p class="switch-text">عندك حساب؟ <span onclick="toggleMode()">سجل دخولك</span></p>
 </div>
 
-<!-- Forgot Password Form -->
-<div id="forgot-password-form" style="display:none; margin-top:10px;">
-  <input type="email" id="reset-email" placeholder="أدخل بريدك الإلكتروني">
-  <button class="btn-auth" onclick="resetPassword()">إرسال رابط إعادة التعيين</button>
+<!-- OTP Form -->
+<div id="otp-form" style="display:none;">
+  <p>أدخل الكود المرسل على رقم الهاتف</p>
+  <input type="text" id="otp-code" placeholder="OTP">
+  <button class="btn-auth" id="verify-otp-btn">تأكيد الكود</button>
 </div>
 
 <div id="error-msg"></div>
 </div>
 
 <script type="module">
-// ---------------- Firebase Setup ----------------
+// Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -112,109 +77,100 @@ const firebaseConfig = {
   projectId: "hoba-tech",
   storageBucket: "hoba-tech.firebasestorage.app",
   messagingSenderId: "465948708700",
-  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
-  measurementId: "G-EBHF8FEDB2"
+  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-// ---------------- Toggle Mode ----------------
+// Toggle between login/signup
 window.toggleMode = function() {
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    const title = document.getElementById('title');
-    if (loginForm.style.display === 'none') {
-        loginForm.style.display = 'block';
-        signupForm.style.display = 'none';
-        document.getElementById('forgot-password-form').style.display = 'none';
-        title.innerText = "مرحباً بك يا مستشار";
-    } else {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'block';
-        document.getElementById('forgot-password-form').style.display = 'none';
-        title.innerText = "انضم لعائلة هوبا تيك";
-        // قفل الفرقة الثانية والثالثة والرابعة أثناء التسجيل
-        document.getElementById('s-group').value = 'الفرقة الأولى';
-        document.getElementById('s-group').disabled = true;
-    }
+  const loginForm = document.getElementById('login-form');
+  const signupForm = document.getElementById('signup-form');
+  const title = document.getElementById('title');
+  if(loginForm.style.display==='none') {
+    loginForm.style.display='block';
+    signupForm.style.display='none';
+    title.innerText="مرحباً بك يا مستشار";
+  } else {
+    loginForm.style.display='none';
+    signupForm.style.display='block';
+    title.innerText="انضم لعائلة هوبا تيك";
+  }
 };
 
-// ---------------- Signup ----------------
+// Signup
 document.getElementById('signup-btn').addEventListener('click', () => {
-    const name = document.getElementById('s-name').value;
-    const phone = document.getElementById('s-phone').value;
-    const group = document.getElementById('s-group').value;
-    const email = document.getElementById('s-email').value;
-    const password = document.getElementById('s-pass').value;
-    const errorMsg = document.getElementById('error-msg');
+  const name = document.getElementById('s-name').value;
+  const phone = document.getElementById('s-phone').value;
+  const group = document.getElementById('s-group').value;
+  const email = document.getElementById('s-email').value;
+  const password = document.getElementById('s-pass').value;
+  const errorMsg = document.getElementById('error-msg');
 
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            set(ref(database, 'users/' + user.uid), {
-                name: name,
-                phone: phone,
-                group: group,
-                email: email
-            });
-            alert('مبروك يا مستشار تم التسجيل!');
-            window.location.href = "داش 4.html";
-        })
-        .catch((error) => { errorMsg.innerText = error.message; });
+  if(!name||!phone||!group||!email||!password){ errorMsg.innerText="يرجى ملء جميع الحقول"; return; }
+
+  createUserWithEmailAndPassword(auth,email,password)
+    .then(userCredential=>{
+      const user = userCredential.user;
+      set(ref(database,'users/'+user.uid),{
+        name,name, phone, group, email
+      });
+      alert("تم التسجيل بنجاح!");
+      window.location.href="داش 4.html";
+    })
+    .catch(error=>{ errorMsg.innerText="خطأ: "+error.message; });
 });
 
-// ---------------- Login ----------------
-document.getElementById('login-btn').addEventListener('click', () => {
-    const email = document.getElementById('l-email').value;
-    const password = document.getElementById('l-pass').value;
-    const errorMsg = document.getElementById('error-msg');
+// Login with email
+document.getElementById('login-btn').addEventListener('click',()=>{
+  const email = document.getElementById('l-email').value;
+  const password = document.getElementById('l-pass').value;
+  const errorMsg = document.getElementById('error-msg');
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            alert('تم تسجيل الدخول!');
-            window.location.href = "داش 4.html";
-        })
-        .catch((error) => { errorMsg.innerText = "خطأ في البريد أو كلمة السر"; });
+  signInWithEmailAndPassword(auth,email,password)
+    .then(userCredential=>{
+      alert("تم تسجيل الدخول!");
+      window.location.href="داش 4.html";
+    })
+    .catch(error=>{ errorMsg.innerText="خطأ: البريد أو كلمة السر"; });
 });
 
-// ---------------- Auto-login ----------------
-onAuthStateChanged(auth, (user) => {
-    if(user){
-        window.location.href = "داش 4.html";
-    }
+// Login with phone
+document.getElementById('phone-login-btn').addEventListener('click',()=>{
+  const phone = prompt("أدخل رقم الهاتف مع +20");
+  if(!phone) return;
+
+  // Render recaptcha
+  window.recaptchaVerifier = new RecaptchaVerifier('phone-login-btn', { 'size':'invisible' }, auth);
+
+  signInWithPhoneNumber(auth,phone,window.recaptchaVerifier)
+    .then(confirmationResult=>{
+      window.confirmationResult = confirmationResult;
+      document.getElementById('login-form').style.display='none';
+      document.getElementById('otp-form').style.display='block';
+    })
+    .catch(error=>{ document.getElementById('error-msg').innerText="خطأ في رقم الهاتف"; });
 });
 
-// ---------------- Forgot Password ----------------
-window.showForgotPassword = function() {
-    document.getElementById('forgot-password-form').style.display = 'block';
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('s-group').value = 'الفرقة الأولى';
-    document.getElementById('s-group').disabled = true;
-};
+// Verify OTP
+document.getElementById('verify-otp-btn').addEventListener('click',()=>{
+  const code = document.getElementById('otp-code').value;
+  window.confirmationResult.confirm(code)
+    .then(result=>{
+      alert("تم تسجيل الدخول برقم الهاتف!");
+      window.location.href="داش 4.html";
+    })
+    .catch(err=>{
+      document.getElementById('error-msg').innerText="كود OTP غير صحيح";
+    });
+});
 
-window.resetPassword = function() {
-    const email = document.getElementById('reset-email').value;
-    const errorMsg = document.getElementById('error-msg');
-
-    if(!email){
-        errorMsg.style.color = "red";
-        errorMsg.innerText = "من فضلك أدخل بريدك الإلكتروني";
-        return;
-    }
-
-    sendPasswordResetEmail(auth, email)
-        .then(() => {
-            errorMsg.style.color = "lime";
-            errorMsg.innerText = "تم إرسال رابط إعادة التعيين على بريدك!";
-        })
-        .catch((error) => {
-            errorMsg.style.color = "red";
-            errorMsg.innerText = "خطأ: البريد غير مسجل أو غير صحيح";
-        });
-};
+// Auto-login if already signed in
+onAuthStateChanged(auth,user=>{
+  if(user) window.location.href="داش 4.html";
+});
 </script>
 
 </body>
