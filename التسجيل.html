@@ -51,10 +51,11 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   cursor: pointer; transition: 0.3s; margin-top: 10px;
 }
 .btn-auth:hover { box-shadow: 0 0 20px var(--glow-color); transform: scale(1.02); }
-.switch-text { margin-top: 20px; font-size: 13px; }
+.switch-text { margin-top: 10px; font-size: 13px; }
 .switch-text span { color: var(--glow-color); cursor: pointer; font-weight: bold; text-decoration: underline; }
-#error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; text-align: center; }
-#success-msg { color: #00ff00; font-size: 12px; margin-top: 10px; min-height: 18px; text-align: center; }
+#error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; }
+#success-msg { color: #4CAF50; font-size: 12px; margin-top: 10px; min-height: 18px; }
+#forgot-email { display: none; margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -70,9 +71,11 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   <div style="height: 10px;"></div>
   <input type="password" id="l-pass" placeholder="كلمة السر">
   <button class="btn-auth" id="login-btn">دخول</button>
-  <p style="margin-top:5px; font-size:13px;">
-    <span style="color:#ffcc00; cursor:pointer;" id="forgot-pass">نسيت كلمة السر؟</span>
-  </p>
+  <p class="switch-text"><span id="forgot-btn">نسيت كلمة السر؟</span></p>
+  <div id="forgot-email">
+    <input type="email" id="f-email" placeholder="أدخل البريد الإلكتروني لإعادة التعيين">
+    <button class="btn-auth" id="reset-btn" style="margin-top:5px;">إرسال رابط إعادة التعيين</button>
+  </div>
   <p class="switch-text">ليس لديك حساب؟ <span onclick="toggleMode()">أنشئ حسابك الآن</span></p>
 </div>
 
@@ -100,7 +103,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 // ---------------- Firebase Setup ----------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import { getDatabase, ref, get, child, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
@@ -121,10 +124,6 @@ window.toggleMode = function() {
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
     const title = document.getElementById('title');
-    const errorMsg = document.getElementById('error-msg');
-    const successMsg = document.getElementById('success-msg');
-    errorMsg.innerText = "";
-    successMsg.innerText = "";
     if (loginForm.style.display === 'none') {
         loginForm.style.display = 'block';
         signupForm.style.display = 'none';
@@ -145,27 +144,22 @@ document.getElementById('signup-btn').addEventListener('click', () => {
     const password = document.getElementById('s-pass').value;
     const errorMsg = document.getElementById('error-msg');
     const successMsg = document.getElementById('success-msg');
-    errorMsg.innerText = "";
-    successMsg.innerText = "";
-
-    if (!name || !phone || !group || !email || !password) {
-        errorMsg.innerText = "من فضلك أكمل جميع الحقول";
-        return;
-    }
 
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
+            // حفظ البيانات في الـ Database
             set(ref(database, 'users/' + user.uid), {
                 name: name,
                 phone: phone,
                 group: group,
                 email: email
             });
-            successMsg.innerText = "تم التسجيل بنجاح! 🔥";
-            setTimeout(() => { window.location.href = "داش 4.html"; }, 1000);
+            successMsg.innerText = 'مبروك يا مستشار تم التسجيل!';
+            errorMsg.innerText = '';
+            setTimeout(()=>{ window.location.href = "داش 4.html"; }, 1000);
         })
-        .catch((error) => { errorMsg.innerText = "خطأ: " + error.message; });
+        .catch((error) => { errorMsg.innerText = error.message; successMsg.innerText=''; });
 });
 
 // ---------------- Login ----------------
@@ -174,49 +168,50 @@ document.getElementById('login-btn').addEventListener('click', () => {
     const password = document.getElementById('l-pass').value;
     const errorMsg = document.getElementById('error-msg');
     const successMsg = document.getElementById('success-msg');
-    errorMsg.innerText = "";
-    successMsg.innerText = "";
-
-    if (!email || !password) {
-        errorMsg.innerText = "من فضلك أدخل البريد الإلكتروني وكلمة السر";
-        return;
-    }
 
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            successMsg.innerText = "تم تسجيل الدخول!";
-            setTimeout(() => { window.location.href = "داش 4.html"; }, 500);
+            successMsg.innerText = 'تم تسجيل الدخول!';
+            errorMsg.innerText = '';
+            setTimeout(()=>{ window.location.href = "داش 4.html"; }, 500);
         })
-        .catch((error) => { errorMsg.innerText = "خطأ في البريد أو كلمة السر ❌"; });
+        .catch((error) => { errorMsg.innerText = 'خطأ في كلمة السر أو البريد الإلكتروني'; successMsg.innerText=''; });
 });
 
 // ---------------- Forgot Password ----------------
-document.getElementById('forgot-pass').addEventListener('click', () => {
-    const email = document.getElementById('l-email').value;
+document.getElementById('forgot-btn').addEventListener('click', () => {
+    document.getElementById('forgot-email').style.display = 'block';
+    document.getElementById('success-msg').innerText='';
+    document.getElementById('error-msg').innerText='';
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    const fEmail = document.getElementById('f-email').value;
     const errorMsg = document.getElementById('error-msg');
     const successMsg = document.getElementById('success-msg');
-    errorMsg.innerText = "";
-    successMsg.innerText = "";
+    const dbRef = ref(database);
 
-    if (!email) {
-        errorMsg.innerText = "من فضلك أدخل البريد الإلكتروني لإرسال رابط إعادة تعيين كلمة السر";
-        return;
-    }
-
-    sendPasswordResetEmail(auth, email)
-        .then(() => {
-            successMsg.innerText = "تم إرسال رابط إعادة تعيين كلمة السر إلى بريدك الإلكتروني ";
-        })
-        .catch((error) => {
-            errorMsg.innerText = "خطأ: " + error.message;
+    get(child(dbRef, 'users')).then((snapshot) => {
+        let found = false;
+        snapshot.forEach((childSnap)=>{
+            if(childSnap.val().email === fEmail){
+                found = true;
+            }
         });
+        if(found){
+            sendPasswordResetEmail(auth, fEmail)
+            .then(()=>{ successMsg.innerText='تم إرسال رابط إعادة تعيين كلمة السر'; errorMsg.innerText=''; })
+            .catch((err)=>{ errorMsg.innerText=err.message; successMsg.innerText=''; });
+        } else {
+            errorMsg.innerText='البريد الإلكتروني غير مسجل لدينا';
+            successMsg.innerText='';
+        }
+    }).catch((err)=>{ errorMsg.innerText=err.message; successMsg.innerText=''; });
 });
 
 // ---------------- Auto-login ----------------
 onAuthStateChanged(auth, (user) => {
-    if(user){
-        window.location.href = "داش 4.html";
-    }
+    if(user){ window.location.href = "داش 4.html"; }
 });
 </script>
 
