@@ -248,7 +248,7 @@
     const userListContainer = document.getElementById('user-list');
 
     // دالة لجلب البيانات وعرضها
-    onSnapshot(collection(db, "users"), (snapshot) => {
+    onSnapshot(collection(db, "/users"), (snapshot) => {
         console.log("تم الاتصال بالقاعدة، عدد المستندات:", snapshot.size); // هيظهر في الـ Console
         userListContainer.innerHTML = ''; 
 
@@ -287,6 +287,7 @@
 </script>
 </body>
 </html>
+
 
 
 
