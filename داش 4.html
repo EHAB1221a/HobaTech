@@ -261,6 +261,56 @@
             requestAnimationFrame(animate);
         }
         init(); animate();
-    </script>
+        <script type="module">
+// 1. الاستيراد المطلوب
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+// 2. نفس الـ Config بتاعك (لازم يكون هو هو)
+const firebaseConfig = {
+  apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+  authDomain: "hoba-tech.firebaseapp.com",
+  projectId: "hoba-tech",
+  storageBucket: "hoba-tech.firebasestorage.app",
+  messagingSenderId: "465948708700",
+  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 3. دالة سحب الأعضاء وعرضهم
+function loadUsers() {
+    const userListContainer = document.getElementById('user-list'); // تأكد إن الـ tbody في جدولك واخد id="user-list"
+
+    // مراقبة الـ collection اللي اسمها users في الوقت الفعلي
+    onSnapshot(collection(db, "users"), (snapshot) => {
+        userListContainer.innerHTML = ''; // تصفير الجدول قبل العرض الجديد
+
+        snapshot.forEach((doc) => {
+            const user = doc.data();
+            
+            // إنشاء صف جديد في الجدول
+            const row = `
+                <tr>
+                    <td>${user.fullName || 'بدون اسم'}</td>
+                    <td>${user.phone || 'بدون رقم'}</td>
+                    <td>${user.group || 'غير محدد'}</td>
+                    <td><span class="badge">${user.role || 'user'}</span></td>
+                    <td>${user.email || 'لا يوجد'}</td>
+                </tr>
+            `;
+            userListContainer.innerHTML += row;
+        });
+
+        if (snapshot.empty) {
+            userListContainer.innerHTML = '<tr><td colspan="5">لا يوجد أعضاء مسجلين حالياً</td></tr>';
+        }
+    });
+}
+
+// تشغيل الدالة فور تحميل الصفحة
+window.onload = loadUsers;
+</script>
 </body>
 </html>
