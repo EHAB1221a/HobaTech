@@ -54,6 +54,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 .switch-text { margin-top: 20px; font-size: 13px; }
 .switch-text span { color: var(--glow-color); cursor: pointer; font-weight: bold; text-decoration: underline; }
 #error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; }
+#success-msg { color: #00ff00; font-size: 12px; margin-top: 10px; min-height: 18px; }
 </style>
 </head>
 <body>
@@ -70,8 +71,10 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   <div style="height: 10px;"></div>
   <input type="password" id="l-pass" placeholder="كلمة السر">
   <button class="btn-auth" id="login-btn">دخول</button>
-  <p class="switch-text">ليس لديك حساب؟ <span onclick="toggleMode()">أنشئ حسابك الآن</span></p>
-  <p class="switch-text"><span onclick="showForgotPassword()">نسيت كلمة السر؟</span></p>
+  <p class="switch-text">
+    ليس لديك حساب؟ <span onclick="toggleMode('signup')">أنشئ حسابك الآن</span><br>
+         <span onclick="toggleMode('forgot')">نسيت كلمةالسر؟</span>
+  </p>
 </div>
 
 <!-- Signup Form -->
@@ -79,143 +82,156 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   <input type="text" id="s-name" placeholder="الاسم الكامل">
   <input type="tel" id="s-phone" placeholder="رقم الموبايل" style="margin-top: 10px;">
   <select id="s-group" style="margin-top: 10px;">
-      <option value="" disabled selected>اختر الفرقة</option>
-      <option>الفرقة الأولى</option>
-      <option>الفرقة الثانية</option>
-      <option>الفرقة الثالثة</option>
-      <option>الفرقة الرابعة</option>
-  </select>
+    <option value="" disabled selected>اختر الفرقة</option>
+    <option>الفرقة الأولى</option>
+    <option disabled style="color: gray;">الفرقة الثانية 🔒</option>
+    <option disabled style="color: gray;">الفرقة الثالثة 🔒</option>
+    <option disabled style="color: gray;">الفرقة الرابعة 🔒</option>
+</select>
   <input type="email" id="s-email" placeholder="البريد الإلكتروني" style="margin-top: 10px;">
   <input type="password" id="s-pass" placeholder="كلمة السر" style="margin-top: 10px;">
   <button class="btn-auth" id="signup-btn" style="margin-top:10px;">تأكيد الاشتراك</button>
-  <p class="switch-text">عندك حساب؟ <span onclick="toggleMode()">سجل دخولك</span></p>
+  <p class="switch-text">عندك حساب؟ <span onclick="toggleMode('login')">سجل دخولك</span></p>
 </div>
 
 <!-- Forgot Password Form -->
-<div id="forgot-password-form" style="display:none; margin-top:10px;">
-  <input type="email" id="reset-email" placeholder="أدخل بريدك الإلكتروني">
-  <button class="btn-auth" onclick="resetPassword()">إرسال رابط إعادة التعيين</button>
+<div id="forgot-form" style="display: none;">
+  <input type="email" id="f-email" placeholder="أدخل بريدك الإلكتروني">
+  <button class="btn-auth" id="reset-btn" style="margin-top:10px;">إعادة تعيين كلمة السر</button>
+  <p class="switch-text">تذكرت كلمة السر؟ <span onclick="toggleMode('login')">سجل دخولك</span></p>
+  <div id="success-msg"></div>
 </div>
 
 <div id="error-msg"></div>
 </div>
 
 <script type="module">
-// ---------------- Firebase Setup ----------------
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-  authDomain: "hoba-tech.firebaseapp.com",
-  projectId: "hoba-tech",
-  storageBucket: "hoba-tech.firebasestorage.app",
-  messagingSenderId: "465948708700",
-  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
-  measurementId: "G-EBHF8FEDB2"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
-
-// ---------------- Toggle Mode ----------------
-window.toggleMode = function() {
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    const title = document.getElementById('title');
-    if (loginForm.style.display === 'none') {
-        loginForm.style.display = 'block';
-        signupForm.style.display = 'none';
-        document.getElementById('forgot-password-form').style.display = 'none';
-        title.innerText = "مرحباً بك يا مستشار";
-    } else {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'block';
-        document.getElementById('forgot-password-form').style.display = 'none';
-        title.innerText = "انضم لعائلة هوبا تيك";
-        // قفل الفرقة الثانية والثالثة والرابعة أثناء التسجيل
-        document.getElementById('s-group').value = 'الفرقة الأولى';
-        document.getElementById('s-group').disabled = true;
-    }
-};
-
-// ---------------- Signup ----------------
-document.getElementById('signup-btn').addEventListener('click', () => {
-    const name = document.getElementById('s-name').value;
-    const phone = document.getElementById('s-phone').value;
-    const group = document.getElementById('s-group').value;
-    const email = document.getElementById('s-email').value;
-    const password = document.getElementById('s-pass').value;
-    const errorMsg = document.getElementById('error-msg');
-
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            set(ref(database, 'users/' + user.uid), {
-                name: name,
-                phone: phone,
-                group: group,
-                email: email
-            });
-            alert('مبروك يا مستشار تم التسجيل!');
-            window.location.href = "داش 4.html";
-        })
-        .catch((error) => { errorMsg.innerText = error.message; });
-});
-
-// ---------------- Login ----------------
+  // ---------------- Firebase Setup ----------------
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+  // لاحظ التغيير هنا: استيراد Firestore
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+    authDomain: "hoba-tech.firebaseapp.com",
+    projectId: "hoba-tech",
+    storageBucket: "hoba-tech.firebasestorage.app",
+    messagingSenderId: "465948708700",
+    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
+    measurementId: "G-EBHF8FEDB2"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app); // تعريف Firestore
+  
+  // ---------------- Toggle Mode ----------------
+  window.toggleMode = function(mode) {
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const forgotForm = document.getElementById('forgot-form');
+      const title = document.getElementById('title');
+  
+      loginForm.style.display = 'none';
+      signupForm.style.display = 'none';
+      forgotForm.style.display = 'none';
+  
+      if(mode === 'signup') {
+          signupForm.style.display = 'block';
+          title.innerText = "انضم الان لعائلة هوبا تيك";
+      } else if(mode === 'forgot') {
+          forgotForm.style.display = 'block';
+          title.innerText = "نسيت كلمة السر";
+      } else {
+          loginForm.style.display = 'block';
+          title.innerText = "مرحباً بك يا مستشار";
+      }
+  };
+  
+  // ---------------- Signup (تم التعديل ليرسل لـ Firestore) ----------------
+  document.getElementById('signup-btn').addEventListener('click', () => {
+      const name = document.getElementById('s-name').value;
+      const phone = document.getElementById('s-phone').value;
+      const group = document.getElementById('s-group').value;
+      const email = document.getElementById('s-email').value;
+      const password = document.getElementById('s-pass').value;
+      const errorMsg = document.getElementById('error-msg');
+  
+      if(!name || !phone || !email || !password) {
+          errorMsg.innerText = "برجاء إدخال كافة البيانات";
+          return;
+      }
+  
+      createUserWithEmailAndPassword(auth, email, password)
+          .then(async (userCredential) => {
+              const user = userCredential.user;
+              
+              // تخزين في Firestore عشان يظهر في الداشبورد
+              await setDoc(doc(db, "users", user.uid), {
+                  fullName: name, // استخدمنا fullName عشان كود الداشبورد بيقرأها كدة
+                  phone: phone,
+                  group: group,
+                  email: email,
+                  role: "user",
+                  uid: user.uid
+              });
+  
+              alert('تم التسجيل بنجاح يا مستشار!');
+              window.location.href = "داش 4.html";
+          })
+          .catch((error) => { errorMsg.innerText = "خطأ: " + error.message; });
+  });
+  
+  // ---------------- Login المعدل ----------------
 document.getElementById('login-btn').addEventListener('click', () => {
     const email = document.getElementById('l-email').value;
-    const password = document.getElementById('l-pass').value;
+    const passwordInput = document.getElementById('l-pass'); // مسكنا حقل الباسورد نفسه
+    const password = passwordInput.value;
     const errorMsg = document.getElementById('error-msg');
+
+    // مسح رسالة الخطأ القديمة قبل البدء
+    errorMsg.innerText = "جاري التحقق..."; 
 
     signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            alert('تم تسجيل الدخول!');
+        .then(() => {
             window.location.href = "داش 4.html";
         })
-        .catch((error) => { errorMsg.innerText = "خطأ في البريد أو كلمة السر"; });
-});
-
-// ---------------- Auto-login ----------------
-onAuthStateChanged(auth, (user) => {
-    if(user){
-        window.location.href = "داش 4.html";
-    }
-});
-
-// ---------------- Forgot Password ----------------
-window.showForgotPassword = function() {
-    document.getElementById('forgot-password-form').style.display = 'block';
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('s-group').value = 'الفرقة الأولى';
-    document.getElementById('s-group').disabled = true;
-};
-
-window.resetPassword = function() {
-    const email = document.getElementById('reset-email').value;
-    const errorMsg = document.getElementById('error-msg');
-
-    if(!email){
-        errorMsg.style.color = "red";
-        errorMsg.innerText = "من فضلك أدخل بريدك الإلكتروني";
-        return;
-    }
-
-    sendPasswordResetEmail(auth, email)
-        .then(() => {
-            errorMsg.style.color = "lime";
-            errorMsg.innerText = "تم إرسال رابط إعادة التعيين على بريدك!";
-        })
-        .catch((error) => {
-            errorMsg.style.color = "red";
-            errorMsg.innerText = "خطأ: البريد غير مسجل أو غير صحيح";
+        .catch((error) => { 
+            // التعديل السحري هنا:
+            errorMsg.innerText = "خطأ في البريد الإلكتروني أو كلمة السر"; 
+            passwordInput.value = ""; // بنصفر الباسورد عشان يكتبه من جديد
+            passwordInput.focus();   // بنخلي الماوس يروح على خانة الباسورد لوحده
         });
-};
-</script>
+});
+  
+  // ---------------- Forgot Password ----------------
+  document.getElementById('reset-btn').addEventListener('click', () => {
+      const fEmail = document.getElementById('f-email').value;
+      const errorMsg = document.getElementById('error-msg');
+      const successMsg = document.getElementById('success-msg');
+  
+      sendPasswordResetEmail(auth, fEmail)
+        .then(() => {
+            successMsg.innerText = 'تم إرسال رابط إعادة تعيين كلمة السر';
+            errorMsg.innerText = '';
+        })
+        .catch((err) => {
+            errorMsg.innerText = 'البريد الإلكتروني غير مسجل لدينا';
+            successMsg.innerText = '';
+        });
+  });
+  
+  // ---------------- Auto-login ----------------
+  onAuthStateChanged(auth, (user) => {
+      if(user){
+          // تأكد أنك في صفحة التسجيل وليس الداشبورد لمنع التكرار
+          if(!window.location.href.includes("داش 4.html")) {
+              window.location.href = "داش 4.html";
+          }
+      }
+  });
+  </script>
 
 </body>
 </html>
