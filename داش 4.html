@@ -231,62 +231,57 @@
         init(); animate();
     </script>
 
-    <script type="module">
+   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-    authDomain: "hoba-tech.firebaseapp.com",
-    projectId: "hoba-tech", // تأكد إنها hoba-tech مش حاجة تانية
-    storageBucket: "hoba-tech.firebasestorage.app",
-    messagingSenderId: "465948708700",
-    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
-};
+    // الـ Config بتاعك اللي إنت لسه جايبه
+    const firebaseConfig = {
+        apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+        authDomain: "hoba-tech.firebaseapp.com",
+        projectId: "hoba-tech",
+        storageBucket: "hoba-tech.firebasestorage.app",
+        messagingSenderId: "465948708700",
+        appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
+        measurementId: "G-EBHF8FEDB2"
+    };
+
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const db = getFirestore(app); // إحنا هنا بنجبره يكلم الـ Firestore مش الـ Realtime
     const userListContainer = document.getElementById('user-list');
 
-    // دالة لجلب البيانات وعرضها
     onSnapshot(collection(db, "users"), (snapshot) => {
-        console.log("تم الاتصال بالقاعدة، عدد المستندات:", snapshot.size); // هيظهر في الـ Console
+        console.log("الربط نجح! عدد المستندات الحقيقي:", snapshot.size);
         userListContainer.innerHTML = ''; 
 
         if (snapshot.empty) {
-            userListContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">المخزن فاضي في الفايربيس</td></tr>';
+            userListContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">المخزن فاضي.. تأكد من إضافة بيانات في Firestore</td></tr>';
             return;
         }
 
-     snapshot.forEach((doc) => {
-    const user = doc.data();
-    console.log("البيانات اللي وصلت فعلاً:", user); // بص هنا في الكونسول
-    
-    // محاولة قراءة الاسم بكل الأشكال اللي شفناها في صورك
-    const name = user.fullName || user.Fullname || user.الاسم || user.name || 'غير مسجل';
-    const mobile = user.phone || user['رقم الهاتف'] || 'بدون رقم';
-    const group = user.group || 'الفرقة الرابعة';
-    const role = user.role || 'user';
+        snapshot.forEach((doc) => {
+            const user = doc.data();
+            // البحث عن الاسم بأي صيغة (كبيرة أو صغيرة أو عربي) كما ظهر في صورك
+            const name = user.fullName || user.Fullname || user.الاسم || user.name || 'غير مسجل';
+            const mobile = user.phone || user['رقم الهاتف'] || 'بدون رقم';
 
-    const row = `
-        <tr>
-            <td>${name}</td>
-            <td>${mobile}</td>
-            <td>${group}</td>
-            <td><span class="badge">${role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
-        </tr>
-    `;
-    userListContainer.innerHTML += row;
-});
-    userListContainer.innerHTML += row;
-});
-          
+            const row = `
+                <tr>
+                    <td>${name}</td>
+                    <td>${mobile}</td>
+                    <td>${user.group || 'الفرقة الرابعة'}</td>
+                    <td><span class="badge">${user.role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
+                </tr>
+            `;
+            userListContainer.innerHTML += row;
+        });
     }, (error) => {
-        console.error("خطأ في جلب البيانات:", error);
-        userListContainer.innerHTML = `<tr><td colspan="4" style="color:red;">خطأ: ${error.message}</td></tr>`;
+        console.error("خطأ في الصلاحيات:", error);
     });
 </script>
 </body>
 </html>
+
 
 
 
