@@ -235,15 +235,14 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-        authDomain: "hoba-tech.firebaseapp.com",
-        projectId: "hoba-tech",
-        storageBucket: "hoba-tech.firebasestorage.app",
-        messagingSenderId: "465948708700",
-        appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
-    };
-
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+    authDomain: "hoba-tech.firebaseapp.com",
+    projectId: "hoba-tech", // تأكد إنها hoba-tech مش حاجة تانية
+    storageBucket: "hoba-tech.firebasestorage.app",
+    messagingSenderId: "465948708700",
+    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
+};
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const userListContainer = document.getElementById('user-list');
@@ -278,4 +277,5 @@
 </script>
 </body>
 </html>
+
 
