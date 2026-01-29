@@ -46,10 +46,8 @@
 
         .container { padding: 100px 50px; transition: 0.5s; }
 
-        /* ستايل الأقسام والبطاقات */
         .section-card { background: var(--glass); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); max-width: 900px; margin: 0 auto; }
         
-        /* الرئيسية */
         .dashboard-header { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-bottom: 50px; }
         .progress-radar { background: rgba(0, 68, 204, 0.05); border: 2px solid rgba(0, 68, 204, 0.2); border-radius: 30px; padding: 30px; text-align: center; }
         .circle-wrap { width: 130px; height: 130px; background: #111; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; border: 4px solid var(--glow-color); box-shadow: 0 0 20px var(--glow-color); animation: pulse 2s infinite; }
@@ -58,47 +56,32 @@
         .stats-row { display: flex; justify-content: space-around; margin-top: 20px; }
         .stat-box span { display: block; font-size: 28px; font-weight: 900; color: var(--glow-color); }
 
-        /* المكتبة */
         .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .lib-card { background: rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; transition: 0.4s; cursor: pointer; position: relative; }
         .lib-card:hover { transform: translateY(-5px); border-color: var(--glow-color); background: rgba(0, 68, 204, 0.05); }
         .lib-card i { font-size: 40px; color: var(--glow-color); margin-bottom: 15px; }
-        .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .lib-card {
-            background: rgba(255, 255, 255, 0.02); border-radius: 25px; padding: 40px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;
-            transition: 0.4s; position: relative; cursor: pointer;
-        }
-        .lib-card:hover {
-            transform: translateY(-10px); border-color: var(--glow-color);
-            box-shadow: 0 0 30px rgba(0, 68, 204, 0.4), inset 0 0 15px rgba(0, 68, 204, 0.2);
-            background: rgba(0, 68, 204, 0.05);
-        }
-        .lib-card i { font-size: 50px; color: var(--glow-color); margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--glow-color)); }
-        .badge { background: #333; padding: 5px 15px; border-radius: 8px; font-size: 11px; position: absolute; top: 20px; left: 20px; }
 
-        /* القوائم (أعضاء/طلبات) */
         .list-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px 20px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,68,204,0.1); }
         .btn-accept { background: #0088ff; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
         .btn-reject { background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-right: 5px; }
 
-        /* الإعدادات */
         .setting-group { margin-bottom: 15px; }
         .setting-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 13px; }
         .setting-group input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
-        .setting-group input:focus { border-color: var(--glow-color); }
-        .profile-img-section { text-align: center; margin-bottom: 25px; }
-        .profile-img-section img { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--glow-color); }
-
         .btn-save { background: var(--glow-color); color: white; border: none; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-logout { background: transparent; color: #ff4444; border: 1px solid #ff4444; width: 100%; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; }
 
-        /* الأنيميشن والأقسام */
         .page-section { display: none; }
         .page-section.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 2000; display: none; padding: 50px; }
+        
+        /* تنسيق جدول الأعضاء */
+        .user-table { width: 100%; border-collapse: collapse; text-align: right; }
+        .user-table th { color: var(--glow-color); padding: 10px; border-bottom: 1px solid rgba(0,68,204,0.3); }
+        .user-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        .badge { background: rgba(0, 68, 204, 0.2); color: var(--glow-color); padding: 4px 8px; border-radius: 6px; font-size: 11px; border: 1px solid var(--glow-color); }
     </style>
 </head>
 <body>
@@ -148,54 +131,41 @@
                     <h3>تاريخ النظم القانونية</h3>
                     <p>10 محاضرات | PDF</p>
                 </div>
-                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-university"></i><h3>القانون المدني</h3><p>قريباً..</p></div>
-                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-university"></i><h3>القانون المدني</h3><p>قريباً..</p></div>
-                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-user-shield"></i><h3>الهكر الأخلاقي</h3><p>قريباً..</p></div>
-                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-scroll"></i><h3>الشريعة الإسلامية</h3><p>قريباً..</p></div>
-                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-globe"></i><h3>القانون الدولي</h3><p>قريباً..</p></div>
-                <div class="lib-card" style="opacity: 0.6;"><div class="badge">قريباً</div><i class="fas fa-users"></i><h3>علم الاجتماع</h3><p>قريباً..</p></div>
-               
+                <div class="lib-card" style="opacity: 0.6;"><i class="fas fa-university"></i><h3>القانون المدني</h3><p>قريباً..</p></div>
             </div>
         </div>
 
         <div id="requests" class="page-section">
             <h1 style="text-align: center;">طلبات الانضمام</h1>
-            <div class="section-card">
-                <div class="list-item">
-                    <span>أحمد محمد (دفع 2023)</span>
-                    <div><button class="btn-accept">قبول</button><button class="btn-reject">رفض</button></div>
-                </div>
+            <div class="section-card" id="requests-list">
+                <p style="text-align: center; opacity: 0.5;">لا توجد طلبات معلقة حالياً</p>
             </div>
         </div>
 
         <div id="members" class="page-section">
             <h1 style="text-align: center;">الأعضاء المشتركين</h1>
             <div class="section-card">
-                <div class="list-item">
-                    <span>إيهاب الدرديري (المالك)</span>
-                    <span style="color: #00ff00; font-size: 12px;">متصل</span>
-                </div>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الموبايل</th>
+                            <th>الفرقة</th>
+                            <th>الرتبة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-list">
+                        <tr><td colspan="4" style="text-align:center;">جاري تحميل الأعضاء...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <div id="settings" class="page-section">
             <h1 style="text-align: center;">الإعدادات</h1>
             <div class="section-card">
-                <div class="setting-group">
-                    <label>الاسم بالكامل</label>
-                    <input type="text" value="إيهاب أحمد حامد الدردير">
-                </div>
-                <div class="profile-img-section">
-                    <img src="https://via.placeholder.com/90" id="prof-img">
-                    <br><label for="up-img" style="cursor:pointer; color:var(--glow-color); font-size:13px;">تغيير صورة الملف الشخصي</label>
-                    <input type="file" id="up-img" hidden onchange="updateImg(event)">
-                </div>
-                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin: 20px 0;">
-                <div class="setting-group"><label>كلمة السر الحالية</label><input type="password" placeholder="********"></div>
-                <div class="setting-group"><label>كلمة السر الجديدة</label><input type="password" placeholder="كلمة السر الجديدة"></div>
-                <div class="setting-group"><label>تأكيد كلمة السر</label><input type="password" placeholder="تأكيد الكلمة"></div>
+                <div class="setting-group"><label>الاسم بالكامل</label><input type="text" value="إيهاب أحمد حامد الدردير"></div>
                 <button class="btn-save" onclick="alert('تم الحفظ')">تأكيد التغييرات</button>
-                <button style="background:none; border:none; color:var(--glow-color); display:block; margin: 10px auto; cursor:pointer; text-decoration:underline;">نسيت كلمة السر؟</button>
                 <button class="btn-logout" onclick="location.reload()">تسجيل الخروج</button>
             </div>
         </div>
@@ -204,10 +174,6 @@
     <div id="overlay">
         <div style="cursor:pointer; color:var(--glow-color);" onclick="closeSubject()"><i class="fas fa-arrow-right"></i> عودة</div>
         <h1 id="sub-title"></h1>
-        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px;">
-            <span>1. مدخل تاريخ النظم</span>
-            <i class="fas fa-play-circle" style="float:left; color:var(--glow-color);"></i>
-        </div>
     </div>
 
     <script>
@@ -217,7 +183,15 @@
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            if(event) event.currentTarget.classList.add('active');
+            
+            // تحديث حالة الزر النشط
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                if(link.innerText.includes(document.getElementById(pageId).previousElementSibling?.innerText || "")) {
+                   // منطق بسيط للتحديد
+                }
+            });
+
             document.getElementById('sidebar').classList.remove('active');
         }
 
@@ -227,12 +201,6 @@
         }
 
         function closeSubject() { document.getElementById('overlay').style.display = 'none'; }
-
-        function updateImg(e) {
-            const reader = new FileReader();
-            reader.onload = function() { document.getElementById('prof-img').src = reader.result; }
-            reader.readAsDataURL(e.target.files[0]);
-        }
 
         // كود الخلفية المتحركة
         const canvas = document.getElementById('bg-canvas');
@@ -261,56 +229,48 @@
             requestAnimationFrame(animate);
         }
         init(); animate();
-        <script type="module">
-// 1. الاستيراد المطلوب
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+    </script>
 
-// 2. نفس الـ Config بتاعك (لازم يكون هو هو)
-const firebaseConfig = {
-  apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-  authDomain: "hoba-tech.firebaseapp.com",
-  projectId: "hoba-tech",
-  storageBucket: "hoba-tech.firebasestorage.app",
-  messagingSenderId: "465948708700",
-  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
-};
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+            authDomain: "hoba-tech.firebaseapp.com",
+            projectId: "hoba-tech",
+            storageBucket: "hoba-tech.firebasestorage.app",
+            messagingSenderId: "465948708700",
+            appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
+        };
 
-// 3. دالة سحب الأعضاء وعرضهم
-function loadUsers() {
-    const userListContainer = document.getElementById('user-list'); // تأكد إن الـ tbody في جدولك واخد id="user-list"
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    // مراقبة الـ collection اللي اسمها users في الوقت الفعلي
-    onSnapshot(collection(db, "users"), (snapshot) => {
-        userListContainer.innerHTML = ''; // تصفير الجدول قبل العرض الجديد
+        // مراقبة الأعضاء من Firestore
+        const userListContainer = document.getElementById('user-list');
 
-        snapshot.forEach((doc) => {
-            const user = doc.data();
+        onSnapshot(collection(db, "users"), (snapshot) => {
+            userListContainer.innerHTML = ''; 
             
-            // إنشاء صف جديد في الجدول
-            const row = `
-                <tr>
-                    <td>${user.fullName || 'بدون اسم'}</td>
-                    <td>${user.phone || 'بدون رقم'}</td>
-                    <td>${user.group || 'غير محدد'}</td>
-                    <td><span class="badge">${user.role || 'user'}</span></td>
-                    <td>${user.email || 'لا يوجد'}</td>
-                </tr>
-            `;
-            userListContainer.innerHTML += row;
+            if (snapshot.empty) {
+                userListContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا يوجد أعضاء مسجلين حالياً</td></tr>';
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const user = doc.data();
+                const row = `
+                    <tr>
+                        <td>${user.fullName || 'بدون اسم'}</td>
+                        <td>${user.phone || 'بدون رقم'}</td>
+                        <td>${user.group || 'غير محدد'}</td>
+                        <td><span class="badge">${user.role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
+                    </tr>
+                `;
+                userListContainer.innerHTML += row;
+            });
         });
-
-        if (snapshot.empty) {
-            userListContainer.innerHTML = '<tr><td colspan="5">لا يوجد أعضاء مسجلين حالياً</td></tr>';
-        }
-    });
-}
-
-// تشغيل الدالة فور تحميل الصفحة
-window.onload = loadUsers;
-</script>
+    </script>
 </body>
 </html>
