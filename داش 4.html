@@ -250,7 +250,7 @@
     // دالة لجلب البيانات وعرضها
     onSnapshot(collection(db, "users"), (snapshot) => {
         console.log("تم الاتصال بالقاعدة، عدد المستندات:", snapshot.size); // هيظهر في الـ Console
-        userListContainer.innerHTML = 'https://console.firebase.google.com/u/0/project/hoba-tech/firestore/databases/default/data'; 
+        userListContainer.innerHTML = ''; 
 
         if (snapshot.empty) {
             userListContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">المخزن فاضي في الفايربيس</td></tr>';
@@ -287,6 +287,7 @@
 </script>
 </body>
 </html>
+
 
 
 
