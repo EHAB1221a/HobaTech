@@ -248,9 +248,9 @@
     const userListContainer = document.getElementById('user-list');
 
     // دالة لجلب البيانات وعرضها
-    onSnapshot(collection(db, "/users"), (snapshot) => {
+    onSnapshot(collection(db, "users"), (snapshot) => {
         console.log("تم الاتصال بالقاعدة، عدد المستندات:", snapshot.size); // هيظهر في الـ Console
-        userListContainer.innerHTML = ''; 
+        userListContainer.innerHTML = 'https://console.firebase.google.com/u/0/project/hoba-tech/firestore/databases/default/data'; 
 
         if (snapshot.empty) {
             userListContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">المخزن فاضي في الفايربيس</td></tr>';
@@ -287,6 +287,7 @@
 </script>
 </body>
 </html>
+
 
 
 
