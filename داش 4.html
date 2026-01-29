@@ -257,20 +257,26 @@
             return;
         }
 
-      snapshot.forEach((doc) => {
+     snapshot.forEach((doc) => {
     const user = doc.data();
-    // الكود دلوقتي هيدور على الاسم سواء مكتوب fullName أو Fullname أو حتى "الاسم"
-    const name = user.fullName || user.Fullname || user.الاسم || 'غير مسجل';
-    const mobile = user.phone || user['رقم الهاتف'] || 'بدون رقم';
+    console.log("البيانات اللي وصلت فعلاً:", user); // بص هنا في الكونسول
     
+    // محاولة قراءة الاسم بكل الأشكال اللي شفناها في صورك
+    const name = user.fullName || user.Fullname || user.الاسم || user.name || 'غير مسجل';
+    const mobile = user.phone || user['رقم الهاتف'] || 'بدون رقم';
+    const group = user.group || 'الفرقة الرابعة';
+    const role = user.role || 'user';
+
     const row = `
         <tr>
             <td>${name}</td>
             <td>${mobile}</td>
-            <td>${user.group || 'الفرقة الرابعة'}</td>
-            <td><span class="badge">${user.role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
+            <td>${group}</td>
+            <td><span class="badge">${role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
         </tr>
     `;
+    userListContainer.innerHTML += row;
+});
     userListContainer.innerHTML += row;
 });
           
@@ -281,6 +287,7 @@
 </script>
 </body>
 </html>
+
 
 
 
