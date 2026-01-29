@@ -257,19 +257,23 @@
             return;
         }
 
-        snapshot.forEach((doc) => {
-            const user = doc.data();
-            console.log("بيانات المستخدم:", user); 
-            const row = `
-                <tr>
-                    <td>${user.fullName || 'غير مسجل'}</td>
-                    <td>${user.phone || 'بدون رقم'}</td>
-                    <td>${user.group || 'الفرقة الرابعة'}</td>
-                    <td><span class="badge">${user.role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
-                </tr>
-            `;
-            userListContainer.innerHTML += row;
-        });
+      snapshot.forEach((doc) => {
+    const user = doc.data();
+    // الكود دلوقتي هيدور على الاسم سواء مكتوب fullName أو Fullname أو حتى "الاسم"
+    const name = user.fullName || user.Fullname || user.الاسم || 'غير مسجل';
+    const mobile = user.phone || user['رقم الهاتف'] || 'بدون رقم';
+    
+    const row = `
+        <tr>
+            <td>${name}</td>
+            <td>${mobile}</td>
+            <td>${user.group || 'الفرقة الرابعة'}</td>
+            <td><span class="badge">${user.role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
+        </tr>
+    `;
+    userListContainer.innerHTML += row;
+});
+          
     }, (error) => {
         console.error("خطأ في جلب البيانات:", error);
         userListContainer.innerHTML = `<tr><td colspan="4" style="color:red;">خطأ: ${error.message}</td></tr>`;
@@ -277,5 +281,6 @@
 </script>
 </body>
 </html>
+
 
 
