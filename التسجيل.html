@@ -1,236 +1,188 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HOBA TECH | التسجيل</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-html { scroll-behavior: smooth; }
-:root {
-  --glow-color: #0044cc;
-  --bg-dark: #050505;
-  --glass: rgba(255, 255, 255, 0.05);
-}
-body {
-  margin: 0; padding: 0;
-  font-family: 'Cairo', sans-serif;
-  background: var(--bg-dark);
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  color: white;
-}
-.bg-glow {
-  position: absolute; width: 300px; height: 300px;
-  background: var(--glow-color); filter: blur(150px);
-  border-radius: 50%; z-index: -1; opacity: 0.3;
-  animation: move 10s infinite alternate;
-}
-@keyframes move { from { transform: translate(-50%, -50%); } to { transform: translate(50%, 50%); } }
-.auth-card {
-  background: var(--glass); padding: 30px;
-  border-radius: 25px; border: 1px solid rgba(0,68,204,0.3);
-  width: 350px; text-align: center; backdrop-filter: blur(20px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-.auth-card h2 { color: var(--glow-color); font-size: 28px; margin-bottom: 10px; letter-spacing: 2px; }
-.auth-card p { font-size: 14px; color: #bbb; margin-bottom: 20px; }
-input, select {
-  width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
-  outline: none; box-sizing: border-box; transition: 0.3s; font-family: 'Cairo';
-}
-input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,68,204,0.1); }
-.btn-auth {
-  width: 100%; padding: 12px; background: var(--glow-color);
-  border: none; color: white; border-radius: 12px; font-weight: bold; font-size: 16px;
-  cursor: pointer; transition: 0.3s; margin-top: 10px;
-}
-.btn-auth:hover { box-shadow: 0 0 20px var(--glow-color); transform: scale(1.02); }
-.switch-text { margin-top: 20px; font-size: 13px; }
-.switch-text span { color: var(--glow-color); cursor: pointer; font-weight: bold; text-decoration: underline; }
-#error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; }
-#success-msg { color: #00ff00; font-size: 12px; margin-top: 10px; min-height: 18px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOBA TECH | المنصة المتكاملة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        :root { --main: #0044cc; --bg: #050505; --card: rgba(255, 255, 255, 0.05); }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        .bg-glow { position: absolute; width: 300px; height: 300px; background: var(--main); filter: blur(150px); border-radius: 50%; z-index: -1; opacity: 0.3; animation: move 10s infinite alternate; }
+        @keyframes move { from { transform: translate(-50%, -50%); } to { transform: translate(50%, 50%); } }
+        .auth-card { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid rgba(0,68,204,0.3); width: 350px; text-align: center; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        h2 { color: var(--main); font-size: 28px; margin-bottom: 5px; }
+        p { font-size: 14px; color: #bbb; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin-top: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none; box-sizing: border-box; font-family: 'Cairo'; }
+        input:focus { border-color: var(--main); }
+        .btn-auth { width: 100%; padding: 12px; background: var(--main); border: none; color: white; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 15px; }
+        .btn-auth:hover { box-shadow: 0 0 20px var(--main); }
+        .switch { margin-top: 20px; font-size: 13px; color: #aaa; }
+        .switch span { color: var(--main); cursor: pointer; font-weight: bold; text-decoration: underline; }
+        #error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; }
+    </style>
 </head>
 <body>
 
 <div class="bg-glow"></div>
 
 <div class="auth-card">
-<h2>HOBA TECH</h2>
-<p id="title">مرحباً بك يا مستشار</p>
+    <h2 id="card-title">HOBA TECH</h2>
+    <p id="card-desc">مرحباً بك يا مستشار</p>
 
-<div id="login-form">
-  <input type="email" id="l-email" placeholder="البريد الإلكتروني">
-  <div style="height: 10px;"></div>
-  <input type="password" id="l-pass" placeholder="كلمة السر">
-  <button class="btn-auth" id="login-btn" onclick="handleLogin()">دخول</button>
-  <p class="switch-text">
-    ليس لديك حساب؟ <span onclick="toggleMode('signup')">أنشئ حسابك الآن</span><br>
-         <span onclick="toggleMode('forgot')">نسيت كلمةالسر؟</span>
-  </p>
-</div>
+    <div id="login-box">
+        <input type="email" id="l-email" placeholder="البريد الإلكتروني">
+        <input type="password" id="l-pass" placeholder="كلمة السر">
+        <button class="btn-auth" onclick="handleLogin()">دخول</button>
+        <div class="switch">
+            ليس لديك حساب؟ <span onclick="toggle('signup')">أنشئ حسابك الآن</span><br><br>
+            <span onclick="toggle('forgot')">نسيت كلمة السر؟</span>
+        </div>
+    </div>
 
-<div id="signup-form" style="display: none;">
-  <input type="text" id="s-name" placeholder="الاسم الكامل">
-  <input type="tel" id="s-phone" placeholder="رقم الموبايل" style="margin-top: 10px;">
-  <select id="s-group" style="margin-top: 10px;">
-    <option value="" disabled selected>اختر الفرقة</option>
-    <option>الفرقة الأولى</option>
-    <option disabled style="color: gray;">الفرقة الثانية 🔒</option>
-    <option disabled style="color: gray;">الفرقة الثالثة 🔒</option>
-    <option disabled style="color: gray;">الفرقة الرابعة 🔒</option>
-</select>
-  <input type="email" id="s-email" placeholder="البريد الإلكتروني" style="margin-top: 10px;">
-  <input type="password" id="s-pass" placeholder="كلمة السر" style="margin-top: 10px;">
-  <button class="btn-auth" id="signup-btn" onclick="handleSignup()">تأكيد الاشتراك</button>
-  <p class="switch-text">عندك حساب؟ <span onclick="toggleMode('login')">سجل دخولك</span></p>
-</div>
+    <div id="signup-box" style="display: none;">
+        <input type="text" id="s-name" placeholder="الاسم الكامل">
+        <input type="tel" id="s-phone" placeholder="رقم الموبايل">
+        <select id="s-group">
+            <option value="" disabled selected>اختر الفرقة</option>
+            <option>         الفرقة الأولى</option>
+            <option disabled>الفرقة التانية 🔒</option>
+            <option disabled>الفرقة التالثة 🔒</option>
+            <option disabled>الفرقة الرابعة 🔒</option>
+        </select>
+        <input type="email" id="s-email" placeholder="البريد الإلكتروني">
+        <input type="password" id="s-pass" placeholder="كلمة السر">
+        <button class="btn-auth" id="signup-btn" onclick="handleSignup()">تأكيد الاشتراك</button>
+        <div class="switch">عندك حساب؟ <span onclick="toggle('login')">سجل دخولك</span></div>
+    </div>
 
-<div id="forgot-form" style="display: none;">
-  <input type="email" id="f-email" placeholder="أدخل بريدك الإلكتروني">
-  <button class="btn-auth" id="reset-btn" onclick="handleReset()">إعادة تعيين كلمة السر</button>
-  <p class="switch-text">تذكرت كلمة السر؟ <span onclick="toggleMode('login')">سجل دخولك</span></p>
-  <div id="success-msg"></div>
-</div>
+    <div id="forgot-box" style="display: none;">
+        <input type="email" id="f-email" placeholder="أدخل البريد الإلكتروني للمساعدة">
+        <button class="btn-auth" id="reset-btn" onclick="handleReset()">إرسال رابط التعيين</button>
+        <div class="switch">تذكرت كلمة السر؟ <span onclick="toggle('login')">رجوع للدخول</span></div>
+    </div>
 
-<div id="error-msg"></div>
+    <div id="error-msg"></div>
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-  
-  const firebaseConfig = {
-    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-    authDomain: "hoba-tech.firebaseapp.com",
-    projectId: "hoba-tech",
-    storageBucket: "hoba-tech.firebasestorage.app",
-    messagingSenderId: "465948708700",
-    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
-    measurementId: "G-EBHF8FEDB2"
-  };
-  
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const SHEETDB_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  let signupClicks = 0;
+    const firebaseConfig = {
+        apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+        authDomain: "hoba-tech.firebaseapp.com",
+        projectId: "hoba-tech",
+        storageBucket: "hoba-tech.firebasestorage.app",
+        messagingSenderId: "465948708700",
+        appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
+    };
 
-  window.toggleMode = function(mode) {
-      signupClicks = 0;
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('signup-form').style.display = 'none';
-      document.getElementById('forgot-form').style.display = 'none';
-      const title = document.getElementById('title');
-      const sBtn = document.getElementById('signup-btn');
-      sBtn.innerText = "تأكيد الاشتراك";
-      sBtn.style.background = "";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const SHEET_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
 
-      if(mode === 'signup') {
-          document.getElementById('signup-form').style.display = 'block';
-          title.innerText = "انضم الان لعائلة هوبا تيك";
-      } else if(mode === 'forgot') {
-          document.getElementById('forgot-form').style.display = 'block';
-          title.innerText = "نسيت كلمة السر";
-      } else {
-          document.getElementById('login-form').style.display = 'block';
-          title.innerText = "مرحباً بك يا مستشار";
-      }
-  };
+    let clicks = 0;
 
-  // ---------------- Signup المعدل لضمان جوجل شيت ----------------
- // ---------------- Signup (الحل النهائي والقطعي) ----------------
- window.handleSignup = async function() {
-      const btn = document.getElementById('signup-btn');
-      const errorMsg = document.getElementById('error-msg');
-      const name = document.getElementById('s-name').value;
-      const phone = document.getElementById('s-phone').value;
-      const group = document.getElementById('s-group').value;
-      const email = document.getElementById('s-email').value;
-      const password = document.getElementById('s-pass').value;
+    window.toggle = (mode) => {
+        clicks = 0;
+        document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none';
+        document.getElementById('signup-box').style.display = mode === 'signup' ? 'block' : 'none';
+        document.getElementById('forgot-box').style.display = mode === 'forgot' ? 'block' : 'none';
+        
+        const desc = document.getElementById('card-desc');
+        if(mode === 'signup') desc.innerText = 'انضم لعائلة هوبا تيك';
+        else if(mode === 'forgot') desc.innerText = 'استعادة كلمة السر';
+        else desc.innerText = 'مرحباً بك يا مستشار';
 
-      if(!name || !phone || !group || !email || !password) {
-          errorMsg.innerText = "كمل بياناتك يا مستشار";
-          return;
-      }
+        document.getElementById('signup-btn').innerText = "تأكيد الاشتراك";
+        document.getElementById('signup-btn').style.background = "";
+        document.getElementById('error-msg').innerText = "";
+    };
 
-      signupClicks++;
+    window.handleSignup = async () => {
+        const name = document.getElementById('s-name').value;
+        const phone = document.getElementById('s-phone').value;
+        const group = document.getElementById('s-group').value;
+        const email = document.getElementById('s-email').value;
+        const pass = document.getElementById('s-pass').value;
+        const btn = document.getElementById('signup-btn');
+        const msg = document.getElementById('error-msg');
 
-      if(signupClicks === 1) {
-          btn.innerText = "اضغط مرة أخرى للدخول فورا ✅";
-          btn.style.background = "#28a745";
-          errorMsg.innerText = "تم تجهيز حسابك.. دوسة كمان وهتبقى جوه";
-          return;
-      }
+        if(!name || !phone || !group || !email || !pass) { msg.innerText = "كمل بياناتك يا مستشار"; return; }
 
-      // الدوسة التانية - تنفيذ فوري بدون انتظار
-      btn.innerText = "جاري فتح المنصة...";
-      btn.style.pointerEvents = "none";
+        clicks++;
+        if(clicks === 1) {
+            btn.innerText = "تم انشاء حسابك بنجاح اضغط مرة أخرى للدخول ";
+            btn.style.background = "#28a745";
+            msg.innerText = "تحزير يرجي عدم مشاركة بيناتك مع اي شخص ";
+            return;
+        }
 
-      try {
-          // 1. التسجيل في فايربيس (ده سريع جداً)
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
+        btn.disabled = true;
+        msg.innerText = "جاري انشاء الحساب استغفر حتي ينتهي";
 
-          // 2. الحفظ في فاير ستور (سريع جداً)
-          await setDoc(doc(db, "users", user.uid), {
-              fullName: name, phone: phone, group: group, email: email, role: "عضو", uid: user.uid
-          });
+        try {
+            const res = await createUserWithEmailAndPassword(auth, email, pass);
+            setDoc(doc(db, "users", res.user.uid), { fullName: name, phone, group, email, role: "user" });
 
-          // 3. إرسال البيانات لجوجل شيت (بدون await نهائياً)
-          // دي بتخلي البيانات تتبعت في الخلفية والمتصفح ميهنجش
-          const sheetData = JSON.stringify({
-              data: [{ "name": name, "phone": phone, "email": email, "group": group, "role": "عضو", "password": password }]
-          });
+          // إرسال للجوجل شيت في الخلفية مع إضافة "عضو"
+fetch(SHEET_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+        data: [{
+            name: name, 
+            phone: phone, 
+            email: email, 
+            group: group, 
+            password: pass, 
+            role: "عضو" // دي الإضافة اللي كانت ناقصة يا وحش
+        }]
+    }),
+    keepalive: true
+});
 
-          fetch(SHEETDB_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: sheetData,
-              keepalive: true // بتضمن إن البيانات تروح حتى لو قفلنا الصفحة
-          }).catch(e => console.log("Background record failed"));
+            window.location.assign("داش 4.html");
+        } catch (e) {
+            clicks = 0; btn.disabled = false; btn.innerText = "تأكيد الاشتراك";
+            msg.innerText = "خطأ: " + e.message;
+        }
+    };
 
-          // 4. التحويل الفوري (أهم خطوة)
-          errorMsg.style.color = "#00ff00";
-          errorMsg.innerText = "أهلاً بك يا مستشار!";
-          
-          window.location.replace("داش 4.html");
+    window.handleLogin = () => {
+        const email = document.getElementById('l-email').value;
+        const pass = document.getElementById('l-pass').value;
+        signInWithEmailAndPassword(auth, email, pass)
+            .then(() => window.location.assign("داش 4.html"))
+            .catch(() => document.getElementById('error-msg').innerText = "بيانات الدخول غلط!");
+    };
 
-      } catch (error) {
-          signupClicks = 0;
-          btn.style.pointerEvents = "auto";
-          btn.innerText = "تأكيد الاشتراك";
-          btn.style.background = "";
-          if (error.code === 'auth/email-already-in-use') {
-              errorMsg.innerText = "الإيميل مسجل.. سجل دخولك";
-          } else {
-              errorMsg.innerText = "حدث خطأ: " + error.message;
-          }
-      }
-  };
+    window.handleReset = async () => {
+        const email = document.getElementById('f-email').value;
+        const msg = document.getElementById('error-msg');
+        const btn = document.getElementById('reset-btn');
 
-  window.handleLogin = function() {
-      const email = document.getElementById('l-email').value;
-      const pass = document.getElementById('l-pass').value;
-      const errorMsg = document.getElementById('error-msg');
-      signInWithEmailAndPassword(auth, email, pass)
-          .then(() => { window.location.href = "داش 4.html"; })
-          .catch(() => { errorMsg.innerText = "خطأ في البيانات"; });
-  };
+        if (!email) { msg.innerText = "اكتب البريد الأول!"; return; }
 
-  window.handleReset = function() {
-      sendPasswordResetEmail(auth, document.getElementById('f-email').value)
-          .then(() => { document.getElementById('success-msg').innerText = "تم إرسال الرابط"; })
-          .catch(() => { document.getElementById('error-msg').innerText = "البريد غير مسجل"; });
-  };
+        btn.disabled = true;
+        btn.innerText = "جاري الإرسال...";
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            msg.style.color = "#00ff00";
+            msg.innerText = "تم إرسال رابط التغيير لبريدك";
+            btn.innerText = "تم الإرسال ";
+        } catch (e) {
+            btn.disabled = false;
+            btn.innerText = "إرسال رابط التعيين";
+            msg.style.color = "#ff4444";
+            msg.innerText = "خطأ: البريد غير مسجل";
+        }
+    };
 </script>
 </body>
 </html>
