@@ -540,25 +540,7 @@
             }
             draw() { ctx.fillStyle = '#0044cc'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
 
-            function handleLogout() {
-    Swal.fire({
-        title: 'هل تريد المغادرة؟',
-        text: "",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ff4444',
-        cancelButtonColor: 'red',
-        confirmButtonText: 'نعم، تسجيل خروج',
-        cancelButtonText: 'إلغاء'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            auth.signOut().then(() => {
-                window.location.href = 'التسجيل.html';
-            });
-        }
-    });
-
-}
+          
         }
         function init() { for (let i = 0; i < 80; i++) particles.push(new Particle()); }
         function animate() {
@@ -586,10 +568,14 @@
 
         document.getElementById('sidebar').classList.remove('active');
     }
-         
+
+         function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
     </script>
 </body>
 </html>
+
 
 
 
