@@ -510,26 +510,7 @@
                             </div>
                         </div>
                     </div>`;
-                      <script>
-function handleLogout() {
-    Swal.fire({
-        title: 'هل تريد المغادرة؟',
-        text: "",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ff4444',
-        cancelButtonColor: 'red',
-        confirmButtonText: 'نعم، تسجيل خروج',
-        cancelButtonText: 'إلغاء'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            auth.signOut().then(() => {
-                window.location.href = 'التسجيل.html';
-            });
-        }
-    });
-}
-</script>
+                   
                 });
             } catch (e) {
                 container.innerHTML = "<p style='text-align:center; color:red;'>حدث خطأ في تحميل البيانات.</p>";
@@ -576,6 +557,26 @@ function handleLogout() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
+            
+function handleLogout() {
+    Swal.fire({
+        title: 'هل تريد المغادرة؟',
+        text: "",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4444',
+        cancelButtonColor: 'red',
+        confirmButtonText: 'نعم، تسجيل خروج',
+        cancelButtonText: 'إلغاء'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            auth.signOut().then(() => {
+                window.location.href = 'التسجيل.html';
+            });
+        }
+    });
+}
+
          function showPage(pageId) {
         document.querySelectorAll('.page-section').forEach(sec => {
             sec.classList.remove('active');
@@ -599,6 +600,7 @@ function handleLogout() {
     </script>
 </body>
 </html>
+
 
 
 
