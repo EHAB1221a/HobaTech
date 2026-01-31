@@ -571,9 +571,26 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
+         function showPage(pageId) {
+        document.querySelectorAll('.page-section').forEach(sec => {
+            sec.classList.remove('active');
+        });
+
+        document.getElementById(pageId).classList.add('active');
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        event.currentTarget.classList.add('active');
+
+        document.getElementById('sidebar').classList.remove('active');
+    }
+         
     </script>
 </body>
 </html>
+
 
 
 
