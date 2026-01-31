@@ -461,49 +461,70 @@
                 btn.disabled = false;
             }
         }
-         const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
+           <script>
+        const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4'; // <--- حط الرابط بتاعك هنا
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        async function loadTechMembers() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                const container = document.getElementById('members-list');
+                container.innerHTML = '';
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            if(pageId === 'members') loadTechMembers();
-            document.getElementById('sidebar').classList.remove('active');
-        }
+                data.forEach(user => {
+    const isAdmin = user.role && user.role.toLowerCase() === 'admin';
+    
+    // اللون اللي هيستخدم في الأيقونات بناء على الرتبة
+    const iconClass = isAdmin ? 'admin-icon' : '';
 
-     const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
+    container.innerHTML += `
+        <div class="member-card ${isAdmin ? 'admin-card' : ''}">
+            <div class="status-badge ${isAdmin ? 'admin' : ''}">
+                ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
+            </div>
 
-async function loadTechMembers() {
-    const container = document.getElementById('members-list');
-    container.innerHTML = '<p style="text-align:center;">جاري التحميل انتظر لحظة ...</p>';
-
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json(); // لو SheetDB بيرجع مصفوفة مباشرة
-        // لو بيرجع {data: [...] } يبقى: const data = (await res.json()).data;
-
-        if (!data || data.length === 0) {
-            container.innerHTML = "<p style='text-align:center; color:red;'>لا توجد بيانات لعرضها</p>";
-            return;
-        }
-
-        container.innerHTML = '';
-        data.forEach(user => {
-            container.innerHTML += `
-                <div class="member-card">
-                    <p><strong>الاسم:</strong> ${user.name || '---'}</p>
-                    <p><strong>رقم الهاتف:</strong> ${user.phone || '---'}</p>
-                    <p><strong>الدور:</strong> ${user.role || 'عضو'}</p>
+            <div class="info-container">
+                <div class="info-row">
+                    <i class="fas fa-user ${iconClass}"></i>
+                    <div>
+                        <span class="label">الاسم بالكامل</span>
+                        <span class="value" style="${isAdmin ? 'color: #d4af37;' : ''}">${user.name}</span>
+                    </div>
                 </div>
-            `;
-        });
 
-    } catch (e) {
-        container.innerHTML = "<p style='text-align:center; color:red;'>حدث خطأ في تحميل البيانات.</p>";
-        console.error(e);
-    }
-}
+                <div class="info-row">
+                    <i class="fas fa-phone-alt ${iconClass}"></i>
+                    <div>
+                        <span class="label">رقم الموبايل</span>
+                        <span class="value" style="direction: ltr; display:inline-block;">${user.phone || '---'}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <i class="fas fa-university ${iconClass}"></i>
+                    <div>
+                        <span class="label">الفرقة الدراسية</span>
+                        <span class="value">${user.level || 'غير محدد'}</span>
+                    </div>
+                </div>
+
+                <div class="info-row" style="border:none;">
+                    <i class="fas fa-envelope ${iconClass}"></i>
+                    <div>
+                        <span class="label">البريد الإلكتروني</span>
+                        <span class="value" style="font-size:12px;">${user.email || 'لا يوجد إيميل'}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+});
+            } catch (e) {
+                document.getElementById('members-list').innerHTML = "حدث خطأ في تحميل البيانات.";
+            }
+        }
+
+        loadTechMembers();
         function openSubject(name) {
             document.getElementById('sub-title').innerText = name;
             document.getElementById('overlay').style.display = 'block';
@@ -587,6 +608,7 @@ function handleLogout() {
     </script>
 </body>
 </html>
+
 
 
 
