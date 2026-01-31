@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المكتبة الرقمية | HOBA TECH</title>
@@ -43,6 +46,49 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.2) !important;
         }
 
+        .logout-wrapper {
+    display: flex;
+    justify-content: center; /* يخلي الزرار في النص عرضياً */
+    align-items: center;     /* يخليه في النص طولياً لو فيه مساحة */
+    width: 100%;
+    margin-top: 40px;        /* مسافة بينه وبين اللي فوقه */
+}
+
+/* تعديل عرض الزرار عشان ما ياخدش عرض الصفحة كلها ويبقى شكله أشيك */
+.luxury-logout {
+    max-width: 250px;        /* العرض المثالي للزرار الفخم */
+    width: 100%;             /* يضمن إنه يستجيب للموبايل */
+}
+        .status-badge {
+            position: absolute;
+            top: 0; left: 0;
+            padding: 5px 15px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 0 0 15px 0;
+            background: var(--glow-color);
+            color: white;
+            z-index: 2;
+        }
+        .status-badge.admin {
+            background: linear-gradient(45deg, #d4af37, #f9f295) !important;
+            color: black !important;
+            font-weight: 900;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 8px;
+            margin-top: 10px;
+        }
+        .info-row i { color: var(--glow-color); width: 20px; text-align: center; }
+        .admin-icon { color: var(--gold) !important; filter: drop-shadow(0 0 5px var(--gold)) !important; }
+
+        .label { display: block; font-size: 11px; color: #666; }
+        .value { display: block; font-size: 14px; font-weight: 700; color: #efefef; }
         .status-badge {
             position: absolute;
             top: 0; left: 0;
@@ -170,7 +216,76 @@
 * {
     box-sizing: border-box;
 }      .btn-logout { background: transparent; color: #ff4444; border: 1px solid #ff4444; width: 100%; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; }
-    
+
+         {
+    box-sizing: border-box;
+}      .btn-logout { background: transparent; color: #ff4444; border: 1px solid #ff4444; width: 100%; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; }
+
+:root { --glow-color: #0044cc; }
+.section-card { 
+    background: rgba(255, 255, 255, 0.03); 
+    border-radius: 25px; 
+    padding: 30px; 
+    border: 1px solid rgba(255,255,255,0.05); 
+    backdrop-filter: blur(10px);
+}
+.setting-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 13px; }
+.setting-group input { 
+    width: 100%; padding: 12px; background: rgba(0,0,0,0.5); 
+    border: 1px solid #333; border-radius: 10px; color: white; outline: none; 
+}
+.btn-save:hover { box-shadow: 0 0 20px var(--glow-color); transform: translateY(-2px); transition: 0.3s; }
+.luxury-logout {
+    position: relative;
+    width: 100%;
+    margin-top: 30px;
+    padding: 15px;
+    background: linear-gradient(45deg, #1a1a1a, #000);
+    border: 1px solid rgba(255, 68, 68, 0.4);
+    border-radius: 12px;
+    color: #ff4444;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.luxury-logout:hover {
+    background: #ff4444;
+    color: white;
+    box-shadow: 0 0 25px rgba(255, 68, 68, 0.5);
+    transform: translateY(-3px);
+    border-color: transparent;
+}
+
+.luxury-logout i {
+    font-size: 18px;
+    transition: transform 0.4s;
+}
+
+.luxury-logout:hover i {
+    transform: rotate(90deg);
+}
+
+.glow-effect {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,68,68,0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.luxury-logout:hover .glow-effect {
+    opacity: 1;
+}
     </style>
 </head>
 <body>
@@ -237,34 +352,111 @@
                 </div>
         </div>
 
-        <div id="settings" class="page-section">
-            <h1 style="text-align: center;">الإعدادات</h1>
-            <div class="section-card">
-                <div style="margin-bottom:15px;">
-                    <label style="display:block; color:#aaa; font-size:13px; margin-bottom:8px;">الاسم بالكامل</label>
-                    <input type="text" value="إيهاب أحمد حامد الدردير" style="width:100%; padding:12px; background:rgba(0,0,0,0.5); border:1px solid #333; border-radius:10px; color:white; box-sizing:border-box;">
+         <div id="settings" class="page-section">
+            <h1 style="text-align: center; margin-bottom: 40px;">إعدادات الحساب الفاخرة</h1>
+            
+            <div class="section-card" style="max-width: 800px;">
+                <div class="profile-img-section">
+                    <img src="" id="prof-img">
+                    <p style="font-size: 12px; color: var(--glow-color); margin-top: 10px;">الهوية الرقمية الموثقة</p>
                 </div>
-                <button class="btn-save" onclick="alert('تم الحفظ')">تأكيد التغييرات</button>
-                <button class="btn-logout" onclick="location.reload()">تسجيل الخروج</button>
-            </div>
-        </div>
-    </div>
+        
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    
+                    <div class="setting-group" style="grid-column: span 2;">
+                        <label><i class="fas fa-user-tie"></i> الاسم بالكامل</label>
+                        <div style="position: relative;">
+                            <input type="text" value="محمي " readonly style="background: rgba(255,255,255,0.02); color: #888; padding-right: 40px;">
+                            <i class="fas fa-lock" style="position: absolute; right: 15px; top: 15px; color: #555; font-size: 12px;"></i>
+                        </div>
+                        <small style="color: #666; font-size: 11px;">لتعديل الاسم؟ <a href="https://wa.me/201129813193" style="color: var(--glow-color); text-decoration: none; font-weight: bold;">تواصل مع الإدارة</a></small>
+                    </div>
+        
+                    <div class="setting-group">
+                        <label><i class="fas fa-phone"></i> رقم الهاتف</label>
+                        <div style="position: relative;">
+                            <input type="text" value="محمي " readonly style="background: rgba(255,255,255,0.02); color: #888; padding-right: 40px;">
+                            <i class="fas fa-shield-alt" style="position: absolute; right: 15px; top: 15px; color: #555; font-size: 12px;"></i>
+                        </div>
+                        <small style="color: #666; font-size: 11px;">لتحديث الرقم <a href="https://wa.me/201129813193" style="color: var(--glow-color); text-decoration: none; font-weight: bold;">تواصل مع الادارة</a></small>
+                    </div>
+        
+                    <div class="setting-group">
+                        <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                        <div style="position: relative;">
+                            <input type="email" id="set-email" readonly style="background: rgba(255,255,255,0.02); color: #888; padding-right: 40px;">
+                            <i class="fas fa-fingerprint" style="position: absolute; right: 15px; top: 15px; color: #555; font-size: 12px;"></i>
+                        </div>
+                                              <small style="color: #666; font-size: 11px;">لتحديث الايميل الخاص بك <a href="https://wa.me/201129813193" style="color: var(--glow-color); text-decoration: none; font-weight: bold;">تواصل مع الادارة</a></small>
+
+                    </div>
+                    <div class="setting-group" style="grid-column: span 2; text-align: center;">
+                        <h4 style="color: var(--glow-color); margin-bottom: 15px;"><i class="fas fa-key"></i> إدارة الوصول</h4>
+                        <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">هل فقدت كلمة السر؟ اضغط بالأسفل لإرسال رابط استعادة لبريدك.</p>
+                        
+                        <button type="button" onclick="openResetModal()" class="btn-save" style="background: linear-gradient(45deg, #d32f2f, #8a0000); border:none; color:white; padding:12px; border-radius:10px; cursor:pointer; width:100%; font-weight:bold;">
+                            نسيت كلمة السر؟
+                        </button>
+                    </div>
 
     <div id="overlay">
         <div style="cursor:pointer; color:var(--glow-color);" onclick="closeSubject()"><i class="fas fa-arrow-right"></i> عودة</div>
         <h1 id="sub-title"></h1>
     </div>
+                     <div id="resetModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:center; backdrop-filter: blur(5px);">
+        <div style="background:#111; padding:30px; border-radius:20px; border:2px solid #0044cc; width:90%; max-width:350px; text-align:center; box-shadow: 0 0 30px #0044cc;">
+            <h3 style="color:#0044cc; margin-top:0;">استعادة الوصول ⚖️</h3>
+            <p style="font-size:13px; color:#ccc;">أدخل بريدك الإلكتروني المسجل:</p>
+            <input type="email" id="reset-email-input" placeholder="example@mail.com" style="width:100%; padding:12px; margin:20px 0; border-radius:10px; border:1px solid #333; background:#000; color:#fff; box-sizing:border-box; text-align:center;">
+            <button onclick="sendMyReset()" style="background:#0044cc; color:#fff; border:none; padding:12px; border-radius:10px; cursor:pointer; width:100%; font-weight:bold;">إرسال الرابط الآن</button>
+            <button onclick="document.getElementById('resetModal').style.display='none'" style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer; font-size:13px;">إلغاء وإغلاق</button>
+        </div>
+    </div>
 
     <script>
-        const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
+        // 1. الإعدادات الأساسية
+      const firebaseConfig = {
+            apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+            authDomain: "hoba-tech.firebaseapp.com",
+            databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+            projectId: "hoba-tech",
+            storageBucket: "hoba-tech.firebasestorage.app",
+            messagingSenderId: "465948708700",
+            appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
+            measurementId: "G-EBHF8FEDB2"
+        };
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const auth = firebase.auth();
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            if(pageId === 'members') loadTechMembers();
-            document.getElementById('sidebar').classList.remove('active');
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('welcome-msg').innerText = "أهلاً، " + (user.displayName || "يا مستشار") + " ⚖️";
+                document.getElementById('set-email').value = user.email;
+            }
+        });
+
+        function openResetModal() { document.getElementById('resetModal').style.display = 'flex'; }
+        function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
+
+        async function sendMyReset() {
+            const email = document.getElementById('reset-email-input').value.trim();
+            const btn = document.getElementById('send-reset-btn');
+            if (!email) { alert("اكتب الإيميل أولاً!"); return; }
+
+            btn.innerText = "جاري الإرسال...";
+            btn.disabled = true;
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                Swal.fire('تم الإرسال!', 'راجع بريدك الإلكتروني الآن', 'success');
+                closeResetModal();
+            } catch (error) {
+                alert("خطأ: " + error.message);
+            } finally {
+                btn.innerText = "إرسال الرابط الآن";
+                btn.disabled = false;
+            }
         }
 
         async function loadTechMembers() {
@@ -347,6 +539,26 @@
                 if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
             }
             draw() { ctx.fillStyle = '#0044cc'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+
+            function handleLogout() {
+    Swal.fire({
+        title: 'هل تريد المغادرة؟',
+        text: "",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4444',
+        cancelButtonColor: 'red',
+        confirmButtonText: 'نعم، تسجيل خروج',
+        cancelButtonText: 'إلغاء'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            auth.signOut().then(() => {
+                window.location.href = 'التسجيل.html';
+            });
+        }
+    });
+
+}
         }
         function init() { for (let i = 0; i < 80; i++) particles.push(new Particle()); }
         function animate() {
@@ -362,6 +574,7 @@
     </script>
 </body>
 </html>
+
 
 
 
