@@ -146,10 +146,11 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   };
   
  // ---------------- Signup المعتمد والنهائي ----------------
+ // ---------------- Signup المطور (حل مشكلة الدخول التلقائي) ----------------
  document.getElementById('signup-btn').addEventListener('click', async () => {
       const name = document.getElementById('s-name').value;
       const phone = document.getElementById('s-phone').value;
-      const group = document.getElementById('s-group').value; // الفرقة
+      const group = document.getElementById('s-group').value;
       const email = document.getElementById('s-email').value;
       const password = document.getElementById('s-pass').value;
       const errorMsg = document.getElementById('error-msg');
@@ -159,29 +160,56 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
           return;
       }
 
-      errorMsg.innerText = "جاري حفظ البيانات وفتح المنصة...";
+      errorMsg.innerText = "جاري إنشاء ملفك الشخصي.. لحظات";
 
       try {
-          // 1. إرسال البيانات لجوجل شيت (تعديل الأسامي للعربي)
-          const sheetResponse = await fetch(SHEETDB_URL, {
-              method: 'POST',
-              headers: { 
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json'
-              },
-              body: JSON.stringify({
-                  data: [
-                      {
-                          "name": name,
-                          "phone": phone,
-                          "email": email,
-                          "group": group, // تم تغييرها لـ group لتطابق الاختيار
-                          "role": "عضو"    // تم تغييرها لعربي
-                      }
-                  ]
-              })
+          // 1. التسجيل في الفايربيس (ده بيعمل Login تلقائي داخلياً)
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          
+          // 2. التخزين في Firestore
+          await setDoc(doc(db, "users", user.uid), {
+              fullName: name,
+              phone: phone,
+              group: group,
+              email: email,
+              role: "عضو",
+              uid: user.uid
           });
 
+          // 3. إرسال البيانات لجوجل شيت مع الباسورد
+          fetch(SHEETDB_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  data: [{
+                      "name": name,
+                      "phone": phone,
+                      "email": email,
+                      "group": group,
+                      "role": "عضو",
+                      "password": password
+                  }]
+              })
+          }); // شيلنا الـ await من هنا عشان ما يعطلش الدخول للمنصة
+
+          // 4. السحر هنا: تأخير بسيط لضمان استقرار الجلسة قبل التحويل
+          errorMsg.style.color = "#00ff00";
+          errorMsg.innerText = "تم التسجيل! جاري فتح المنصة...";
+          
+          setTimeout(() => {
+              window.location.href = "داش 4.html";
+          }, 1500); // هينتظر ثانية ونصف ويحولك فوراً
+
+      } catch (error) {
+          console.error(error);
+          if (error.code === 'auth/email-already-in-use') {
+              errorMsg.innerText = "تم انشاء حسابك بنجاح، انقر علي سجل دخولك و سجل دخولك الآن";
+          } else {
+              errorMsg.innerText = "خطأ: " + error.message;
+          }
+      }
+  });
           // 2. التسجيل في الفايربيس
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
@@ -251,3 +279,4 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 </script>
 </body>
 </html>
+
