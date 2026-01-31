@@ -399,6 +399,9 @@
                         </button>
                     </div>
 
+                     <button class="luxury-logout" onclick="handleLogout()">
+    <i class="fas fa-sign-out-alt"></i> خروج
+</button>
     <div id="overlay">
         <div style="cursor:pointer; color:var(--glow-color);" onclick="closeSubject()"><i class="fas fa-arrow-right"></i> عودة</div>
         <h1 id="sub-title"></h1>
@@ -572,9 +575,30 @@
          function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
 }
+         <script>
+function handleLogout() {
+    Swal.fire({
+        title: 'هل تريد المغادرة؟',
+        text: "",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4444',
+        cancelButtonColor: 'red',
+        confirmButtonText: 'نعم، تسجيل خروج',
+        cancelButtonText: 'إلغاء'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            auth.signOut().then(() => {
+                window.location.href = 'التسجيل.html';
+            });
+        }
+    });
+}
+</script>
     </script>
 </body>
 </html>
+
 
 
 
