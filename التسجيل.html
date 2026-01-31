@@ -203,7 +203,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
       } catch (error) {
           console.error(error);
           if (error.code === 'auth/email-already-in-use') {
-              errorMsg.innerText = "هذا البريد مسجل بالفعل، جرب الدخول";
+              errorMsg.innerText = "تم انشاء حسابك بنجاح، انقر علي سجل دخولك و سجل دخولك الآن";
           } else {
               errorMsg.innerText = "خطأ: " + error.message;
           }
@@ -249,5 +249,6 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 </script>
 </body>
 </html>
+
 
 
