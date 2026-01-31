@@ -6,6 +6,56 @@
     <title>المكتبة الرقمية | HOBA TECH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+        /* تنسيق الكروت الجديد (الأزرق والذهبي) */
+.member-card {
+    background: rgba(10, 11, 14, 0.8);
+    border: 1px solid rgba(0, 68, 204, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    position: relative;
+    transition: 0.4s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.member-card:hover {
+    transform: translateY(-5px);
+    border-color: #0044cc;
+    box-shadow: 0 0 20px rgba(0, 68, 204, 0.4);
+}
+
+.admin-card {
+    border-color: rgba(212, 175, 55, 0.5) !important;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2) !important;
+}
+
+.status-badge {
+    position: absolute;
+    top: 0; left: 0;
+    padding: 5px 15px;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 0 0 15px 0;
+    background: #0044cc;
+    color: white;
+}
+
+.status-badge.admin {
+    background: linear-gradient(45deg, #d4af37, #f9f295) !important;
+    color: black !important;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 8px;
+    margin-top: 10px;
+}
+
+.admin-icon { color: #d4af37 !important; }
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
         :root {
@@ -142,9 +192,11 @@
             </div>
         </div>
 
-        <div id="members" class="page-section">
-            <h1 style="text-align: center;">الأعضاء المشتركين</h1>
-            <div class="section-card">
+      <div id="members" class="page-section">
+    <h1 style="text-align: center; color: var(--glow-color);">قائمة المستشارين</h1>
+    <div id="members-list">
+        </div>
+</div>
                 <table class="user-table">
                     <thead>
                         <tr>
@@ -278,9 +330,64 @@
     }, (error) => {
         console.error("خطأ في الصلاحيات:", error);
     });
+       const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4'; 
+
+async function loadTechMembers() {
+    const container = document.getElementById('members-list');
+    if(!container) return; // تأمين لو القسم مش موجود
+
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        container.innerHTML = '';
+
+        data.forEach(user => {
+            const isAdmin = user.role && user.role.toLowerCase() === 'admin';
+            const iconClass = isAdmin ? 'admin-icon' : '';
+
+            container.innerHTML += `
+                <div class="member-card ${isAdmin ? 'admin-card' : ''}">
+                    <div class="status-badge ${isAdmin ? 'admin' : ''}">
+                        ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
+                    </div>
+                    <div class="info-container">
+                        <div class="info-row"><i class="fas fa-user ${iconClass}"></i>
+                            <div><span style="font-size:11px; color:#666; display:block;">الاسم</span>
+                            <span style="font-weight:bold; ${isAdmin ? 'color:#d4af37' : ''}">${user.name}</span></div>
+                        </div>
+                        <div class="info-row"><i class="fas fa-phone-alt ${iconClass}"></i>
+                            <div><span style="font-size:11px; color:#666; display:block;">الموبايل</span>
+                            <span style="direction:ltr; display:inline-block;">${user.phone || '---'}</span></div>
+                        </div>
+                        <div class="info-row"><i class="fas fa-university ${iconClass}"></i>
+                            <div><span style="font-size:11px; color:#666; display:block;">الفرقة</span>
+                            <span>${user.level || 'غير محدد'}</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (e) {
+        container.innerHTML = "<p style='text-align:center;'>حدث خطأ في الاتصال بالبيانات.</p>";
+    }
+}
+
+// تعديل وظيفة التنقل عشان تحمل البيانات لما تفتح صفحة الأعضاء
+function showPage(pageId) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    
+    // لو المستخدم فتح صفحة الأعضاء، حمل البيانات فوراً
+    if(pageId === 'members') {
+        loadTechMembers();
+    }
+    
+    document.getElementById('sidebar').classList.remove('active');
+}
 </script>
 </body>
 </html>
+
 
 
 
