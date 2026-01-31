@@ -232,7 +232,7 @@
         </div>
 
         <div id="members" class="page-section">
-            <h1 style="text-align: center; color: var(--glow-color); margin-bottom: 30px;">قائمة المستشارين</h1>
+            <h1 style="text-align: center; color: var(--glow-color); margin-bottom: 30px;">قائمة السادة الاعضاء</h1>
             <div id="members-list">
                 </div>
         </div>
@@ -269,7 +269,7 @@
 
         async function loadTechMembers() {
             const container = document.getElementById('members-list');
-            container.innerHTML = '<p style="text-align:center;">جاري استدعاء سجلات المستشارين...</p>';
+            container.innerHTML = '<p style="text-align:center;">جاري التحميل انتظر لحظة ...</p>';
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
@@ -282,7 +282,7 @@
                     container.innerHTML += `
                     <div class="member-card ${isAdmin ? 'admin-card' : ''}">
                         <div class="status-badge ${isAdmin ? 'admin' : ''}">
-                            ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
+                            ${isAdmin ? '👑 آلادمن ' : '⚖️  عضو'}
                         </div>
                         <div class="info-container">
                             <div class="info-row">
@@ -303,7 +303,7 @@
                                 <i class="fas fa-university ${iconClass}"></i>
                                 <div>
                                     <span class="label">الفرقة الدراسية</span>
-                                    <span class="value">${user.level || 'غير محدد'}</span>
+                                    <span class="value">${user.level || 'الفرقة الاولي'}</span>
                                 </div>
                             </div>
                             <div class="info-row" style="border:none;">
@@ -362,3 +362,4 @@
     </script>
 </body>
 </html>
+
