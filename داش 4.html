@@ -460,7 +460,8 @@
                 btn.innerText = "إرسال الرابط الآن";
                 btn.disabled = false;
             }
-        }async function loadTechMembers() {
+        }
+         async function loadTechMembers() {
     const container = document.getElementById('members-list');
     container.innerHTML = '<p style="text-align:center;">جاري التحميل انتظر لحظة ...</p>';
     try {
@@ -481,7 +482,7 @@
             container.innerHTML += `
             <div class="member-card ${isAdmin ? 'admin-card' : ''}">
                 <div class="status-badge ${isAdmin ? 'admin' : ''}">
-                    ${isAdmin ? '   آلادمن 👑 ' : '  عضو'}
+                    ${isAdmin ? 'آلادمن 👑' : 'عضو'}
                 </div>
                 <div class="info-container">
                     <div class="info-row">
@@ -605,6 +606,7 @@ function handleLogout() {
     </script>
 </body>
 </html>
+
 
 
 
