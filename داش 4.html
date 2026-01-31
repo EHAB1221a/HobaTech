@@ -346,11 +346,16 @@
             </div>
         </div>
 
-        <div id="members" class="page-section">
-            <h1 style="text-align: center; color: var(--glow-color); margin-bottom: 30px;">قائمة السادة الاعضاء</h1>
-            <div id="members-list">
-                </div>
+        <h2 style="text-align: center; margin-bottom: 40px;">
+        <i class="fas fa-users-cog" style="color: var(--tech-blue);"></i>  الاعضاء المشتركين
+    </h2>
+
+    <div id="members-list">
+        <div class="loader">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>جاري استدعاء البيانات...</p>
         </div>
+    </div>
 
          <div id="settings" class="page-section">
             <h1 style="text-align: center; margin-bottom: 40px;">إعدادات الحساب الفاخرة</h1>
@@ -418,50 +423,7 @@
 
     <script>
         // 1. الإعدادات الأساسية
-      const firebaseConfig = {
-            apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-            authDomain: "hoba-tech.firebaseapp.com",
-            databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
-            projectId: "hoba-tech",
-            storageBucket: "hoba-tech.firebasestorage.app",
-            messagingSenderId: "465948708700",
-            appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
-            measurementId: "G-EBHF8FEDB2"
-        };
-
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const auth = firebase.auth();
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('welcome-msg').innerText = "أهلاً، " + (user.displayName || "يا مستشار") + " ⚖️";
-                document.getElementById('set-email').value = user.email;
-            }
-        });
-
-        function openResetModal() { document.getElementById('resetModal').style.display = 'flex'; }
-        function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
-
-        async function sendMyReset() {
-            const email = document.getElementById('reset-email-input').value.trim();
-            const btn = document.getElementById('send-reset-btn');
-            if (!email) { alert("اكتب الإيميل أولاً!"); return; }
-
-            btn.innerText = "جاري الإرسال...";
-            btn.disabled = true;
-
-            try {
-                await auth.sendPasswordResetEmail(email);
-                Swal.fire('تم الإرسال!', 'راجع بريدك الإلكتروني الآن', 'success');
-                closeResetModal();
-            } catch (error) {
-                alert("خطأ: " + error.message);
-            } finally {
-                btn.innerText = "إرسال الرابط الآن";
-                btn.disabled = false;
-            }
-        }
-           <script>
+     
         const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4'; // <--- حط الرابط بتاعك هنا
 
         async function loadTechMembers() {
@@ -608,6 +570,7 @@ function handleLogout() {
     </script>
 </body>
 </html>
+
 
 
 
