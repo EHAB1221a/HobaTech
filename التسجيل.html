@@ -145,9 +145,8 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
       }
   };
   
- // ---------------- Signup المعتمد والنهائي ----------------
- // ---------------- Signup المطور (حل مشكلة الدخول التلقائي) ----------------
- document.getElementById('signup-btn').addEventListener('click', async () => {
+  // ---------------- Signup المعتمد والنظيف ----------------
+  document.getElementById('signup-btn').addEventListener('click', async () => {
       const name = document.getElementById('s-name').value;
       const phone = document.getElementById('s-phone').value;
       const group = document.getElementById('s-group').value;
@@ -163,7 +162,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
       errorMsg.innerText = "جاري إنشاء ملفك الشخصي.. لحظات";
 
       try {
-          // 1. التسجيل في الفايربيس (ده بيعمل Login تلقائي داخلياً)
+          // 1. التسجيل في الفايربيس
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
           
@@ -177,7 +176,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
               uid: user.uid
           });
 
-          // 3. إرسال البيانات لجوجل شيت مع الباسورد
+          // 3. إرسال البيانات لجوجل شيت في الخلفية (عشان ما يعطلش المستخدم)
           fetch(SHEETDB_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -191,55 +190,27 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
                       "password": password
                   }]
               })
-          }); // شيلنا الـ await من هنا عشان ما يعطلش الدخول للمنصة
+          }).catch(e => console.log("Sheet Error:", e));
 
-          // 4. السحر هنا: تأخير بسيط لضمان استقرار الجلسة قبل التحويل
+          // 4. التحويل الفوري
           errorMsg.style.color = "#00ff00";
-          errorMsg.innerText = "تم التسجيل! جاري فتح المنصة...";
+          errorMsg.innerText = "تم التسجيل بنجاح! جاري فتح المنصة...";
           
           setTimeout(() => {
               window.location.href = "داش 4.html";
-          }, 1500); // هينتظر ثانية ونصف ويحولك فوراً
-
-      } catch (error) {
-          console.error(error);
-          if (error.code === 'auth/email-already-in-use') {
-              errorMsg.innerText = "تم انشاء حسابك بنجاح، انقر علي سجل دخولك و سجل دخولك الآن";
-          } else {
-              errorMsg.innerText = "خطأ: " + error.message;
-          }
-      }
-  });
-          // 2. التسجيل في الفايربيس
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-          
-          // 3. التخزين في Firestore (لأغراض المنصة الداخلية)
-          await setDoc(doc(db, "users", user.uid), {
-              fullName: name,
-              phone: phone,
-              group: group,
-              email: email,
-              role: "عضو",
-              uid: user.uid
-          });
-
-          // 4. الدخول الفوري للمنصة
-          alert('أهلاً بك في عائلة هوبا تيك يا مستشار!');
-          
-          // تأكد أن ملف "داش 4.html" موجود في نفس الفولدر
-          window.location.replace("داش 4.html"); 
+          }, 1200);
 
       } catch (error) {
           console.error(error);
           if (error.code === 'auth/email-already-in-use') {
               errorMsg.innerText = "هذا البريد مسجل بالفعل، جرب الدخول";
           } else {
-              errorMsg.innerText = "حدث خطأ: " + error.message;
+              errorMsg.innerText = "خطأ: " + error.message;
           }
       }
   });
-  // ---------------- Login المعدل ----------------
+
+  // ---------------- Login المعتمد ----------------
   document.getElementById('login-btn').addEventListener('click', () => {
     const email = document.getElementById('l-email').value;
     const passwordInput = document.getElementById('l-pass');
@@ -250,7 +221,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-            window.location.href = "داش 4.html"; // تم تعديل الرابط هنا
+            window.location.href = "داش 4.html";
         })
         .catch((error) => { 
             errorMsg.innerText = "خطأ في البريد الإلكتروني أو كلمة السر"; 
@@ -275,8 +246,8 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
             successMsg.innerText = '';
         });
   });
-
 </script>
 </body>
 </html>
+
 
