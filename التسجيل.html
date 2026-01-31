@@ -69,7 +69,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   <input type="email" id="l-email" placeholder="البريد الإلكتروني">
   <div style="height: 10px;"></div>
   <input type="password" id="l-pass" placeholder="كلمة السر">
-  <button class="btn-auth" id="login-btn">دخول</button>
+  <button class="btn-auth" id="login-btn" onclick="handleLogin()">دخول</button>
   <p class="switch-text">
     ليس لديك حساب؟ <span onclick="toggleMode('signup')">أنشئ حسابك الآن</span><br>
          <span onclick="toggleMode('forgot')">نسيت كلمةالسر؟</span>
@@ -88,13 +88,13 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 </select>
   <input type="email" id="s-email" placeholder="البريد الإلكتروني" style="margin-top: 10px;">
   <input type="password" id="s-pass" placeholder="كلمة السر" style="margin-top: 10px;">
-  <button class="btn-auth" id="signup-btn" style="margin-top:10px;">تأكيد الاشتراك</button>
+  <button class="btn-auth" id="signup-btn" onclick="handleSignup()">تأكيد الاشتراك</button>
   <p class="switch-text">عندك حساب؟ <span onclick="toggleMode('login')">سجل دخولك</span></p>
 </div>
 
 <div id="forgot-form" style="display: none;">
   <input type="email" id="f-email" placeholder="أدخل بريدك الإلكتروني">
-  <button class="btn-auth" id="reset-btn" style="margin-top:10px;">إعادة تعيين كلمة السر</button>
+  <button class="btn-auth" id="reset-btn" onclick="handleReset()">إعادة تعيين كلمة السر</button>
   <p class="switch-text">تذكرت كلمة السر؟ <span onclick="toggleMode('login')">سجل دخولك</span></p>
   <div id="success-msg"></div>
 </div>
@@ -104,7 +104,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
   
   const firebaseConfig = {
@@ -120,143 +120,117 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-
   const SHEETDB_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
-  
+
+  let signupClicks = 0;
+
   window.toggleMode = function(mode) {
-      const loginForm = document.getElementById('login-form');
-      const signupForm = document.getElementById('signup-form');
-      const forgotForm = document.getElementById('forgot-form');
+      signupClicks = 0;
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('signup-form').style.display = 'none';
+      document.getElementById('forgot-form').style.display = 'none';
       const title = document.getElementById('title');
-  
-      loginForm.style.display = 'none';
-      signupForm.style.display = 'none';
-      forgotForm.style.display = 'none';
-  
+      const sBtn = document.getElementById('signup-btn');
+      sBtn.innerText = "تأكيد الاشتراك";
+      sBtn.style.background = "";
+
       if(mode === 'signup') {
-          signupForm.style.display = 'block';
+          document.getElementById('signup-form').style.display = 'block';
           title.innerText = "انضم الان لعائلة هوبا تيك";
       } else if(mode === 'forgot') {
-          forgotForm.style.display = 'block';
+          document.getElementById('forgot-form').style.display = 'block';
           title.innerText = "نسيت كلمة السر";
       } else {
-          loginForm.style.display = 'block';
+          document.getElementById('login-form').style.display = 'block';
           title.innerText = "مرحباً بك يا مستشار";
       }
   };
-  
-  // ---------------- Signup المعتمد والنظيف ----------------
- // ---------------- Signup المطور: طلقة واحدة فقط ----------------
-document.getElementById('signup-btn').addEventListener('click', async (e) => {
-    const btn = e.target;
-    const name = document.getElementById('s-name').value;
-    const phone = document.getElementById('s-phone').value;
-    const group = document.getElementById('s-group').value;
-    const email = document.getElementById('s-email').value;
-    const password = document.getElementById('s-pass').value;
-    const errorMsg = document.getElementById('error-msg');
 
-    if(!name || !phone || !group || !email || !password) {
-        errorMsg.innerText = "برجاء إدخال كافة البيانات واختيار الفرقة";
-        return;
-    }
-
-    // تعطيل الزرار فوراً عشان ميتداسش عليه تاني
-    btn.disabled = true;
-    btn.innerText = "جاري الحفظ...";
-    errorMsg.innerText = "جاري إنشاء ملفك الشخصي.. لحظات";
-
-    try {
-        // 1. التسجيل في الفايربيس
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        
-        // 2. التخزين في Firestore
-        await setDoc(doc(db, "users", user.uid), {
-            fullName: name,
-            phone: phone,
-            group: group,
-            email: email,
-            role: "عضو",
-            uid: user.uid
-        });
-
-        // 3. إرسال البيانات لجوجل شيت (في الخلفية)
-        fetch(SHEETDB_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                data: [{
-                    "name": name,
-                    "phone": phone,
-                    "email": email,
-                    "group": group,
-                    "role": "عضو",
-                    "password": password
-                }]
-            })
-        }).catch(err => console.log("SheetDB Error ignored"));
-
-        // 4. نجاح العملية والتحويل
-        errorMsg.style.color = "#00ff00";
-        errorMsg.innerText = "تم التسجيل! جاري فتح المنصة...";
-        
-        setTimeout(() => {
-            window.location.href = "داش 4.html";
-        }, 1200);
-
-    } catch (error) {
-        // إعادة تفعيل الزرار لو حصل خطأ عشان يحاول تاني
-        btn.disabled = false;
-        btn.innerText = "تأكيد الاشتراك";
-        console.error(error);
-        if (error.code === 'auth/email-already-in-use') {
-            errorMsg.innerText = "هذا البريد مسجل بالفعل، سجل دخولك";
-        } else {
-            errorMsg.innerText = "حدث خطأ: " + error.message;
-        }
-    }
-});
-  // ---------------- Login المعتمد ----------------
-  document.getElementById('login-btn').addEventListener('click', () => {
-    const email = document.getElementById('l-email').value;
-    const passwordInput = document.getElementById('l-pass');
-    const password = passwordInput.value;
-    const errorMsg = document.getElementById('error-msg');
-
-    errorMsg.innerText = "جاري التحقق..."; 
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-            window.location.href = "داش 4.html";
-        })
-        .catch((error) => { 
-            errorMsg.innerText = "خطأ في البريد الإلكتروني أو كلمة السر"; 
-            passwordInput.value = "";
-            passwordInput.focus();
-        });
-  });
-  
-  // ---------------- Forgot Password ----------------
-  document.getElementById('reset-btn').addEventListener('click', () => {
-      const fEmail = document.getElementById('f-email').value;
+  // ---------------- Signup المعدل لضمان جوجل شيت ----------------
+ // ---------------- Signup (الحل النهائي والقطعي) ----------------
+ window.handleSignup = async function() {
+      const btn = document.getElementById('signup-btn');
       const errorMsg = document.getElementById('error-msg');
-      const successMsg = document.getElementById('success-msg');
-  
-      sendPasswordResetEmail(auth, fEmail)
-        .then(() => {
-            successMsg.innerText = 'تم إرسال رابط إعادة تعيين كلمة السر';
-            errorMsg.innerText = '';
-        })
-        .catch((err) => {
-            errorMsg.innerText = 'البريد الإلكتروني غير مسجل لدينا';
-            successMsg.innerText = '';
-        });
-  });
+      const name = document.getElementById('s-name').value;
+      const phone = document.getElementById('s-phone').value;
+      const group = document.getElementById('s-group').value;
+      const email = document.getElementById('s-email').value;
+      const password = document.getElementById('s-pass').value;
+
+      if(!name || !phone || !group || !email || !password) {
+          errorMsg.innerText = "كمل بياناتك يا مستشار";
+          return;
+      }
+
+      signupClicks++;
+
+      if(signupClicks === 1) {
+          btn.innerText = "اضغط مرة أخرى للدخول فورا ✅";
+          btn.style.background = "#28a745";
+          errorMsg.innerText = "تم تجهيز حسابك.. دوسة كمان وهتبقى جوه";
+          return;
+      }
+
+      // الدوسة التانية - تنفيذ فوري بدون انتظار
+      btn.innerText = "جاري فتح المنصة...";
+      btn.style.pointerEvents = "none";
+
+      try {
+          // 1. التسجيل في فايربيس (ده سريع جداً)
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          // 2. الحفظ في فاير ستور (سريع جداً)
+          await setDoc(doc(db, "users", user.uid), {
+              fullName: name, phone: phone, group: group, email: email, role: "عضو", uid: user.uid
+          });
+
+          // 3. إرسال البيانات لجوجل شيت (بدون await نهائياً)
+          // دي بتخلي البيانات تتبعت في الخلفية والمتصفح ميهنجش
+          const sheetData = JSON.stringify({
+              data: [{ "name": name, "phone": phone, "email": email, "group": group, "role": "عضو", "password": password }]
+          });
+
+          fetch(SHEETDB_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: sheetData,
+              keepalive: true // بتضمن إن البيانات تروح حتى لو قفلنا الصفحة
+          }).catch(e => console.log("Background record failed"));
+
+          // 4. التحويل الفوري (أهم خطوة)
+          errorMsg.style.color = "#00ff00";
+          errorMsg.innerText = "أهلاً بك يا مستشار!";
+          
+          window.location.replace("داش 4.html");
+
+      } catch (error) {
+          signupClicks = 0;
+          btn.style.pointerEvents = "auto";
+          btn.innerText = "تأكيد الاشتراك";
+          btn.style.background = "";
+          if (error.code === 'auth/email-already-in-use') {
+              errorMsg.innerText = "الإيميل مسجل.. سجل دخولك";
+          } else {
+              errorMsg.innerText = "حدث خطأ: " + error.message;
+          }
+      }
+  };
+
+  window.handleLogin = function() {
+      const email = document.getElementById('l-email').value;
+      const pass = document.getElementById('l-pass').value;
+      const errorMsg = document.getElementById('error-msg');
+      signInWithEmailAndPassword(auth, email, pass)
+          .then(() => { window.location.href = "داش 4.html"; })
+          .catch(() => { errorMsg.innerText = "خطأ في البيانات"; });
+  };
+
+  window.handleReset = function() {
+      sendPasswordResetEmail(auth, document.getElementById('f-email').value)
+          .then(() => { document.getElementById('success-msg').innerText = "تم إرسال الرابط"; })
+          .catch(() => { document.getElementById('error-msg').innerText = "البريد غير مسجل"; });
+  };
 </script>
 </body>
 </html>
-
-
-
-
