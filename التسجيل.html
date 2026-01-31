@@ -65,7 +65,6 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 <h2>HOBA TECH</h2>
 <p id="title">مرحباً بك يا مستشار</p>
 
-<!-- Login Form -->
 <div id="login-form">
   <input type="email" id="l-email" placeholder="البريد الإلكتروني">
   <div style="height: 10px;"></div>
@@ -77,7 +76,6 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   </p>
 </div>
 
-<!-- Signup Form -->
 <div id="signup-form" style="display: none;">
   <input type="text" id="s-name" placeholder="الاسم الكامل">
   <input type="tel" id="s-phone" placeholder="رقم الموبايل" style="margin-top: 10px;">
@@ -94,7 +92,6 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   <p class="switch-text">عندك حساب؟ <span onclick="toggleMode('login')">سجل دخولك</span></p>
 </div>
 
-<!-- Forgot Password Form -->
 <div id="forgot-form" style="display: none;">
   <input type="email" id="f-email" placeholder="أدخل بريدك الإلكتروني">
   <button class="btn-auth" id="reset-btn" style="margin-top:10px;">إعادة تعيين كلمة السر</button>
@@ -106,10 +103,8 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 </div>
 
 <script type="module">
-  // ---------------- Firebase Setup ----------------
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-  // لاحظ التغيير هنا: استيراد Firestore
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
   
   const firebaseConfig = {
@@ -124,9 +119,10 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app); // تعريف Firestore
+  const db = getFirestore(app);
+
+  const SHEETDB_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
   
-  // ---------------- Toggle Mode ----------------
   window.toggleMode = function(mode) {
       const loginForm = document.getElementById('login-form');
       const signupForm = document.getElementById('signup-form');
@@ -149,61 +145,91 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
       }
   };
   
-  // ---------------- Signup (تم التعديل ليرسل لـ Firestore) ----------------
-  document.getElementById('signup-btn').addEventListener('click', () => {
+ // ---------------- Signup المعتمد والنهائي ----------------
+ document.getElementById('signup-btn').addEventListener('click', async () => {
       const name = document.getElementById('s-name').value;
       const phone = document.getElementById('s-phone').value;
-      const group = document.getElementById('s-group').value;
+      const group = document.getElementById('s-group').value; // الفرقة
       const email = document.getElementById('s-email').value;
       const password = document.getElementById('s-pass').value;
       const errorMsg = document.getElementById('error-msg');
   
-      if(!name || !phone || !email || !password) {
-          errorMsg.innerText = "برجاء إدخال كافة البيانات";
+      if(!name || !phone || !group || !email || !password) {
+          errorMsg.innerText = "برجاء إدخال كافة البيانات واختيار الفرقة";
           return;
       }
-  
-      createUserWithEmailAndPassword(auth, email, password)
-          .then(async (userCredential) => {
-              const user = userCredential.user;
-              
-              // تخزين في Firestore عشان يظهر في الداشبورد
-              await setDoc(doc(db, "users", user.uid), {
-                  fullName: name, // استخدمنا fullName عشان كود الداشبورد بيقرأها كدة
-                  phone: phone,
-                  group: group,
-                  email: email,
-                  role: "user",
-                  uid: user.uid
-              });
-  
-              alert('تم التسجيل بنجاح يا مستشار!');
-              window.location.href = "داش 4.html";
-          })
-          .catch((error) => { errorMsg.innerText = "خطأ: " + error.message; });
+
+      errorMsg.innerText = "جاري حفظ البيانات وفتح المنصة...";
+
+      try {
+          // 1. إرسال البيانات لجوجل شيت (تعديل الأسامي للعربي)
+          const sheetResponse = await fetch(SHEETDB_URL, {
+              method: 'POST',
+              headers: { 
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                  data: [
+                      {
+                          "name": name,
+                          "phone": phone,
+                          "email": email,
+                          "group": group, // تم تغييرها لـ group لتطابق الاختيار
+                          "role": "عضو"    // تم تغييرها لعربي
+                      }
+                  ]
+              })
+          });
+
+          // 2. التسجيل في الفايربيس
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          
+          // 3. التخزين في Firestore (لأغراض المنصة الداخلية)
+          await setDoc(doc(db, "users", user.uid), {
+              fullName: name,
+              phone: phone,
+              group: group,
+              email: email,
+              role: "عضو",
+              uid: user.uid
+          });
+
+          // 4. الدخول الفوري للمنصة
+          alert('أهلاً بك في عائلة هوبا تيك يا مستشار!');
+          
+          // تأكد أن ملف "داش 4.html" موجود في نفس الفولدر
+          window.location.replace("داش 4.html"); 
+
+      } catch (error) {
+          console.error(error);
+          if (error.code === 'auth/email-already-in-use') {
+              errorMsg.innerText = "هذا البريد مسجل بالفعل، جرب الدخول";
+          } else {
+              errorMsg.innerText = "حدث خطأ: " + error.message;
+          }
+      }
   });
-  
   // ---------------- Login المعدل ----------------
-document.getElementById('login-btn').addEventListener('click', () => {
+  document.getElementById('login-btn').addEventListener('click', () => {
     const email = document.getElementById('l-email').value;
-    const passwordInput = document.getElementById('l-pass'); // مسكنا حقل الباسورد نفسه
+    const passwordInput = document.getElementById('l-pass');
     const password = passwordInput.value;
     const errorMsg = document.getElementById('error-msg');
 
-    // مسح رسالة الخطأ القديمة قبل البدء
     errorMsg.innerText = "جاري التحقق..."; 
 
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-            window.location.href = "داش 4.html";
+            window.location.href = "داش 4.html"; // تم تعديل الرابط هنا
         })
         .catch((error) => { 
-            // التعديل السحري هنا:
             errorMsg.innerText = "خطأ في البريد الإلكتروني أو كلمة السر"; 
-            passwordInput.value = ""; // بنصفر الباسورد عشان يكتبه من جديد
-            passwordInput.focus();   // بنخلي الماوس يروح على خانة الباسورد لوحده
+            passwordInput.value = "";
+            passwordInput.focus();
         });
-});
+  });
   
   // ---------------- Forgot Password ----------------
   document.getElementById('reset-btn').addEventListener('click', () => {
@@ -221,17 +247,7 @@ document.getElementById('login-btn').addEventListener('click', () => {
             successMsg.innerText = '';
         });
   });
-  
-  // ---------------- Auto-login ----------------
-  onAuthStateChanged(auth, (user) => {
-      if(user){
-          // تأكد أنك في صفحة التسجيل وليس الداشبورد لمنع التكرار
-          if(!window.location.href.includes("داش 4.html")) {
-              window.location.href = "داش 4.html";
-          }
-      }
-  });
-  </script>
 
+</script>
 </body>
 </html>
