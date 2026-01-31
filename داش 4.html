@@ -291,7 +291,9 @@
 <body>
 
     <canvas id="bg-canvas"></canvas>
-    <div class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+<div class="menu-toggle" onclick="toggleSidebar()" style="z-index: 9999; position: fixed; cursor: pointer;">
+    <i class="fas fa-bars"></i>
+</div>
 
     <div class="sidebar" id="sidebar">
         <h3 style="text-align: center; color: var(--glow-color); margin-bottom: 30px;">HOBA TECH</h3>
@@ -614,6 +616,7 @@ function handleLogout() {
     </script>
 </body>
 </html>
+
 
 
 
