@@ -6,69 +6,75 @@
     <title>المكتبة الرقمية | HOBA TECH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        /* تنسيق الكروت الجديد (الأزرق والذهبي) */
-.member-card {
-    background: rgba(10, 11, 14, 0.8);
-    border: 1px solid rgba(0, 68, 204, 0.3);
-    border-radius: 15px;
-    padding: 25px;
-    position: relative;
-    transition: 0.4s;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.member-card:hover {
-    transform: translateY(-5px);
-    border-color: #0044cc;
-    box-shadow: 0 0 20px rgba(0, 68, 204, 0.4);
-}
-
-.admin-card {
-    border-color: rgba(212, 175, 55, 0.5) !important;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2) !important;
-}
-
-.status-badge {
-    position: absolute;
-    top: 0; left: 0;
-    padding: 5px 15px;
-    font-size: 11px;
-    font-weight: bold;
-    border-radius: 0 0 15px 0;
-    background: #0044cc;
-    color: white;
-}
-
-.status-badge.admin {
-    background: linear-gradient(45deg, #d4af37, #f9f295) !important;
-    color: black !important;
-}
-
-.info-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    padding-bottom: 8px;
-    margin-top: 10px;
-}
-
-.admin-icon { color: #d4af37 !important; }
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
         :root {
             --glow-color: #0044cc;
             --bg-dark: #08090a;
             --glass: rgba(255, 255, 255, 0.03);
+            --gold: #d4af37;
         }
 
         #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: #050505; }
         body { margin: 0; font-family: 'Cairo', sans-serif; background: transparent; color: white; overflow-x: hidden; }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: -1; }
 
-        /* زر القائمة */
+        /* --- تنسيق الكروت الفخم --- */
+        .member-card {
+            background: rgba(10, 11, 14, 0.8);
+            border: 1px solid rgba(0, 68, 204, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transition: 0.4s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .member-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--glow-color);
+            box-shadow: 0 0 20px rgba(0, 68, 204, 0.4);
+        }
+
+        /* ستايل الآدمن الذهبي */
+        .admin-card {
+            border-color: rgba(212, 175, 55, 0.5) !important;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2) !important;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 0; left: 0;
+            padding: 5px 15px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 0 0 15px 0;
+            background: var(--glow-color);
+            color: white;
+            z-index: 2;
+        }
+        .status-badge.admin {
+            background: linear-gradient(45deg, #d4af37, #f9f295) !important;
+            color: black !important;
+            font-weight: 900;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 8px;
+            margin-top: 10px;
+        }
+        .info-row i { color: var(--glow-color); width: 20px; text-align: center; }
+        .admin-icon { color: var(--gold) !important; filter: drop-shadow(0 0 5px var(--gold)) !important; }
+
+        .label { display: block; font-size: 11px; color: #666; }
+        .value { display: block; font-size: 14px; font-weight: 700; color: #efefef; }
+
+        /* --- زر القائمة والسايد بار --- */
         .menu-toggle {
             position: fixed; top: 20px; right: 20px; font-size: 25px;
             color: white; cursor: pointer; z-index: 1001;
@@ -76,9 +82,6 @@
             display: flex; align-items: center; justify-content: center;
             border-radius: 12px; box-shadow: 0 0 15px var(--glow-color); transition: 0.3s;
         }
-        .menu-toggle:hover { transform: scale(1.1); box-shadow: 0 0 25px var(--glow-color); }
-
-        /* السايد بار */
         .sidebar {
             position: fixed; top: 0; right: -300px; width: 280px; height: 100vh;
             background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px);
@@ -86,7 +89,6 @@
             padding: 80px 20px; z-index: 1000;
         }
         .sidebar.active { right: 0; box-shadow: -10px 0 30px rgba(0, 68, 204, 0.2); }
-
         .nav-link {
             padding: 15px; margin-bottom: 10px; border-radius: 12px;
             color: white; text-decoration: none; display: flex; align-items: center; gap: 12px;
@@ -95,9 +97,11 @@
         .nav-link:hover, .nav-link.active { background: rgba(0, 68, 204, 0.2); border-color: var(--glow-color); color: var(--glow-color); }
 
         .container { padding: 100px 50px; transition: 0.5s; }
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .section-card { background: var(--glass); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); max-width: 900px; margin: 0 auto; }
-        
+        /* --- الهوم والداشبورد --- */
         .dashboard-header { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-bottom: 50px; }
         .progress-radar { background: rgba(0, 68, 204, 0.05); border: 2px solid rgba(0, 68, 204, 0.2); border-radius: 30px; padding: 30px; text-align: center; }
         .circle-wrap { width: 130px; height: 130px; background: #111; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; border: 4px solid var(--glow-color); box-shadow: 0 0 20px var(--glow-color); animation: pulse 2s infinite; }
@@ -107,31 +111,14 @@
         .stat-box span { display: block; font-size: 28px; font-weight: 900; color: var(--glow-color); }
 
         .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .lib-card { background: rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; transition: 0.4s; cursor: pointer; position: relative; }
+        .lib-card { background: rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; transition: 0.4s; cursor: pointer; }
         .lib-card:hover { transform: translateY(-5px); border-color: var(--glow-color); background: rgba(0, 68, 204, 0.05); }
         .lib-card i { font-size: 40px; color: var(--glow-color); margin-bottom: 15px; }
 
-        .list-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px 20px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,68,204,0.1); }
-        .btn-accept { background: #0088ff; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
-        .btn-reject { background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-right: 5px; }
-
-        .setting-group { margin-bottom: 15px; }
-        .setting-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 13px; }
-        .setting-group input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 2000; display: none; padding: 50px; }
+        .section-card { background: var(--glass); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); max-width: 900px; margin: 0 auto; }
         .btn-save { background: var(--glow-color); color: white; border: none; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-logout { background: transparent; color: #ff4444; border: 1px solid #ff4444; width: 100%; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; }
-
-        .page-section { display: none; }
-        .page-section.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 2000; display: none; padding: 50px; }
-        
-        /* تنسيق جدول الأعضاء */
-        .user-table { width: 100%; border-collapse: collapse; text-align: right; }
-        .user-table th { color: var(--glow-color); padding: 10px; border-bottom: 1px solid rgba(0,68,204,0.3); }
-        .user-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-        .badge { background: rgba(0, 68, 204, 0.2); color: var(--glow-color); padding: 4px 8px; border-radius: 6px; font-size: 11px; border: 1px solid var(--glow-color); }
     </style>
 </head>
 <body>
@@ -192,31 +179,19 @@
             </div>
         </div>
 
-      <div id="members" class="page-section">
-    <h1 style="text-align: center; color: var(--glow-color);">قائمة المستشارين</h1>
-    <div id="members-list">
-        </div>
-</div>
-                <table class="user-table">
-                    <thead>
-                        <tr>
-                            <th>الاسم</th>
-                            <th>الموبايل</th>
-                            <th>الفرقة</th>
-                            <th>الرتبة</th>
-                        </tr>
-                    </thead>
-                    <tbody id="user-list">
-                        <tr><td colspan="4" style="text-align:center;">جاري تحميل الأعضاء...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+        <div id="members" class="page-section">
+            <h1 style="text-align: center; color: var(--glow-color); margin-bottom: 30px;">قائمة المستشارين</h1>
+            <div id="members-list">
+                </div>
         </div>
 
         <div id="settings" class="page-section">
             <h1 style="text-align: center;">الإعدادات</h1>
             <div class="section-card">
-                <div class="setting-group"><label>الاسم بالكامل</label><input type="text" value="إيهاب أحمد حامد الدردير"></div>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; color:#aaa; font-size:13px; margin-bottom:8px;">الاسم بالكامل</label>
+                    <input type="text" value="إيهاب أحمد حامد الدردير" style="width:100%; padding:12px; background:rgba(0,0,0,0.5); border:1px solid #333; border-radius:10px; color:white; box-sizing:border-box;">
+                </div>
                 <button class="btn-save" onclick="alert('تم الحفظ')">تأكيد التغييرات</button>
                 <button class="btn-logout" onclick="location.reload()">تسجيل الخروج</button>
             </div>
@@ -229,22 +204,69 @@
     </div>
 
     <script>
+        const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
+
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        
+
         function showPage(pageId) {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            
-            // تحديث حالة الزر النشط
-            const links = document.querySelectorAll('.nav-link');
-            links.forEach(link => {
-                if(link.innerText.includes(document.getElementById(pageId).previousElementSibling?.innerText || "")) {
-                   // منطق بسيط للتحديد
-                }
-            });
-
+            if(pageId === 'members') loadTechMembers();
             document.getElementById('sidebar').classList.remove('active');
+        }
+
+        async function loadTechMembers() {
+            const container = document.getElementById('members-list');
+            container.innerHTML = '<p style="text-align:center;">جاري استدعاء سجلات المستشارين...</p>';
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                container.innerHTML = '';
+
+                data.forEach(user => {
+                    const isAdmin = user.role && user.role.toLowerCase() === 'admin';
+                    const iconClass = isAdmin ? 'admin-icon' : '';
+
+                    container.innerHTML += `
+                    <div class="member-card ${isAdmin ? 'admin-card' : ''}">
+                        <div class="status-badge ${isAdmin ? 'admin' : ''}">
+                            ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
+                        </div>
+                        <div class="info-container">
+                            <div class="info-row">
+                                <i class="fas fa-user ${iconClass}"></i>
+                                <div>
+                                    <span class="label">الاسم بالكامل</span>
+                                    <span class="value" style="${isAdmin ? 'color: #d4af37;' : ''}">${user.name}</span>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-phone-alt ${iconClass}"></i>
+                                <div>
+                                    <span class="label">رقم الموبايل</span>
+                                    <span class="value" style="direction: ltr; display:inline-block;">${user.phone || '---'}</span>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-university ${iconClass}"></i>
+                                <div>
+                                    <span class="label">الفرقة الدراسية</span>
+                                    <span class="value">${user.level || 'غير محدد'}</span>
+                                </div>
+                            </div>
+                            <div class="info-row" style="border:none;">
+                                <i class="fas fa-envelope ${iconClass}"></i>
+                                <div>
+                                    <span class="label">البريد الإلكتروني</span>
+                                    <span class="value" style="font-size:12px;">${user.email || 'لا يوجد إيميل'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            } catch (e) {
+                container.innerHTML = "<p style='text-align:center; color:red;'>حدث خطأ في تحميل البيانات.</p>";
+            }
         }
 
         function openSubject(name) {
@@ -282,117 +304,5 @@
         }
         init(); animate();
     </script>
-
-   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-    // الـ Config بتاعك اللي إنت لسه جايبه
-    const firebaseConfig = {
-        apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-        authDomain: "hoba-tech.firebaseapp.com",
-        projectId: "hoba-tech",
-        storageBucket: "hoba-tech.firebasestorage.app",
-        messagingSenderId: "465948708700",
-        appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
-        measurementId: "G-EBHF8FEDB2"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app); // إحنا هنا بنجبره يكلم الـ Firestore مش الـ Realtime
-    const userListContainer = document.getElementById('user-list');
-
-    onSnapshot(collection(db, "users"), (snapshot) => {
-        console.log("الربط نجح! عدد المستندات الحقيقي:", snapshot.size);
-        userListContainer.innerHTML = ''; 
-
-        if (snapshot.empty) {
-            userListContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">المخزن فاضي.. تأكد من إضافة بيانات في Firestore</td></tr>';
-            return;
-        }
-
-        snapshot.forEach((doc) => {
-            const user = doc.data();
-            // البحث عن الاسم بأي صيغة (كبيرة أو صغيرة أو عربي) كما ظهر في صورك
-            const name = user.fullName || user.Fullname || user.الاسم || user.name || 'غير مسجل';
-            const mobile = user.phone || user['رقم الهاتف'] || 'بدون رقم';
-
-            const row = `
-                <tr>
-                    <td>${name}</td>
-                    <td>${mobile}</td>
-                    <td>${user.group || 'الفرقة الرابعة'}</td>
-                    <td><span class="badge">${user.role === 'admin' ? 'المالك ⚖️' : 'مستشار'}</span></td>
-                </tr>
-            `;
-            userListContainer.innerHTML += row;
-        });
-    }, (error) => {
-        console.error("خطأ في الصلاحيات:", error);
-    });
-       const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4'; 
-
-async function loadTechMembers() {
-    const container = document.getElementById('members-list');
-    if(!container) return; // تأمين لو القسم مش موجود
-
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        container.innerHTML = '';
-
-        data.forEach(user => {
-            const isAdmin = user.role && user.role.toLowerCase() === 'admin';
-            const iconClass = isAdmin ? 'admin-icon' : '';
-
-            container.innerHTML += `
-                <div class="member-card ${isAdmin ? 'admin-card' : ''}">
-                    <div class="status-badge ${isAdmin ? 'admin' : ''}">
-                        ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
-                    </div>
-                    <div class="info-container">
-                        <div class="info-row"><i class="fas fa-user ${iconClass}"></i>
-                            <div><span style="font-size:11px; color:#666; display:block;">الاسم</span>
-                            <span style="font-weight:bold; ${isAdmin ? 'color:#d4af37' : ''}">${user.name}</span></div>
-                        </div>
-                        <div class="info-row"><i class="fas fa-phone-alt ${iconClass}"></i>
-                            <div><span style="font-size:11px; color:#666; display:block;">الموبايل</span>
-                            <span style="direction:ltr; display:inline-block;">${user.phone || '---'}</span></div>
-                        </div>
-                        <div class="info-row"><i class="fas fa-university ${iconClass}"></i>
-                            <div><span style="font-size:11px; color:#666; display:block;">الفرقة</span>
-                            <span>${user.level || 'غير محدد'}</span></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    } catch (e) {
-        container.innerHTML = "<p style='text-align:center;'>حدث خطأ في الاتصال بالبيانات.</p>";
-    }
-}
-
-// تعديل وظيفة التنقل عشان تحمل البيانات لما تفتح صفحة الأعضاء
-function showPage(pageId) {
-    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    
-    // لو المستخدم فتح صفحة الأعضاء، حمل البيانات فوراً
-    if(pageId === 'members') {
-        loadTechMembers();
-    }
-    
-    document.getElementById('sidebar').classList.remove('active');
-}
-</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
