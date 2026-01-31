@@ -146,70 +146,77 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
   };
   
   // ---------------- Signup المعتمد والنظيف ----------------
-  document.getElementById('signup-btn').addEventListener('click', async () => {
-      const name = document.getElementById('s-name').value;
-      const phone = document.getElementById('s-phone').value;
-      const group = document.getElementById('s-group').value;
-      const email = document.getElementById('s-email').value;
-      const password = document.getElementById('s-pass').value;
-      const errorMsg = document.getElementById('error-msg');
-  
-      if(!name || !phone || !group || !email || !password) {
-          errorMsg.innerText = "برجاء إدخال كافة البيانات واختيار الفرقة";
-          return;
-      }
+ // ---------------- Signup المطور: طلقة واحدة فقط ----------------
+document.getElementById('signup-btn').addEventListener('click', async (e) => {
+    const btn = e.target;
+    const name = document.getElementById('s-name').value;
+    const phone = document.getElementById('s-phone').value;
+    const group = document.getElementById('s-group').value;
+    const email = document.getElementById('s-email').value;
+    const password = document.getElementById('s-pass').value;
+    const errorMsg = document.getElementById('error-msg');
 
-      errorMsg.innerText = "جاري إنشاء ملفك الشخصي.. لحظات";
+    if(!name || !phone || !group || !email || !password) {
+        errorMsg.innerText = "برجاء إدخال كافة البيانات واختيار الفرقة";
+        return;
+    }
 
-      try {
-          // 1. التسجيل في الفايربيس
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-          
-          // 2. التخزين في Firestore
-          await setDoc(doc(db, "users", user.uid), {
-              fullName: name,
-              phone: phone,
-              group: group,
-              email: email,
-              role: "عضو",
-              uid: user.uid
-          });
+    // تعطيل الزرار فوراً عشان ميتداسش عليه تاني
+    btn.disabled = true;
+    btn.innerText = "جاري الحفظ...";
+    errorMsg.innerText = "جاري إنشاء ملفك الشخصي.. لحظات";
 
-          // 3. إرسال البيانات لجوجل شيت في الخلفية (عشان ما يعطلش المستخدم)
-          fetch(SHEETDB_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                  data: [{
-                      "name": name,
-                      "phone": phone,
-                      "email": email,
-                      "group": group,
-                      "role": "عضو",
-                      "password": password
-                  }]
-              })
-          }).catch(e => console.log("Sheet Error:", e));
+    try {
+        // 1. التسجيل في الفايربيس
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // 2. التخزين في Firestore
+        await setDoc(doc(db, "users", user.uid), {
+            fullName: name,
+            phone: phone,
+            group: group,
+            email: email,
+            role: "عضو",
+            uid: user.uid
+        });
 
-          // 4. التحويل الفوري
-          errorMsg.style.color = "#00ff00";
-          errorMsg.innerText = "تم التسجيل بنجاح! جاري فتح المنصة...";
-          
-          setTimeout(() => {
-              window.location.href = "داش 4.html";
-          }, 1200);
+        // 3. إرسال البيانات لجوجل شيت (في الخلفية)
+        fetch(SHEETDB_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                data: [{
+                    "name": name,
+                    "phone": phone,
+                    "email": email,
+                    "group": group,
+                    "role": "عضو",
+                    "password": password
+                }]
+            })
+        }).catch(err => console.log("SheetDB Error ignored"));
 
-      } catch (error) {
-          console.error(error);
-          if (error.code === 'auth/email-already-in-use') {
-              errorMsg.innerText = "تم انشاء حسابك بنجاح، انقر علي سجل دخولك و سجل دخولك الآن";
-          } else {
-              errorMsg.innerText = "خطأ: " + error.message;
-          }
-      }
-  });
+        // 4. نجاح العملية والتحويل
+        errorMsg.style.color = "#00ff00";
+        errorMsg.innerText = "تم التسجيل! جاري فتح المنصة...";
+        
+        setTimeout(() => {
+            window.location.href = "داش 4.html";
+        }, 1200);
 
+    } catch (error) {
+        // إعادة تفعيل الزرار لو حصل خطأ عشان يحاول تاني
+        btn.disabled = false;
+        btn.innerText = "تأكيد الاشتراك";
+        console.error(error);
+        if (error.code === 'auth/email-already-in-use') {
+            errorMsg.innerText = "هذا البريد مسجل بالفعل، سجل دخولك";
+        } else {
+            errorMsg.innerText = "حدث خطأ: " + error.message;
+        }
+    }
+});
   // ---------------- Login المعتمد ----------------
   document.getElementById('login-btn').addEventListener('click', () => {
     const email = document.getElementById('l-email').value;
@@ -249,6 +256,7 @@ input:focus, select:focus { border-color: var(--glow-color); background: rgba(0,
 </script>
 </body>
 </html>
+
 
 
 
