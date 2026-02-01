@@ -419,51 +419,74 @@
     </div>
 
     <script>
-        // 1. الإ const firebaseConfig = {
-            apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-            authDomain: "hoba-tech.firebaseapp.com",
-            databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
-            projectId: "hoba-tech",
-            storageBucket: "hoba-tech.firebasestorage.app",
-            messagingSenderId: "465948708700",
-            appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
-            measurementId: "G-EBHF8FEDB2"
-        };
+        // 1. Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+    authDomain: "hoba-tech.firebaseapp.com",
+    databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+    projectId: "hoba-tech",
+    storageBucket: "hoba-tech.firebasestorage.app",
+    messagingSenderId: "465948708700",
+    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
+    measurementId: "G-EBHF8FEDB2"
+};
 
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const auth = firebase.auth();
+// تهيئة Firebase
+if (!firebase.apps.length) { 
+    firebase.initializeApp(firebaseConfig); 
+}
+const auth = firebase.auth();
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('welcome-msg').innerText = "أهلاً، " + (user.displayName || "يا مستشار") + " ⚖️";
-                document.getElementById('set-email').value = user.email;
-            }
-        });
+// مراقبة حالة تسجيل الدخول
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // تأكد أن هذه الـ IDs موجودة في الـ HTML الخاص بك
+        const welcomeMsg = document.getElementById('welcome-msg');
+        const setEmail = document.getElementById('set-email');
+        
+        if (welcomeMsg) welcomeMsg.innerText = "أهلاً، " + (user.displayName || "يا مستشار") + " ⚖️";
+        if (setEmail) setEmail.value = user.email;
+    }
+});
 
-        function openResetModal() { document.getElementById('resetModal').style.display = 'flex'; }
-        function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
+// وظائف المودال (النافذة المنبثقة)
+function openResetModal() { 
+    document.getElementById('resetModal').style.display = 'flex'; 
+}
 
-        async function sendMyReset() {
-            const email = document.getElementById('reset-email-input').value.trim();
-            const btn = document.getElementById('send-reset-btn');
-            if (!email) { alert("اكتب الإيميل أولاً!"); return; }
+function closeResetModal() { 
+    document.getElementById('resetModal').style.display = 'none'; 
+}
 
-            btn.innerText = "جاري الإرسال...";
-            btn.disabled = true;
+// دالة استعادة كلمة السر
+async function sendMyReset() {
+    const emailInput = document.getElementById('reset-email-input');
+    const btn = document.getElementById('send-reset-btn');
+    
+    if (!emailInput || !emailInput.value.trim()) { 
+        Swal.fire('تنبيه', 'اكتب الإيميل أولاً!', 'warning'); 
+        return; 
+    }
 
-            try {
-                await auth.sendPasswordResetEmail(email);
-                Swal.fire('تم الإرسال!', 'راجع بريدك الإلكتروني الآن', 'success');
-                closeResetModal();
-            } catch (error) {
-                alert("خطأ: " + error.message);
-            } finally {
-                btn.innerText = "إرسال الرابط الآن";
-                btn.disabled = false;
-            }
+    const email = emailInput.value.trim();
+    if (btn) {
+        btn.innerText = "جاري الإرسال...";
+        btn.disabled = true;
+    }
+
+    try {
+        await auth.sendPasswordResetEmail(email);
+        Swal.fire('تم الإرسال!', 'راجع بريدك الإلكتروني الآن', 'success');
+        closeResetModal();
+    } catch (error) {
+        Swal.fire('خطأ', error.message, 'error');
+    } finally {
+        if (btn) {
+            btn.innerText = "إرسال الرابط الآن";
+            btn.disabled = false;
         }
-           <script>
-     
+    }
+}
         const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4'; // <--- حط الرابط بتاعك هنا
 
         async function loadTechMembers() {
@@ -610,6 +633,7 @@ function handleLogout() {
     </script>
 </body>
 </html>
+
 
 
 
