@@ -70,6 +70,29 @@
     color: #444;
     font-size: 13px;
 }
+        /* ده هيخلي الصورة حجمها مناسب جداً زي اللوجو */
+.user-nav-pic {
+    width: 40px;      /* تقدر تصغر الرقم ده لو عايزها أصغر */
+    height: 40px;     /* لازم العرض يساوي الطول */
+    border-radius: 50%; /* عشان تبقى ديرة بروفيشنال */
+    object-fit: cover;  /* عشان الصورة متتمطش لو أبعادها مش مربعة */
+    cursor: pointer;
+}
+        .sub-menu-wrap {
+    position: absolute;
+    top: 60px; 
+    right: 5%;
+    width: 250px;
+    max-height: 0;      /* دي أهم حتة: بتخلي المربع مخفي في البداية */
+    overflow: hidden;   /* بتخفي أي حاجة زيادة عن المساحة (اللي هي صفر حالياً) */
+    transition: max-height 0.4s ease; /* دي بتخلي الفتحة "ناعمة" */
+    z-index: 1000;
+}
+
+/* الكلاس ده بيتضاف بالـ JavaScript لما تدوس على الصورة */
+.sub-menu-wrap.open-menu {
+    max-height: 400px; /* القيمة دي هي اللي بتخلي المربع يظهر لما تدوس */
+}
         
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Lato:wght@900&display=swap');
 
@@ -232,7 +255,7 @@
             <a href="#">About</a>
             <a href="#">Contact</a>
         </nav>
-        <img src="e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.jpeg" class="user-nav-pic" onclick="toggleMenu()">
+                <img src="e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.jpeg" onclick="toggleMenu()">
     </div>
     
     <div class="sub-menu-wrap" id="subMenu">
@@ -303,6 +326,7 @@ function toggleMenu() {
 </body>
 
 </html>
+
 
 
 
