@@ -25,6 +25,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
+/* تجميع الروابط مع الصورة في جهة واحدة */
+.nav-container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* المسافة بين الكلام والصورة */
+}
+
+/* تصغير وتنسيق المربع المنسدل */
+.sub-menu-wrap {
+    position: absolute;
+    top: 55px; 
+    right: 5%;
+    width: 250px; /* الحجم الصغير الشيك */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    z-index: 1000;
+}
+
+.sub-menu {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+/* ستايل الزراير اللي زي الصورة */
+.sub-menu-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #666;
+    padding: 8px 0;
+    transition: 0.2s;
+}
+
+.sub-menu-link i {
+    width: 32px; height: 32px;
+    background: #f1f1f1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px;
+    color: #444;
+    font-size: 13px;
+}
+        
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Lato:wght@900&display=swap');
 
         body, html {
@@ -179,10 +225,20 @@
                 <div class="logo-text">HOBA TECH</div>
                 <div class="slogan-sub">TOWARDS THE BEST</div>
             </div>
-            <nav>
-                <a href="التسجيل.html" class="">Home</a>
-                <a href="aboutme.html" class="">about me</a>
-            </nav>
+            <div class="nav-container">
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+        <img src="" class="user-nav-pic" onclick="toggleMenu()">
+    </div>
+    
+    <div class="sub-menu-wrap" id="subMenu">
+        <div class="sub-menu">
+            </div>
+    </div>
         </header>
 
         <section class="hero">
@@ -239,10 +295,15 @@
         document.getElementById('btn-about me').addEventListener('click', function() {
             window.location.href = "aboutme.html"; // اسم الصفحة اللي عملتها
         });
+            let subMenu = document.getElementById("subMenu");
+function toggleMenu() {
+    subMenu.classList.toggle("open-menu");
+}
         </script>
 </body>
 
 </html>
+
 
 
 
