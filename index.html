@@ -23,95 +23,31 @@
     <title>HOBA TECH | هوبا تيك</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
+    <link rel="icon" type="image/png" href="منصة/e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.png">
+
     <style>
-/* تجميع الروابط مع الصورة في جهة واحدة */
-.nav-container {
-    display: flex;
-    align-items: center;
-    gap: 20px; /* المسافة بين الكلام والصورة */
-}
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Lato:wght@900&display=swap');
 
-/* تصغير وتنسيق المربع المنسدل */
-.sub-menu-wrap {
-    position: absolute;
-    top: 55px; 
-    right: 5%;
-    width: 250px; /* الحجم الصغير الشيك */
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    z-index: 1000;
-}
-
-.sub-menu {
-    background: #ffffff;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-}
-
-/* ستايل الزراير اللي زي الصورة */
-.sub-menu-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #666;
-    padding: 8px 0;
-    transition: 0.2s;
-}
-
-.sub-menu-link i {
-    width: 32px; height: 32px;
-    background: #f1f1f1;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin-right: 12px;
-    color: #444;
-    font-size: 13px;
-}
-        /* ده هيخلي الصورة حجمها مناسب جداً زي اللوجو */
-.user-nav-pic {
-    width: 40px;      /* تقدر تصغر الرقم ده لو عايزها أصغر */
-    height: 40px;     /* لازم العرض يساوي الطول */
-    border-radius: 50%; /* عشان تبقى ديرة بروفيشنال */
-    object-fit: cover;  /* عشان الصورة متتمطش لو أبعادها مش مربعة */
-    cursor: pointer;
-}
-        .sub-menu-wrap {
-    position: absolute;
-    top: 60px; 
-    right: 5%;
-    width: 250px;
-    max-height: 0;      /* دي أهم حتة: بتخلي المربع مخفي في البداية */
-    overflow: hidden;   /* بتخفي أي حاجة زيادة عن المساحة (اللي هي صفر حالياً) */
-    transition: max-height 0.4s ease; /* دي بتخلي الفتحة "ناعمة" */
-    z-index: 1000;
-}
-
-/* الكلاس ده بيتضاف بالـ JavaScript لما تدوس على الصورة */
-.sub-menu-wrap.open-menu {
-    max-height: 400px; /* القيمة دي هي اللي بتخلي المربع يظهر لما تدوس */
-}
-        
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Lato:wght@900&display=swap');
+        :root {
+            --bg-color: #1a1c1e;
+            --white: #ffffff;
+            --shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
 
         body, html {
             margin: 0; padding: 0;
             font-family: 'Cairo', sans-serif;
             color: white;
-            /* استدعاء الخلفية الأصلية الخاصة بك */
-            background: #1a1c1e url('54303c4f-2a6c-4581-aa81-33c737acd762.png') no-repeat center center fixed;
+            background: var(--bg-color) url('54303c4f-2a6c-4581-aa81-33c737acd762.png') no-repeat center center fixed;
             background-size: cover;
             overflow-x: hidden;
         }
 
-        /* طبقة تعتيم فوق الخلفية عشان الشغل يبان */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); 
+            background: rgba(0, 0, 0, 0.4);
             z-index: -1;
         }
 
@@ -121,47 +57,99 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px 0;
-            direction: ltr; 
+            padding: 20px 0;
+            direction: ltr;
+            position: relative;
         }
 
-        .logo-area { display: flex; flex-direction: column; align-items: center; }
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .logo-area img { width: 60px; margin-bottom: 5px; }
         .logo-text { font-family: 'Lato', sans-serif; font-weight: 900; font-size: 22px; color: #fff; line-height: 1; }
         .slogan-sub { font-size: 9px; letter-spacing: 3px; opacity: 0.7; }
 
-        nav a { color: white; text-decoration: none; margin-left: 25px; font-weight: bold; opacity: 0.8; }
+        .nav-container { display: flex; align-items: center; gap: 20px; }
+        nav { display: flex; gap: 20px; }
+        nav a { color: white; text-decoration: none; font-weight: bold; opacity: 0.8; transition: 0.3s; }
+        nav a:hover { opacity: 1; }
+
+        .user-nav-pic {
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1.5px solid #4a4b47;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .sub-menu-wrap {
+            position: absolute;
+            top: 120px;
+            right: 10%;
+            width: 250px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            z-index: 1000;
+            box-shadow: #920b21;
+        }
+        .sub-menu-wrap.open-menu { max-height: 400px; }
+
+        .sub-menu {
+            background: #02192c;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .user-info { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; }
+        .user-info img { width: 40px; height: 40px; border-radius: 50%; }
+        .user-info h3 { font-size: 14px; margin: 0; font-weight: 700; }
+
+        .sub-menu-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            padding: 8px 0;
+            transition: 0.2s;
+        }
+        .sub-menu-link i {
+            width: 30px; height: 30px;
+            background: #f1f1f1;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        .sub-menu-link p { flex: 1; font-size: 13px; margin: 0; text-align: left; }
+        .sub-menu-link span { color: #ddd; font-size: 16px; }
 
         .hero {
             display: flex;
-            align-items: right;
+            align-items: center;
             justify-content: space-between;
             padding: 60px 0 100px 0;
             min-height: 80vh;
-            direction: ltr; 
+            direction: ltr;
         }
 
         .hero-text { flex: 1; text-align: left; }
-        .hero-text h1 { 
-            font-family: 'Lato', sans-serif;
-            font-size: clamp(40px, 7vw, 85px); 
-            font-weight: 900; 
-            line-height: 0.9; 
-            margin: 0;
-        }
-        
+        .hero-text h1 { font-family: 'Lato', sans-serif; font-size: clamp(40px, 7vw, 85px); font-weight: 900; line-height: 0.9; margin: 0; }
         .tagline-box {
             background-color: #0044cc;
             display: inline-block;
             padding: 12px 25px;
             margin: 35px 0;
-            direction: rtl; 
+            direction: rtl;
             font-size: 20px;
             font-weight: bold;
             box-shadow: 0 10px 20px rgba(37, 75, 151, 0.3);
         }
-
-
         .btn-contact {
             display: inline-block;
             background: white;
@@ -172,45 +160,27 @@
             border-radius: 4px;
         }
 
-        /* --- برواز الميزان البروفيشنال --- */
-        .hero-image { 
-            flex: 1.2; 
-            display: flex; 
-            justify-content: flex-end;
-        }
-        
+        .hero-image { flex: 1.2; display: flex; justify-content: flex-end; }
         .img-wrapper {
             position: relative;
             padding: 15px;
-            /* البرواز الخارجي الشفاف */
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(5px);
             box-shadow: 0 0 40px rgba(0,0,0,0.5);
         }
-
-        .img-wrapper img { 
-            width: 100%; 
-            max-width: 550px; 
-            display: block;
-            border-radius: 10px;
-            filter: brightness(1.1);
-            transition: 0.5s;
-        }
-
+        .img-wrapper img { width: 100%; max-width: 550px; display: block; border-radius: 10px; filter: brightness(1.1); transition: 0.5s; }
         .img-wrapper:hover img { transform: scale(1.02); }
 
-        /* القسم الأزرق */
         .blue-section {
             background: rgba(0, 61, 181, 0.9);
             padding: 80px 8%;
             display: flex;
             align-items: center;
             gap: 50px;
-            direction: ltr; 
+            direction: ltr;
         }
-
         .about-content { flex: 1; text-align: left; }
         .about-content h4 { direction: rtl; text-align: right; margin-bottom: 15px; }
         .about-content p { font-size: 24px; font-weight: 700; line-height: 1.4; }
@@ -237,33 +207,39 @@
             .hero, .blue-section { flex-direction: column; text-align: center; }
             .hero-image { justify-content: center; margin-top: 30px; }
         }
+        
     </style>
 </head>
 <body>
-
     <div class="container">
+        <!-- الهيدر -->
         <header>
             <div class="logo-area">
-                <img src="تنزيل.png" alt="HOBA TECH">
+                <img src="تنزيل.png" alt="Logo">
                 <div class="logo-text">HOBA TECH</div>
                 <div class="slogan-sub">TOWARDS THE BEST</div>
             </div>
             <div class="nav-container">
-        <nav>
-            <a href="#">Home</a>
-            <a href="#">Features</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-        </nav>
-                <img src="e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.jpeg" onclick="toggleMenu()">
-    </div>
-    
-    <div class="sub-menu-wrap" id="subMenu">
-        <div class="sub-menu">
+                <nav>
+                    <a href="كونتاكت.html">information about the platform</a>
+                </nav>
+                <img src="e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.jpeg" class="user-nav-pic" onclick="toggleMenu()">
             </div>
-    </div>
+            <div class="sub-menu-wrap" id="subMenu">
+                <div class="sub-menu">
+                    <div class="user-info">
+                        <img src="e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.jpeg">
+                        <h3>إيهاب الدرديري</h3>
+                    </div>
+                    <hr style="border:0; height:1px; background:#2b0497; margin:10px 0;">
+                    <a href="https://wa.me/201129813193?text=صلي علي النبي" class="sub-menu-link"><i class="fab fa-whatsapp"></i><p>للتواصل واتساب</p><span>&rsaquo;</span></a>
+                    <a href="https://t.me/ehab2155" class="sub-menu-link"><i class="fab fa-telegram-plane"></i><p>جروبنا علي التيليجرام</p><span>&rsaquo;</span></a>
+                    <a href="https://policies.google.com/privacy" class="sub-menu-link"><i class="fa-arrow-right"></i><p>سياسة الخصوصية </p><span>&rsaquo;</span></a>
+                </div>
+            </div>
         </header>
 
+        <!-- Hero -->
         <section class="hero">
             <div class="hero-text">
                 <h1>Together<br>Towards<br>Better</h1>
@@ -271,7 +247,6 @@
                 <br>
                 <a href="التسجيل.html" class="btn-contact">ابدأ الان</a>
             </div>
-
             <div class="hero-image">
                 <div class="img-wrapper">
                     <img src="photo_6026008793725995865_y.jpg" alt="الميزان">
@@ -280,62 +255,43 @@
         </section>
     </div>
 
+    <!-- القسم الأزرق -->
     <section class="blue-section">
         <div class="abstract-box">
-             <img src="84243edd-96b5-4dc0-9b1a-187948e8d786.png" alt="Abstract">
+            <img src="84243edd-96b5-4dc0-9b1a-187948e8d786.png" alt="Abstract">
         </div>
         <div class="about-content">
             <h4>نبذه عن الموقع</h4>
             <p>"HOBA TECH | Leading the future of Tech and Legal education. Innovative learning for a better tomorrow. Towards the Best."</p>
-            <a href="#" class="btn-contact" style="background: transparent; color: white; border: 1px solid white; margin-top: 20px;">Learn More</a>
+            <a href="كونتاكت.html" class="btn-contact" style="background: transparent; color: white; border: 1px solid white; margin-top: 20px;">Learn More</a>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer-cta">
         <h2>Contact HOBA TECH Platform</h2>
     </footer>
-
     <div class="footer-bottom">
         <div class="copy-text">© 2026 جميع الحقوق محفوظة HOBA TECH |</div>
         <div class="social-icons">
-            <a href="https://www.facebook.com/ayhab.ahmd.698715?mibextid=ZbWKwL" target="_blank" title="Facebook">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-            
-            <a href="https://www.instagram.com/h_o_b_a_cr7?igsh=djd1Mm9ld2V1OXBl" target="_blank" title="Instagram">
-                <i class="fab fa-instagram"></i>
-            </a>
-            
-            <a href="https://t.me/ehab2155" target="_blank" title="Telegram">
-                <i class="fab fa-telegram-plane"></i>
-            </a>
-            
-            <a href="https://wa.me/201129813193?text=صلي علي النبي" target="_blank" title="WhatsApp">
-                <i class="fab fa-whatsapp"></i>
-            </a>
+            <a href="https://www.facebook.com/ayhab.ahmd.698715?mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/h_o_b_a_cr7?igsh=djd1Mm9ld2V1OXBl"><i class="fab fa-instagram"></i></a>
+            <a href="https://t.me/ehab2155"><i class="fab fa-telegram-plane"></i></a>
+            <a href="https://wa.me/201129813193?text=صلي علي النبي"><i class="fab fa-whatsapp"></i></a>
         </div>
-        <script>
-        document.getElementById('btn-about me').addEventListener('click', function() {
-            window.location.href = "aboutme.html"; // اسم الصفحة اللي عملتها
+    </div>
+
+    <!-- جافاسكريبت -->
+    <script>
+        let subMenu = document.getElementById("subMenu");
+        function toggleMenu() { subMenu.classList.toggle("open-menu"); }
+
+        document.addEventListener("click", function(e) {
+            const pic = document.querySelector(".user-nav-pic");
+            if (!subMenu.contains(e.target) && !pic.contains(e.target)) {
+                subMenu.classList.remove("open-menu");
+            }
         });
-            let subMenu = document.getElementById("subMenu");
-function toggleMenu() {
-    subMenu.classList.toggle("open-menu");
-}
-        </script>
+    </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
