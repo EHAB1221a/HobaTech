@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOBA TECH | هوبا تيك</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Lato:wght@900&display=swap');
+
+        /* إعدادات الخلفية الثابتة */
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Cairo', sans-serif;
+            color: white;
+            background: #1a1c1e url('54303c4f-2a6c-4581-aa81-33c737acd762.png') no-repeat center center fixed;
+            background-size: cover;
+            scroll-behavior: smooth;
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); z-index: -1;
+        }
+
+        /* هيدر ثابت وفخم */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 8%; background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; direction: ltr;
+        }
+
+        .logo-text { font-family: 'Lato', sans-serif; font-weight: 900; font-size: 22px; color: #fff; }
+
+        .nav-container { display: flex; align-items: center; gap: 20px; }
+        nav { display: flex; gap: 20px; }
+        nav a { color: #ddd; text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
+        nav a:hover { color: #0044cc; }
+
+        .user-nav-pic { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #0044cc; cursor: pointer; object-fit: cover; }
+
+        /* سيكشن المميزات Features */
+        .features-section { padding: 80px 10%; background: rgba(255, 255, 255, 0.02); text-align: center; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px; }
+        .f-card { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.4s; }
+        .f-card:hover { transform: translateY(-10px); background: rgba(0, 68, 204, 0.2); }
+        .f-card i { font-size: 40px; color: #0044cc; margin-bottom: 15px; }
+
+        /* سيكشن من أنا About */
+        .about-section { padding: 100px 10%; display: flex; align-items: center; gap: 50px; direction: rtl; }
+        .about-text { flex: 1; }
+        .about-text h2 { font-size: 35px; color: #0044cc; }
+        .about-text p { font-size: 18px; line-height: 1.8; opacity: 0.9; }
+
+        /* سيكشن التواصل Contact (الأفخم) */
+        .contact-section { padding: 100px 10%; text-align: center; background: linear-gradient(to bottom, transparent, #000); }
+        .contact-container { display: flex; justify-content: center; gap: 30px; margin-top: 40px; flex-wrap: wrap; }
+        .social-card {
+            width: 150px; padding: 20px; background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px; text-decoration: none; color: white;
+            transition: 0.3s; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .social-card i { font-size: 30px; margin-bottom: 10px; display: block; }
+        .social-card.fb:hover { background: #1877f2; box-shadow: 0 0 20px #1877f2; }
+        .social-card.ig:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); box-shadow: 0 0 20px #d6249f; }
+        .social-card.wa:hover { background: #25d366; box-shadow: 0 0 20px #25d366; }
+        .social-card.tg:hover { background: #0088cc; box-shadow: 0 0 20px #0088cc; }
+
+        .sub-menu-wrap { position: absolute; top: 65px; right: 8%; width: 250px; max-height: 0; overflow: hidden; transition: 0.4s; }
+        .open-menu { max-height: 400px; }
+        .sub-menu { background: #fff; padding: 20px; border-radius: 12px; color: #333; }
+        
+        @media (max-width: 768px) { .about-section { flex-direction: column; text-align: center; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.jpeg"><div class="logo-text">HOBA TECH</div></div>
+    <div class="nav-container">
+        <nav>
+            <a href="index.html">Home</a> <a href="#features">Features</a>
+            <a href="#about">about me</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <img src="e1a77b34cd35c63d8299807322647382~tplv-tiktokx-cropcenter_1080_1080.jpeg" class="user-nav-pic" onclick="toggleMenu()">
+    </div>
+
+    
+</header>
+
+<section style="height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column;">
+    <h1 style="font-size: clamp(50px, 10vw, 90px); margin: 0; font-family: 'Lato';">HOBA TECH</h1>
+    <p style="font-size: 20px; letter-spacing: 5px; color: #0044cc; font-weight: bold;">TOWARDS THE BEST</p>
+    <a href="#about" class="btn-contact" style="background: white; color: #0044cc; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 900; margin-top: 20px;">استكشف المنصة</a>
+</section>
+
+<section id="features" class="features-section">
+    <h2>خدمات المنصة</h2>
+    <div class="feature-grid">
+        <div class="f-card">
+            <i class="fa-solid fa-scroll"></i>
+            <h3>الجريدة الرسمية</h3>
+            <p>متابعة كل ما هو جديد ورسمي من خلال الجريدة المصرية الرسمية.</p>
+        </div>
+        <div class="f-card">
+            <i class="fa-solid fa-book"></i>
+            <h3>المذاكرة بشكل مختلف</h3>
+            <p>المساعدة علي المذاكرة بشكل جديد والتدريب علي  حل الاسئلة بشكل دوري .</p>
+        </div>
+        <div class="f-card">
+            <i class="fa-solid fa-balance-scale"></i>
+            <h3>حل القضايا</h3>
+            <p>التدرب علي حل القضايا لتطوير المهارات القانونية .</p>
+        </div>
+    </div>
+    <section id="about" class="about-section" style="padding: 80px 10%; direction: rtl;">
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; border: 1px solid rgba(0, 68, 204, 0.3); backdrop-filter: blur(12px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 40px; flex-wrap: wrap;">
+            
+            <div style="flex: 2; min-width: 300px;">
+                <h2 style="font-size: 28px; color: #0044cc; margin-bottom: 20px; border-right: 5px solid #0044cc; padding-right: 15px; font-family: 'Cairo';">عن إيهاب الدرديري</h2>
+                
+                <p style="font-size: 18px; line-height: 1.7; color: #fff; opacity: 0.95; margin-bottom: 25px; font-family: 'Cairo';">
+                    السلام عليكم، أنا <strong>إيهاب أحمد حامد</strong>، وشهرتي <strong>(إيهاب الدرديري)</strong>، صاحب منصة <strong>هوبا تيك</strong>. أتمنى أن أقدم محتوى ومعلومات تفيدكم بإذن الله.
+                    <br><br>
+                    وفي حال أن المنصة نالت إعجابكم، فلا تنسوا والدي المتوفى -إلى رحمة ربه- من صالح دعائكم، والدعاء لجميع أمواتنا وأموات المسلمين.    
+                <div style="padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <p style="font-size: 20px; color: #eff1f7; font-weight: 900; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0, 68, 204, 0.4);">
+                        وأخيرًا وليس آخرًا.. صلِّ على النبي
+                    </p>
+                    <h3 style="font-size: 22px; color: #0408e7; font-weight: 900; font-family: 'Cairo'; margin: 0;">
+                        والحمد لله رب العالمين
+                    </h3>
+                </div>
+            </div>
+    
+            <div style="flex: 1; min-width: 250px; text-align: center;">
+                <img src="1769974360251.jpg" style="width: 100%; max-width: 300px; border-radius: 20px; border: 2px solid rgba(0, 68, 204, 0.5); box-shadow: 0 10px 30px rgba(0,68,204,0.4); transition: 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+            </div>
+    
+        </div>
+    </section>
+
+<section id="contact" class="contact-section">
+    <h2>للتواصل معي</h2>
+    <p> على منصات التواصل الاجتماعي</p>
+    <div class="contact-container">
+        <a href="https://www.facebook.com/ayhab.ahmd.698715" target="_blank" class="social-card fb">
+            <i class="fab fa-facebook-f"></i> Facebook
+        </a>
+        <a href="https://www.instagram.com/h_o_b_a_cr7" target="_blank" class="social-card ig">
+            <i class="fab fa-instagram"></i> Instagram
+        </a>
+        <a href="https://wa.me/201129813193" target="_blank" class="social-card wa">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+        <a href="https://t.me/ehab2155" target="_blank" class="social-card tg">
+            <i class="fab fa-telegram-plane"></i> Telegram
+        </a>
+    </div>
+</section>
+
+<script>
+    let subMenu = document.getElementById("subMenu");
+    function toggleMenu() { subMenu.classList.toggle("open-menu"); }
+</script>
+
+</body>
+</html>
