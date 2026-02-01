@@ -418,8 +418,10 @@
         </div>
     </div>
 
-    <script>
-        // 1. Firebase Configuration
+<!-- نفس الـ HTML و CSS بدون أي تغيير -->
+
+<script>
+/* ================= Firebase ================= */
 const firebaseConfig = {
     apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
     authDomain: "hoba-tech.firebaseapp.com",
@@ -431,208 +433,134 @@ const firebaseConfig = {
     measurementId: "G-EBHF8FEDB2"
 };
 
-// تهيئة Firebase
-if (!firebase.apps.length) { 
-    firebase.initializeApp(firebaseConfig); 
-}
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// مراقبة حالة تسجيل الدخول
 auth.onAuthStateChanged(user => {
-    if (user) {
-        // تأكد أن هذه الـ IDs موجودة في الـ HTML الخاص بك
-        const welcomeMsg = document.getElementById('welcome-msg');
-        const setEmail = document.getElementById('set-email');
-        
-        if (welcomeMsg) welcomeMsg.innerText = "أهلاً، " + (user.displayName || "يا مستشار") + " ⚖️";
-        if (setEmail) setEmail.value = user.email;
-    }
+    if (!user) return;
+    const setEmail = document.getElementById('set-email');
+    if (setEmail) setEmail.value = user.email;
 });
 
-// وظائف المودال (النافذة المنبثقة)
-function openResetModal() { 
-    document.getElementById('resetModal').style.display = 'flex'; 
+/* ================= Reset Password ================= */
+function openResetModal() {
+    document.getElementById('resetModal').style.display = 'flex';
+}
+function closeResetModal() {
+    document.getElementById('resetModal').style.display = 'none';
 }
 
-function closeResetModal() { 
-    document.getElementById('resetModal').style.display = 'none'; 
-}
-
-// دالة استعادة كلمة السر
 async function sendMyReset() {
-    const emailInput = document.getElementById('reset-email-input');
-    const btn = document.getElementById('send-reset-btn');
-    
-    if (!emailInput || !emailInput.value.trim()) { 
-        Swal.fire('تنبيه', 'اكتب الإيميل أولاً!', 'warning'); 
-        return; 
+    const email = document.getElementById('reset-email-input').value.trim();
+    if (!email) {
+        Swal.fire('تنبيه', 'اكتب الإيميل أولاً', 'warning');
+        return;
     }
-
-    const email = emailInput.value.trim();
-    if (btn) {
-        btn.innerText = "جاري الإرسال...";
-        btn.disabled = true;
-    }
-
     try {
         await auth.sendPasswordResetEmail(email);
-        Swal.fire('تم الإرسال!', 'راجع بريدك الإلكتروني الآن', 'success');
+        Swal.fire('تم', 'تم إرسال الرابط', 'success');
         closeResetModal();
-    } catch (error) {
-        Swal.fire('خطأ', error.message, 'error');
-    } finally {
-        if (btn) {
-            btn.innerText = "إرسال الرابط الآن";
-            btn.disabled = false;
-        }
+    } catch (e) {
+        Swal.fire('خطأ', e.message, 'error');
     }
 }
-        const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4'; // <--- حط الرابط بتاعك هنا
 
-        async function loadTechMembers() {
-            try {
-                const res = await fetch('https://sheetdb.io/api/v1/nf4mijhi1a6u4');
-                const data = await res.json();
-                const container = document.getElementById('members-list');
-                container.innerHTML = '';
+/* ================= Members ================= */
+const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
 
-                data.forEach(user => {
-    const isAdmin = user.role && user.role.toLowerCase() === 'admin';
-    
-    // اللون اللي هيستخدم في الأيقونات بناء على الرتبة
-    const iconClass = isAdmin ? 'admin-icon' : '';
+async function loadTechMembers() {
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const container = document.getElementById('members-list');
+        if (!container) return;
+        container.innerHTML = '';
 
-    container.innerHTML += `
-        <div class="member-card ${isAdmin ? 'admin-card' : ''}">
-            <div class="status-badge ${isAdmin ? 'admin' : ''}">
-                ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
-            </div>
-
-            <div class="info-container">
+        data.forEach(user => {
+            const isAdmin = user.role?.toLowerCase() === 'admin';
+            container.innerHTML += `
+            <div class="member-card ${isAdmin ? 'admin-card' : ''}">
+                <div class="status-badge ${isAdmin ? 'admin' : ''}">
+                    ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
+                </div>
                 <div class="info-row">
-                    <i class="fas fa-user ${iconClass}"></i>
+                    <i class="fas fa-user ${isAdmin ? 'admin-icon' : ''}"></i>
                     <div>
-                        <span class="label">الاسم بالكامل</span>
-                        <span class="value" style="${isAdmin ? 'color: #d4af37;' : ''}">${user.name}</span>
+                        <span class="label">الاسم</span>
+                        <span class="value">${user.name}</span>
                     </div>
                 </div>
+            </div>`;
+        });
+    } catch {
+        document.getElementById('members-list').innerText = 'خطأ في تحميل البيانات';
+    }
+}
+loadTechMembers();
 
-                <div class="info-row">
-                    <i class="fas fa-phone-alt ${iconClass}"></i>
-                    <div>
-                        <span class="label">رقم الموبايل</span>
-                        <span class="value" style="direction: ltr; display:inline-block;">${user.phone || '---'}</span>
-                    </div>
-                </div>
+/* ================= Navigation ================= */
+function showPage(pageId, el) {
+    document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
 
-                <div class="info-row">
-                    <i class="fas fa-university ${iconClass}"></i>
-                    <div>
-                        <span class="label">الفرقة الدراسية</span>
-                        <span class="value">${user.level || 'غير محدد'}</span>
-                    </div>
-                </div>
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    if (el) el.classList.add('active');
 
-                <div class="info-row" style="border:none;">
-                    <i class="fas fa-envelope ${iconClass}"></i>
-                    <div>
-                        <span class="label">البريد الإلكتروني</span>
-                        <span class="value" style="font-size:12px;">${user.email || 'لا يوجد إيميل'}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-});
-            } catch (e) {
-                document.getElementById('members-list').innerHTML = "حدث خطأ في تحميل البيانات.";
-            }
-        }
+    document.getElementById('sidebar').classList.remove('active');
+}
 
-        loadTechMembers();
-        function openSubject(name) {
-            document.getElementById('sub-title').innerText = name;
-            document.getElementById('overlay').style.display = 'block';
-        }
+/* ================= Sidebar ================= */
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
 
-        function closeSubject() { document.getElementById('overlay').style.display = 'none'; }
-
-        // كود الخلفية المتحركة
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let particles = [];
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.x > canvas.width) this.x = 0; if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
-            }
-            draw() { ctx.fillStyle = '#0044cc'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
-
-          
-        }
-        function init() { for (let i = 0; i < 80; i++) particles.push(new Particle()); }
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        }
-        init(); animate();
-    window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
-            
+/* ================= Logout ================= */
 function handleLogout() {
     Swal.fire({
-        title: 'هل تريد المغادرة؟',
-        text: "",
+        title: 'تسجيل الخروج؟',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ff4444',
-        cancelButtonColor: 'red',
-        confirmButtonText: 'نعم، تسجيل خروج',
-        cancelButtonText: 'إلغاء'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            auth.signOut().then(() => {
-                window.location.href = 'التسجيل.html';
-            });
+        confirmButtonText: 'نعم'
+    }).then(res => {
+        if (res.isConfirmed) {
+            auth.signOut().then(() => location.href = 'التسجيل.html');
         }
     });
 }
 
-         function showPage(pageId) {
-        document.querySelectorAll('.page-section').forEach(sec => {
-            sec.classList.remove('active');
-        });
+/* ================= Background ================= */
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-        document.getElementById(pageId).classList.add('active');
+const particles = Array.from({length:80},()=>({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    s:Math.random()*2,
+    vx:Math.random()-.5,
+    vy:Math.random()-.5
+}));
 
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-
-        event.currentTarget.classList.add('active');
-
-        document.getElementById('sidebar').classList.remove('active');
-    }
-
-         function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>canvas.width) p.vx*=-1;
+        if(p.y<0||p.y>canvas.height) p.vy*=-1;
+        ctx.fillStyle='#0044cc';
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.s,0,Math.PI*2);
+        ctx.fill();
+    });
+    requestAnimationFrame(animate);
 }
-        
-    </script>
+animate();
+</script>
 </body>
 </html>
+
 
 
 
