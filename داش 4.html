@@ -449,6 +449,8 @@ const firebaseConfig = {
     measurementId: "G-EBHF8FEDB2"
 };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+const db = firebase.firestore();  
 const auth = firebase.auth();
 auth.onAuthStateChanged(user => {
     if (!user) return;
@@ -642,9 +644,6 @@ document.getElementById('deleteAccountBtn').onclick = function () {
       } else {
         Swal.fire('خطأ', error.message, 'error');
         console.error(error);
-              if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();  // << 
       }
     }
   });
@@ -652,6 +651,7 @@ const db = firebase.firestore();  // <<
 </script>
 </body>
 </html>
+
 
 
 
