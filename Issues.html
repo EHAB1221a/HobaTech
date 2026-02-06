@@ -253,6 +253,31 @@ nav a:empty {
 .card button {
   pointer-events: auto;
 }
+ /* فك الاسكرول غصب عن أي عنصر */
+html, body {
+  overflow-y: auto !important;
+  touch-action: pan-y !important;
+}
+
+/* خلى الصفحة تستقبل السحب */
+body {
+  position: static !important;
+}
+
+/* الكارت نفسه ما يمسكش اللمسة */
+.card {
+  touch-action: pan-y !important;
+}
+
+/* امنع أي تأثير hover / active يخنق السحب */
+.card:active {
+  transform: none !important;
+}
+
+/* لو الكارت كله لينك */
+.card a {
+  touch-action: pan-y !important;
+}   
     </style>
 </head>
 <body>
@@ -335,6 +360,7 @@ function aiRespond(msg) {
 </body>
 
 </html>
+
 
 
 
