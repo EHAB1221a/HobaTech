@@ -228,6 +228,16 @@ nav a:empty {
   justify-content: center;
   gap: 30px;
 }
+        .cards-container,
+.card,
+.card * {
+  pointer-events: auto;
+}
+
+.card {
+  position: relative;
+  z-index: 10;
+}
     </style>
 </head>
 <body>
@@ -310,4 +320,5 @@ function aiRespond(msg) {
 </body>
 
 </html>
+
 
