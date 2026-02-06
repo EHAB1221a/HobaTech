@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoba Tech | جدول المواد </title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d2ff;
+            --neon-purple: #9d50bb;
+            --glass-bg: rgba(15, 23, 42, 0.8);
+            --card-inner: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            background: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.7);
+            min-height: 100vh;
+            width: 100%;
+            padding: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-main {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-main h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #00d2ff, #9d50bb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .days-container {
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .day-section-title {
+            font-size: 2rem;
+            color: #fff;
+            margin: 40px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-right: 5px solid var(--neon-blue);
+            padding-right: 15px;
+        }
+
+        .day-section-title span {
+            font-size: 1rem;
+            color: var(--neon-blue);
+            opacity: 0.8;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .subject-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subject-card:hover {
+            transform: scale(1.03);
+            border-color: var(--neon-blue);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .subject-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .today-info {
+            background: var(--card-inner);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .info-row:last-child { margin-bottom: 0; }
+
+        .label { color: #aaa; }
+        .value { color: var(--neon-blue); font-weight: 600; }
+
+        .total-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .progress-wheel {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: conic-gradient(var(--neon-blue) 0%, #1e293b 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .progress-wheel::after {
+            content: attr(data-p) "%";
+            position: absolute;
+            width: 53px;
+            height: 53px;
+            background: #0f172a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .total-label {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .total-label b { color: var(--neon-purple); font-size: 1.1rem; }
+
+        @media (max-width: 768px) {
+            .header-main h1 { font-size: 2rem; }
+            .day-section-title { font-size: 1.6rem; }
+        }
+        /* تصميم الحاوية للعنوان */
+.hoba-brand {
+    text-align: center;
+    margin-bottom: 30px;
+    cursor: default;
+}
+
+/* تأثير النيون للجملة الأساسية */
+.neon-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    text-transform: uppercase;
+    /* الأنيميشن اللي بيخليها تنور وتطفي بشكل فخم */
+    animation: neon-glow 2s ease-in-out infinite alternate;
+}
+
+/* الجملة الثانوية بأنيميشن تدفق الألوان */
+.sub-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #00d2ff, #9d50bb, #00d2ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-flow 3s linear infinite;
+    margin-top: 5px;
+}
+
+/* أنيميشن إضاءة النيون */
+@keyframes neon-glow {
+    from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00d2ff, 0 0 40px #00d2ff;
+    }
+    to {
+        text-shadow: 0 0 5px #fff, 0 0 10px #00d2ff, 0 0 15px #00d2ff, 0 0 20px #00d2ff;
+        transform: scale(1.02); /* حركة نبض خفيفة */
+    }
+}
+
+/* أنيميشن تدفق الألوان */
+@keyframes text-flow {
+    to { background-position: 200% center; }
+}
+.download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(0, 210, 255, 0.1);
+    border: 1px dashed var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 10px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-blue);
+    transform: translateY(-2px);
+}
+
+.download-btn .icon {
+    font-style: normal;
+    font-size: 1.1rem;
+}
+    </style>
+</head>
+<body>
+
+<div class="overlay">
+    <div class="header-main">
+        <h1>ما تم الوصول اليه في المواد</h1>
+        <div class="hoba-brand">
+            <p class="neon-text">Hoba Tech | هوبا تيك</p>
+            <p class="sub-text">تابع كل ما هو جديد</p>
+        </div>
+    </div>
+
+    <div class="days-container">
+        
+        <div class="day-section-title">يوم الأحد <span></span></div>
+        <div class="cards-grid">
+            
+            <div class="subject-card">
+                <div class="card-header">
+                    <div class="subject-name">المنظمات الدولية</div>
+                </div>
+                <div class="today-info">
+                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
+                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/زين العابدين محمد فؤاد</span></div>
+                    <div class="info-row"><span class="label">الكتاب من اعداد</span><span class="value">أ.د/زين العابدين محمد الهمامي</span></div>
+                </div>
+                <a href="قريبا" class="download-btn">
+                    <span>تحميل الكتاب</span>
+                    <i class="icon"></i>
+                </a>
+                <div class="total-status">
+                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 224</div>
+                    <div class="progress-wheel" style="--p:0"></div>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="card-header">
+                    <div class="subject-name">القانون الدستوري</div>
+                </div>
+                <div class="today-info">
+                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
+                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/صبري جلبي</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/اسلام مهران</span></div>
+                </div>
+                <a href="قريبا" class="download-btn">
+                    <span>تحميل الكتاب</span>
+                    <i class="icon"></i>
+                </a>
+                <div class="total-status">
+                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 378</div>
+                    <div class="progress-wheel" style="--p:0"></div>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="card-header">
+                    <div class="subject-name">تشريعات حماية البيئة</div>
+                </div>
+                <div class="today-info">
+                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
+                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/اسلام مهران</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/زين العابدين محمد فؤاد</span></div>
+                </div>
+                <a href="قريبا" class="download-btn">
+                    <span>تحميل الكتاب</span>
+                    <i class="icon"></i>
+                </a>
+                <div class="total-status">
+                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 200</div>
+                    <div class="progress-wheel" style="--p:0"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-section-title" style="border-color: var(--neon-purple);">يوم الثلاثاء <span></span></div>
+        <div class="cards-grid">
+            
+            <div class="subject-card">
+                <div class="card-header">
+                    <div class="subject-name">مصطلحات قانونية باللغة الفرنسية</div>
+                </div>
+                <div class="today-info">
+                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
+                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/حمادة مصطفي عزب</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/ماهر محمد حامد</span></div>
+                </div>
+                <a href="قريبا" class="download-btn">
+                    <span>تحميل الكتاب</span>
+                    <i class="icon"></i>
+                </a>
+                <div class="total-status">
+                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل غيرمعروف</div>
+                    <div class="progress-wheel" style="--p:0; border:1px solid var(--neon-purple)"></div>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="card-header">
+                    <div class="subject-name">القضايا المجتمعية</div>
+                </div>
+                <div class="today-info">
+                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
+                    <div class="info-row"><span class="label">وصلت لصفحة:</span><span class="value">0 📄</span></div>  
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/عادل محمود علي</span></div>
+                </div>
+
+                <a href="قريبا" class="download-btn">
+                    <span>تحميل الكتاب</span>
+                    <i class="icon"></i>
+                </a>
+                <div class="total-status">
+                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل غيرمعروف</div>
+                    <div class="progress-wheel" style="--p:0; border:1px solid var(--neon-purple)"></div>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <div class="card-header">
+                    <div class="subject-name">تاريخ النظم القانونية والاجتماعية</div>
+                </div>
+                <div class="today-info">
+                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
+                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/عبدالكريم نصير</span></div>
+                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/رفاعي محمد رفاعي</span></div>
+                </div>
+                <a href="قريبا" class="download-btn">
+                    <span>تحميل الكتاب</span>
+                    <i class="icon"></i>
+                </a>
+                <div class="total-status">
+                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 557</div>
+                    <div class="progress-wheel" style="--p:0; border:1px solid var(--neon-purple)"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const wheels = document.querySelectorAll('.progress-wheel');
+
+    wheels.forEach(wheel => {
+        const card = wheel.closest('.subject-card');
+        const doneText = card.querySelector('.total-label b').textContent; // مثال: "120 ص"
+        const totalText = card.querySelector('.total-label').textContent.match(/من اصل (\d+)/)[1];
+
+        const done = parseInt(doneText.replace(/\D/g, ''));
+        const total = parseInt(totalText);
+        const target = Math.round((done / total) * 100);
+
+        let current = 0;
+        const interval = setInterval(() => {
+            if (current >= target) {
+                clearInterval(interval);
+                return;
+            }
+            current++;
+            wheel.style.background = `conic-gradient(var(--neon-blue) ${current}%, #1e293b 0)`;
+            wheel.setAttribute('data-p', current);
+        }, 20);
+    });
+});
+</script>
+
+</body>
+</html>
