@@ -474,48 +474,6 @@ async function sendMyReset() {
         Swal.fire('خطأ', e.message, 'error');
     }
 }
-        import { EmailAuthProvider, reauthenticateWithCredential, deleteUser } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { doc, setDoc, Timestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-document.getElementById("deleteAccount").onclick = async () => {
-    const user = auth.currentUser;
-    if(!user){
-        alert("غير مسجل دخول!");
-        return;
-    }
-
-    // طلب كلمة السر لتأكيد الحذف
-    const password = prompt("⚠️ أدخل كلمة السر لتأكيد حذف الحساب:");
-    if(!password) return;
-
-    try{
-        // إعادة التحقق
-        const credential = EmailAuthProvider.credential(user.email, password);
-        await reauthenticateWithCredential(user, credential);
-
-        // حظر الإيميل 10 أيام
-        await setDoc(doc(db, "banned_emails", user.email), {
-            bannedUntil: Timestamp.fromDate(new Date(Date.now() + 10*24*60*60*1000))
-        });
-
-        // حذف بيانات المستخدم من Firestore
-        await deleteDoc(doc(db, "users", user.uid));
-
-        // حذف الحساب نفسه
-        await deleteUser(user);
-
-        alert("تم حذف الحساب نهائيًا، لن يمكنك استخدام الإيميل خلال 10 أيام");
-        window.location.href = "index.html";
-
-    } catch(error){
-        if(error.code === "auth/wrong-password"){
-            alert("كلمة السر غير صحيحة");
-        } else {
-            alert("حصل خطأ: " + error.message);
-            console.error(error);
-        }
-    }
-};
 
 /* ================= Members ================= */
 const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
@@ -535,7 +493,7 @@ const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
                     container.innerHTML += `
                     <div class="member-card ${isAdmin ? 'admin-card' : ''}">
                         <div class="status-badge ${isAdmin ? 'admin' : ''}">
-                            ${isAdmin ? '👑 آدمن النظام' : '⚖️ مستشار مشترك'}
+                            ${isAdmin ? '👑 آدمن النظام' : ' مستشار مشترك'}
                         </div>
                         <div class="info-container">
                             <div class="info-row">
@@ -635,6 +593,49 @@ function animate(){
     requestAnimationFrame(animate);
 }
 animate();
+        import { EmailAuthProvider, reauthenticateWithCredential, deleteUser } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { doc, setDoc, Timestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+document.getElementById("deleteAccount").onclick = async () => {
+    const user = auth.currentUser;
+    if(!user){
+        alert("غير مسجل دخول!");
+        return;
+    }
+
+    // طلب كلمة السر لتأكيد الحذف
+    const password = prompt("⚠️ أدخل كلمة السر لتأكيد حذف الحساب:");
+    if(!password) return;
+
+    try{
+        // إعادة التحقق
+        const credential = EmailAuthProvider.credential(user.email, password);
+        await reauthenticateWithCredential(user, credential);
+
+        // حظر الإيميل 10 أيام
+        await setDoc(doc(db, "banned_emails", user.email), {
+            bannedUntil: Timestamp.fromDate(new Date(Date.now() + 10*24*60*60*1000))
+        });
+
+        // حذف بيانات المستخدم من Firestore
+        await deleteDoc(doc(db, "users", user.uid));
+
+        // حذف الحساب نفسه
+        await deleteUser(user);
+
+        alert("تم حذف الحساب نهائيًا، لن يمكنك استخدام الإيميل خلال 10 أيام");
+        window.location.href = "index.html";
+
+    } catch(error){
+        if(error.code === "auth/wrong-password"){
+            alert("كلمة السر غير صحيحة");
+        } else {
+            alert("حصل خطأ: " + error.message);
+            console.error(error);
+        }
+    }
+};
+
         
 </script>
 </body>
