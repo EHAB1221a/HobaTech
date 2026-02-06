@@ -549,87 +549,7 @@ function showPage(pageId, el) {
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
 }
- function handleDeleteAccount() {
-    Swal.fire({
-        title: '⚠️ هل أنت متأكد من حذف الحساب؟',
-        text: 'الحساب سيحذف نهائيًا ولن يمكنك استخدام الإيميل خلال 10 أيام',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ff4444',
-        confirmButtonText: 'نعم، احذف الحساب',
-        cancelButtonText: 'إلغاء'
-    }).then(async (res) => {
-        if(res.isConfirmed){
-            const password = prompt("أدخل كلمة السر لتأكيد الحذف:");
-            if(!password) return;
 
-            const user = auth.currentUser;
-            if(!user) {
-                Swal.fire('خطأ','غير مسجل دخول!','error');
-                return;
-            }
-
-            try {
-                const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
-                await user.reauthenticateWithCredential(credential);
-
-                await db.collection("banned_emails").doc(user.email).set({
-                    bannedUntil: new Date(Date.now() + 10*24*60*60*1000)
-                });
-
-                await db.collection("users").doc(user.uid).delete();
-                await user.delete();
-
-                Swal.fire('تم','تم حذف الحساب نهائيًا، لن يمكنك استخدام الإيميل خلال 10 أيام','success')
-                    .then(()=> window.location.href = "التسجيل.html");
-
-            } catch(error) {
-                if(error.code === "auth/wrong-password"){
-                    Swal.fire('خطأ','كلمة السر غير صحيحة','error');
-                } else {
-                    Swal.fire('خطأ',error.message,'error');
-                    console.error(error);
-                }
-            }
-        }
-    });
-}
-        document.getElementById("handleDeleteAccount").onclick = async () => {
-        const user = auth.currentUser;
-        if(!user){
-            Swal.fire('تنبيه','غير مسجل دخول!','warning');
-            return;
-        }
-
-        const password = prompt("⚠️ أدخل كلمة السر لتأكيد حذف الحساب:");
-        if(!password) return;
-
-        try{
-            const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
-            await user.reauthenticateWithCredential(credential);
-
-            // حظر الإيميل 10 أيام
-            await db.collection("banned_emails").doc(user.email).set({
-                bannedUntil: new Date(Date.now() + 10*24*60*60*1000)
-            });
-
-            // حذف بيانات المستخدم
-            await db.collection("users").doc(user.uid).delete();
-
-            // حذف الحساب نفسه
-            await user.delete();
-
-            Swal.fire('تم','تم حذف الحساب نهائيًا، لن يمكنك استخدام الإيميل خلال 10 أيام','success')
-                .then(()=> window.location.href = "index.html");
-
-        } catch(error){
-            if(error.code === "auth/wrong-password"){
-                Swal.fire('خطأ','كلمة السر غير صحيحة','error');
-            } else {
-                Swal.fire('خطأ',error.message,'error');
-                console.error(error);
-            }
-        }
 /* ================= Background ================= */
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
@@ -662,6 +582,7 @@ animate();
 </script>
 </body>
 </html>
+
 
 
 
