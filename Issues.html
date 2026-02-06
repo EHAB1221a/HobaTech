@@ -238,6 +238,21 @@ nav a:empty {
   position: relative;
   z-index: 10;
 }
+        /* خلي السحب ينزل الصفحة */
+.card {
+  touch-action: pan-y;
+}
+
+/* امنع الكرت نفسه من خطف اللمسة */
+.card {
+  pointer-events: none;
+}
+
+/* فعّل اللمس على المحتوى المهم بس */
+.card a,
+.card button {
+  pointer-events: auto;
+}
     </style>
 </head>
 <body>
@@ -320,5 +335,6 @@ function aiRespond(msg) {
 </body>
 
 </html>
+
 
 
