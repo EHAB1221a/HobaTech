@@ -457,6 +457,9 @@ auth.onAuthStateChanged(user => {
     const setEmail = document.getElementById('set-email');
     if (setEmail) setEmail.value = user.email;
 });
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();  // << ده اللي كان ناقص
 
 /* ================= Reset Password ================= */
 function openResetModal() {
@@ -651,3 +654,4 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
