@@ -450,9 +450,6 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();  // << ده اللي كان ناقص
 auth.onAuthStateChanged(user => {
     if (!user) return;
     const setEmail = document.getElementById('set-email');
@@ -652,6 +649,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
