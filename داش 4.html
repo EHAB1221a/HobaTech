@@ -642,6 +642,9 @@ document.getElementById('deleteAccountBtn').onclick = function () {
       } else {
         Swal.fire('خطأ', error.message, 'error');
         console.error(error);
+              if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();  // << 
       }
     }
   });
@@ -649,6 +652,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
