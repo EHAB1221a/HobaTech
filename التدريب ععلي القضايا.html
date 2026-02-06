@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+
+<meta charset="UTF-8">
+<title>بوابة القضايا | HOBA TECH</title>
+
+<style>
+body {
+    background: url('Gemini_Generated_Image_vpbm0bvpbm0bvpbm.png') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+}
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    z-index:-1;
+}
+
+header{
+    background: rgba(11,13,17,.9);
+    backdrop-filter: blur(10px);
+    padding:15px 40px;
+    position:fixed;
+    top:0;
+    width:97%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:10000;
+}
+.logo-text{
+    color:#c5a059;
+    font-size:1.7rem;
+    font-weight:bold;
+    text-decoration:none;
+}
+.nav-link{
+    color:#fff;
+    text-decoration:none;
+}
+
+.container{
+    margin-top:130px;
+    padding:40px;
+    text-align:center;
+}
+
+.cards-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:40px;
+    justify-content:center;
+}
+
+.card{
+    width:320px;
+    height:450px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:30px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.4s;
+}
+.card:hover{
+    transform:translateY(-15px);
+    border-color:#00d4ff;
+    box-shadow:0 0 30px rgba(0,212,255,.4);
+}
+
+.image-circle{
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    border:3px solid #00d4ff;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+.image-circle img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.card h2{
+    margin:10px 0;
+}
+.card p{
+    color:#bbb;
+    padding:0 20px;
+}
+
+.card-btn{
+    margin-top:20px;
+    padding:10px 30px;
+    border-radius:30px;
+    border:2px solid #00d4ff;
+    background:transparent;
+    color:#00d4ff;
+}
+.card:hover .card-btn{
+    background:#00d4ff;
+    color:#000;
+}
+
+.hidden{display:none}
+
+.back-btn{
+    margin-bottom:30px;
+    padding:10px 25px;
+    border:none;
+    border-radius:20px;
+    background:#00d4ff;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a class="nav-link" href="داش 4.html">الصفحة الرئيسية</a>
+    <a href="https://www.cc.gov.eg/" class="logo-text" style="text-decoration: none;">
+        محكمة النقض المصرية
+    </a> </header>
+
+<div class="container">
+
+    <!-- الأقسام الرئيسية -->
+    <div id="main" class="cards-container"></div>
+
+    <!-- الأقسام الفرعية -->
+    <div id="subs" class="hidden">
+        <button class="back-btn" onclick="back()"> رجوع</button>
+        <div id="subCards" class="cards-container"></div>
+    </div>
+
+</div>
+
+<script>
+const data = {
+    "القضايا الجنائية": {
+        img:"WhatsApp Image 2026-02-04 at 2.27.04 PM.jpeg",
+        subs:[
+            "ارهاب وتجمهر مسلح",
+            "قتل عمد",
+            "قتل خطأ",
+            "شروع في قتل",
+            "سرقة",
+            "سرقة بالإكراه",
+            "نصب واحتيال",
+            "خيانة أمانة",
+            "تزوير",
+            "مخدرات",
+            "سلاح بدون ترخيص",
+            "بلطجة","اغتصاب",
+            "خطف",
+            "غسل أموال"
+        ]
+    },
+    "القضايا المدنية": {
+        img:"WhatsApp Image 2026-02-04 at 2.20.16 PM.jpeg",
+        subs:[
+            "تعويض","بطلان عقد","فسخ عقد","صحة توقيع",
+            "مطالبة بمبلغ","طرد للغصب","قسمة مال شائع","ريع"
+        ]
+    },
+    "الأحوال الشخصية": {
+        img:"WhatsApp Image 2026-02-04 at 2.02.21 PM.jpeg",
+        subs:[
+            "طلاق","خلع","نفقة","رؤية","حضانة","إثبات نسب","متعة وعدة"
+        ]
+    },
+    "القضاء الإداري": {
+        img:"WhatsApp Image 2026-02-04 at 2.02.23 PM.jpeg",
+        subs:[
+            "إلغاء قرار","وقف تنفيذ","تعويض إداري","جزاءات","معاشات"
+        ]
+    },
+    "قضايا المرور": {
+        img:"WhatsApp Image 2026-02-04 at 2.23.54 PM.jpeg",
+        subs:[
+            "قتل خطأ مروري","إصابة خطأ","تعويض حوادث","مخالفات جسيمة"
+        ]
+    },
+    "قضايا إلكترونية": {
+        img:"WhatsApp Image 2026-02-04 at 2.09.45 PM.jpeg",
+        subs:[
+            "جرائم إلكترونية","سب وقذف","تشهير","ابتزاز إلكتروني"
+        ]
+    }
+};
+
+const main = document.getElementById("main");
+const subs = document.getElementById("subs");
+const subCards = document.getElementById("subCards");
+
+for(let sec in data){
+    main.innerHTML += `
+    <div class="card" onclick="openSection('${sec}')">
+        <div class="image-circle">
+            <img src="${data[sec].img}">
+        </div>
+        <h2>${sec}</h2>
+        <p>قريبا في الاجازة ...</p>
+        <button class="card-btn">دخول</button>
+    </div>`;
+}
+
+function openSection(name){
+    main.classList.add("hidden");
+    subs.classList.remove("hidden");
+    subCards.innerHTML="";
+    data[name].subs.forEach(s=>{
+        subCards.innerHTML += `
+        <div class="card">
+            <div class="image-circle">
+                <img src="${data[name].img}">
+            </div>
+            <h2>${s}</h2>
+            <p>سيتم إضافة القضايا لاحقًا</p>
+            <button class="card-btn">دخول</button>
+        </div>`;
+    });
+}
+
+function back(){
+    subs.classList.add("hidden");
+    main.classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>

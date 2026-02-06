@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>بوابة المستشار | إيهاب الدرديري</title>
+    <style>
+        body {
+            /* استخدم رابط الصورة الخاص بك هنا */
+            background: url('Gemini_Generated_Image_vpbm0bvpbm0bvpbm.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        .welcome-section h1 {
+            color: #00d4ff;
+            font-size: 2.8rem;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.7);
+            min-height: 1.2em; /* للحفاظ على المساحة أثناء الكتابة */
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 50px;
+            z-index: 1;
+        }
+
+        /* الكارت الزجاجي */
+        .card {
+            width: 320px;
+            height: 450px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            border: 1px solid #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* الدائرة التي ستوضع فيها الصورة */
+        .image-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 90%;
+            border: 3px solid #00d4ff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .image-circle img {
+    width: 100%;
+    height:100%;
+    /* السطرين اللي جايين هما السر */
+    object-fit: cover; /* بيخلي الصورة تملا الدائرة من غير ما تتمط */
+    object-position: center; /* بيخلي نص الصورة هو اللي ظاهر في الدائرة */
+}
+        .card h2 {
+            color: #fff;
+            margin: 10px 0;
+            font-size: 1.6rem;
+        }
+
+        .card-btn {
+            margin-top: 20px;
+            padding: 10px 30px;
+            border: 2px solid #00d4ff;
+            background: transparent;
+            color: #00d4ff;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .card:hover .card-btn {
+            background: #00d4ff;
+            color: #000;
+        }
+        /* تنسيق الهيدر الأساسي */
+header {
+    background: rgba(11, 13, 17, 0.9); /* أسود شفاف فخم */
+    backdrop-filter: blur(10px); /* تأثير القزاز */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: px px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+/* تنسيق الروابط داخل الـ Nav */
+nav {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+.nav-link, nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* تأثير عند الوقوف على الروابط */
+.nav-link:hover, nav a:hover {
+    color: #c5a059; /* يتحول للذهبي */
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+    transform: translateY(-2px);
+}
+
+/* أيقونة البيت */
+.nav-link i {
+    margin-left: 8px;
+    color: #c5a059;
+}
+
+/* تنسيق اللوجو (الجريدة الرسمية) */
+.logo-text {
+    font-family: 'Traditional Arabic', serif; /* لو متاح أو أي خط رسمي */
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #c5a059; /* لون ذهبي ملكي */
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transition: 0.4s;
+}
+
+.logo-text:hover {
+    color: #fff;
+    filter: drop-shadow(0 0 8px rgba(197, 160, 89, 0.8));
+}
+
+/* تحسين شكل الروابط الفاضية لو اتملت بالـ JS */
+nav a:empty {
+    display: none;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="داش 4.html" class="nav-link">
+                <i class="fa-solid fa-house"></i> الصفحة الرئيسية </a>
+        </nav>
+        <a href="https://www.cc.gov.eg/" class="logo-text" style="text-decoration: none;">
+            محكمة النقض المصرية
+        </a>    </header>
+<div class="welcome-section">
+    <h1 id="user-greeting"></h1>
+    <p style="font-size: 1.1rem; color: #ccc;">اختر مسارك القانوني لهذا اليوم</p>
+</div>
+
+<div class="cards-container">
+    <div class="card">
+        <div class="image-circle">
+            <img src="WhatsApp Image 2026-02-03 at 6.52.03 PM.jpeg" alt="قضايا">
+        </div>
+        <h2> الدعاوي والعقود</h2>
+        <p style="color: #bbb; text-align: center; padding: 0 20px;">موسوعه قانونية لجميع صيغ الدعاوي والعقود  والقوانين والتشريعات.</p>
+        <a href="https://lawhub.info/eg/?cat=226"><button class="card-btn">دخول</button></a>
+    </div>
+
+    <div class="card">
+        <div class="image-circle">
+            <img src="WhatsApp Image 2026-02-04 at 1.46.07 AM.jpeg" alt="قضايا">
+        </div>
+        <h2>قراءة </h2>
+        <p style="color: #bbb; text-align: center; padding: 0 20px;">الكتاب الذهبي لجميع صيغ العقود القانونيه.</p>
+        <a href="Noor-Book.com  الذهبى لجميع صيغ العقود القانونيه 3 .pdf"><button class="card-btn">دخول</button></a>
+    </div>
+    <div class="card">
+        <div class="image-circle">
+            <img src="WhatsApp Image 2026-02-03 at 6.52.03 PM (1).jpeg" alt="تدريب">
+        </div>
+        <h2>التدريب علي حل القضايا.</h2>
+        <p style="color: #bbb; text-align: center; padding: 0 20px;">محاكاة القضايا التفاعلية</p>
+       <a href="التدريب ععلي القضايا.html"><button class="card-btn">ابدأ الآن</button></a> 
+    </div>
+</div>
+
+<script>
+    // تأثير الكتابة لاسمك الفخم
+    const greetingText = "مرحباً بك يا سيادة المستشار ..";
+    let index = 0;
+    function typeEffect() {
+        if (index < greetingText.length) {
+            document.getElementById("user-greeting").innerHTML += greetingText.charAt(index);
+            index++;
+            setTimeout(typeEffect, 100);
+        }
+    }
+    window.onload = typeEffect;
+
+
+function toggleChat() {
+    const chat = document.getElementById('ai-chat-box');
+    chat.style.display = chat.style.display === 'none' ? 'block' : 'none';
+}
+
+function aiRespond(msg) {
+    const content = document.getElementById('chat-content');
+    content.innerHTML += `<p style="text-align: left; color: #00d4ff;">💬 ${msg}</p>`;
+    
+    setTimeout(() => {
+        let reply = "";
+        if(msg.includes('عقد')) reply = "تقدر تلاقي كل العقود في 'موسوعة الصيغ' اللي في الصفحة الرئيسية، قسم المدني.";
+        if(msg.includes('مواعيد')) reply = "ميعاد النقض في الأحكام الجنائية هو 60 يوماً من تاريخ صدور الحكم.";
+        
+        content.innerHTML += `<p style="background: #222; padding: 10px; border-radius: 10px; margin-top: 10px;">🤖 ${reply}</p>`;
+        content.scrollTop = content.scrollHeight;
+    }, 1000);
+}
+
+</script>
+
+</body>
+</html>
