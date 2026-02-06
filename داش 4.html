@@ -551,7 +551,35 @@ function toggleSidebar() {
 }
 
 /* ================= Logout ================= */
-function handleDeleteAccount() {
+/* ================= Background ================= */
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+const particles = Array.from({length:80},()=>({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    s:Math.random()*2,
+    vx:Math.random()-.5,
+    vy:Math.random()-.5
+}));
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>canvas.width) p.vx*=-1;
+        if(p.y<0||p.y>canvas.height) p.vy*=-1;
+        ctx.fillStyle='#0044cc';
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.s,0,Math.PI*2);
+        ctx.fill();
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+        function handleDeleteAccount() {
     Swal.fire({
         title: '⚠️ هل أنت متأكد من حذف الحساب؟',
         text: 'الحساب سيحذف نهائيًا ولن يمكنك استخدام الإيميل خلال 10 أيام',
@@ -632,39 +660,10 @@ function handleDeleteAccount() {
                 console.error(error);
             }
         }
-
-/* ================= Background ================= */
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = innerWidth;
-canvas.height = innerHeight;
-
-const particles = Array.from({length:80},()=>({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    s:Math.random()*2,
-    vx:Math.random()-.5,
-    vy:Math.random()-.5
-}));
-
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-        p.x+=p.vx; p.y+=p.vy;
-        if(p.x<0||p.x>canvas.width) p.vx*=-1;
-        if(p.y<0||p.y>canvas.height) p.vy*=-1;
-        ctx.fillStyle='#0044cc';
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.s,0,Math.PI*2);
-        ctx.fill();
-    });
-    requestAnimationFrame(animate);
-}
-animate();
-        
 </script>
 </body>
 </html>
+
 
 
 
