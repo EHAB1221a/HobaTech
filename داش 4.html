@@ -448,13 +448,11 @@ const firebaseConfig = {
     appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
     measurementId: "G-EBHF8FEDB2"
 };
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();  // << ده اللي كان ناقص
-
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();  // << ده اللي كان ناقص
 auth.onAuthStateChanged(user => {
     if (!user) return;
     const setEmail = document.getElementById('set-email');
@@ -654,5 +652,6 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
