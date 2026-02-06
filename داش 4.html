@@ -594,7 +594,7 @@ function toggleSidebar() {
         }
     });
 }
-        document.getElementById("logoutBtn").onclick = async () => {
+        document.getElementById("handleDeleteAccount").onclick = async () => {
         const user = auth.currentUser;
         if(!user){
             Swal.fire('تنبيه','غير مسجل دخول!','warning');
@@ -662,6 +662,7 @@ animate();
 </script>
 </body>
 </html>
+
 
 
 
