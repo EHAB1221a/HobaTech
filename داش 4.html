@@ -5,6 +5,10 @@
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المكتبة الرقمية | HOBA TECH</title>
@@ -409,7 +413,13 @@
                         </button>
                     </div>
 
-      
+      <!-- زر حذف الحساب -->
+<div class="logout-wrapper">
+    <button id="deleteAccountBtn" class="luxury-logout">
+        <i class="fas fa-user-slash"></i> حذف حسابي
+        <span class="glow-effect"></span>
+    </button>
+</div>
     <div id="overlay">
         <div style="cursor:pointer; color:var(--glow-color);" onclick="closeSubject()"><i class="fas fa-arrow-right"></i> عودة</div>
         <h1 id="sub-title"></h1>
@@ -471,6 +481,7 @@ async function sendMyReset() {
     }
 }
 
+
 /* ================= Members ================= */
 const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
 
@@ -528,6 +539,7 @@ const API_URL = 'https://sheetdb.io/api/v1/nf4mijhi1a6u4';
             }
         }
 
+        
 loadTechMembers();
 
 /* ================= Navigation ================= */
@@ -574,25 +586,68 @@ function animate(){
     requestAnimationFrame(animate);
 }
 animate();
-       
+
+
+document.getElementById('deleteAccountBtn').onclick = function () {
+
+  Swal.fire({
+    title: '⚠️ تأكيد حذف الحساب',
+    text: 'سيتم حذف الحساب نهائيًا ولن يمكنك استخدام الإيميل لمدة 10 أيام',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#ff4444',
+    confirmButtonText: 'نعم، احذف الحساب',
+    cancelButtonText: 'إلغاء'
+  }).then(async (res) => {
+
+    if (!res.isConfirmed) return;
+
+    const user = auth.currentUser;
+    if (!user) {
+      Swal.fire('خطأ', 'غير مسجل دخول', 'error');
+      return;
+    }
+
+    const password = prompt('أدخل كلمة السر لتأكيد الحذف:');
+    if (!password) return;
+
+    try {
+      // إعادة التحقق
+      const credential =
+        firebase.auth.EmailAuthProvider.credential(user.email, password);
+      await user.reauthenticateWithCredential(credential);
+
+      // حظر الإيميل 10 أيام
+      await db.collection('banned_emails').doc(user.email).set({
+        bannedUntil: firebase.firestore.Timestamp.fromDate(
+          new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
+        )
+      });
+
+      // حذف بيانات المستخدم
+      await db.collection('users').doc(user.uid).delete();
+
+      // حذف الحساب نفسه
+      await user.delete();
+
+      Swal.fire(
+        'تم الحذف',
+        'تم حذف الحساب ولن يمكنك استخدام الإيميل لمدة 10 أيام',
+        'success'
+      ).then(() => {
+        window.location.href = 'التسجيل.html';
+      });
+
+    } catch (error) {
+      if (error.code === 'auth/wrong-password') {
+        Swal.fire('خطأ', 'كلمة السر غير صحيحة', 'error');
+      } else {
+        Swal.fire('خطأ', error.message, 'error');
+        console.error(error);
+      }
+    }
+  });
+};
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
