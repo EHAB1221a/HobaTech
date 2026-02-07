@@ -665,9 +665,19 @@ function showPage(pageId, el) {
 
 /* ================= Sidebar ================= */
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
 }
 
+// لما تدوس على زر القائمة
+document.querySelector('.menu-toggle').addEventListener('click', toggleSidebar);
+
+// لو عايز تضغط على أي لينك في القايمة والقائمة تقفل
+document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('active');
+    });
+});
 /* ================= Background ================= */
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
@@ -758,28 +768,11 @@ document.getElementById('deleteAccountBtn').onclick = function () {
     }
   });
 };
-        let sidebarOpen = false;
-const sidebar = document.getElementById('sidebar');
-const toggleBtn = document.querySelector('.menu-toggle');
 
-function toggleSidebar() {
-    sidebar.classList.toggle('active');
-    sidebarOpen = sidebar.classList.contains('active');
-}
-
-// ربط الزرار
-toggleBtn.addEventListener('click', toggleSidebar);
-
-// لو ضغط المستخدم بره القايمة، تقفل
-document.addEventListener('click', function(e){
-    if(sidebarOpen && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-        sidebar.classList.remove('active');
-        sidebarOpen = false;
-    }
-});
 </script>
 </body>
 </html>
+
 
 
 
