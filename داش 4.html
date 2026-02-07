@@ -687,16 +687,17 @@ function showPage(pageId, el) {
 /* ================= Sidebar ================= */
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('active');
+    sidebar.classList.toggle('active');  // يفتح أو يقفل
 }
 
-// لما تدوس على زر القائمة
+// زر القائمة
 document.querySelector('.menu-toggle').addEventListener('click', toggleSidebar);
 
-// لو عايز تضغط على أي لينك في القايمة والقائمة تقفل
+// لما تدوس على أي لينك في القايمة، القائمة تقفل تلقائي
 document.querySelectorAll('.sidebar .nav-link').forEach(link => {
     link.addEventListener('click', () => {
-        document.getElementById('sidebar').classList.remove('active');
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.remove('active');  // تقفل
     });
 });
 /* ================= Background ================= */
@@ -793,6 +794,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
