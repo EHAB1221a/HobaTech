@@ -758,9 +758,29 @@ document.getElementById('deleteAccountBtn').onclick = function () {
     }
   });
 };
+        let sidebarOpen = false;
+const sidebar = document.getElementById('sidebar');
+const toggleBtn = document.querySelector('.menu-toggle');
+
+function toggleSidebar() {
+    sidebar.classList.toggle('active');
+    sidebarOpen = sidebar.classList.contains('active');
+}
+
+// ربط الزرار
+toggleBtn.addEventListener('click', toggleSidebar);
+
+// لو ضغط المستخدم بره القايمة، تقفل
+document.addEventListener('click', function(e){
+    if(sidebarOpen && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+        sidebarOpen = false;
+    }
+});
 </script>
 </body>
 </html>
+
 
 
 
