@@ -353,6 +353,16 @@
     border: 3px solid #3b82f6;
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
+     .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;       /* ده اللي يخليها تنزل */
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* سكرول ناعم على الموبايل */
+}
     </style>
 </head>
 <body>
@@ -751,6 +761,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
