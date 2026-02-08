@@ -125,9 +125,55 @@
     from { transform: scale(1); text-shadow: 0 0 10px #00f2ff; }
     to { transform: scale(1.05); text-shadow: 0 0 30px #00f2ff, 0 0 50px #7000ff; }
 }
+        header {
+    padding: 15px 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* تنسيق القائمة */
+nav {
+    display: flex;
+    justify-content: flex-end; /* يحرك الرابط لليمين */
+    align-items: center;
+    gap: 20px;
+}
+
+/* رابط الصفحة الرئيسية */
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: right;
+    gap: 8px;
+    background-color: #1f2937; /* لون الزر */
+}
+
+/* تأثير hover */
+.nav-link:hover {
+    background-color: #00d4ff;
+    color: #2061c4;
+    transform: scale(1.05);
+}
+
+/* أيقونة */
+.nav-link i {
+    font-size: 20px;
+}
     </style>
 </head>
 <body>
+     <header>
+        <nav>
+            <a href="داش 4.html" class="nav-link">
+                <i class="fa-solid fa-house"></i> الصفحة الرئيسية
+            </a>
+        </nav>
+    </header>
     <div class="bubbles-container" id="bubbles-bg"></div>
     <div class="logo-text">HOBA TECH</div>
     <h1>نتيجة الطلاب في الامتحان🏆</h1>
@@ -338,3 +384,4 @@ window.onload = function() {
 </body>
 
 </html>
+
