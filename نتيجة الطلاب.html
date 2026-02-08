@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>    <link rel="icon" type="image/png" sizes="1000x1000" href="1769979851931.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة شرف الأوائل | Hoba Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #ffd700; --blue: #00f2ff; --glass-bg: rgba(255, 255, 255, 0.05); }
+        body {
+            background: #020617 url('wallhaven-qr27rq.jpg') no-repeat center center fixed;
+            background-size: cover; color: #fff; font-family: 'Cairo', sans-serif;
+            margin: 0; padding: 50px 10px; display: flex; flex-direction: column; align-items: center;
+        }
+        h1 { font-weight: 900; color: var(--blue); text-shadow: 0 0 15px rgba(0,242,255,0.4); text-align: center; }
+        .pyramid { display: flex; flex-direction: column; align-items: center; gap: 40px; margin-top: 30px; width: 100%; max-width: 1400px; }
+        .row { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; width: 100%; }
+        
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 15px 5px; width: 130px; text-align: center; position: relative; transition: 0.3s;
+            margin-bottom: 20px;
+        }
+        .glass-card:hover { transform: translateY(-5px); border-color: var(--blue); background: rgba(255, 255, 255, 0.1); }
+        
+        .rank-tag {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--blue); color: #000; padding: 2px 10px; border-radius: 50px; font-weight: bold; font-size: 0.75rem; white-space: nowrap; z-index: 10;
+        }
+        
+        .img-wrapper { width: 65px; height: 65px; margin: 5px auto 10px; border-radius: 50%; border: 2px solid var(--blue); overflow: hidden; background: #111; }
+        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .name { font-weight: bold; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 5px; }
+        .score-tag { color: var(--gold); font-weight: 900; display: block; margin-top: 5px; font-size: 0.9rem; }
+        .time-tag { font-size: 0.6rem; color: #aaa; margin-top: 5px; }
+
+        .logo-text {
+            font-size: 4rem; font-weight: 900;
+            color: #fff; text-align: center;
+            text-shadow: 0 0 10px var(--blue), 0 0 20px var(--blue);
+            margin-bottom: 5px;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px var(--blue); transform: scale(1); }
+            to { text-shadow: 0 0 30px var(--blue), 0 0 50px #7000ff; transform: scale(1.02); }
+        }
+
+        h1 { font-size: 1.5rem; opacity: 0.8; margin-top: 0; margin-bottom: 50px; }
+
+        .pyramid { display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; max-width: 1400px; }
+        .row { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; width: 100%; }
+        /* تمييز المركز الأول (الذهبي) */
+        .first-place { width: 170px; border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+        .first-place .rank-tag { background: var(--gold); box-shadow: 0 0 15px var(--gold); font-size: 0.9rem; }
+        .first-place .img-wrapper { width: 90px; height: 90px; border-color: var(--gold); }
+        .first-place .name { color: var(--gold); font-size: 1.1rem; }
+        
+      
+        #loading { font-size: 1.5rem; color: var(--blue); margin-top: 50px; }
+
+        /* حاوية الخلفية */
+.bubbles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* عشان تكون ورا الكروت */
+    overflow: hidden;
+    background: radial-gradient(black);
+}
+
+/* شكل الفقاعة الواحدة */
+.bubble {
+    position: absolute;
+    bottom: -100px;
+    background: #d0ff00; /* لون الفقاعات الأزرق */
+    border-radius: 50%;
+    opacity: 0.1;
+    filter: blur(8px);
+    animation: moveUp 10s infinite linear;
+}
+
+/* حركة الصعود للأعلى */
+@keyframes moveUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        transform: translateY(-120vh) scale(1.5);
+        opacity: 0;
+    }
+}
+/* خلفية الفقاعات */
+#bubbles-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; overflow: hidden;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+}
+.bubble {
+    position: absolute; bottom: -100px; background: #00f2ff;
+    border-radius: 50%; opacity: 0.1; filter: blur(8px);
+    animation: moveUp 10s infinite linear;
+}
+@keyframes moveUp {
+    0% { transform: translateY(0) scale(1); opacity: 0.1; }
+    50% { opacity: 0.4; }
+    100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
+}
+
+/* حركة نبض اللوجو */
+.brand-logo {
+    animation: glowEffect 2s infinite alternate;
+}
+@keyframes glowEffect {
+    from { transform: scale(1); text-shadow: 0 0 10px #00f2ff; }
+    to { transform: scale(1.05); text-shadow: 0 0 30px #00f2ff, 0 0 50px #7000ff; }
+}
+    </style>
+</head>
+<body>
+    <div class="bubbles-container" id="bubbles-bg"></div>
+    <div class="logo-text">HOBA TECH</div>
+    <h1>نتيجة الطلاب في الامتحان🏆</h1>
+    <div id="loading">جاري جلب الأبطال من القاعدة...</div>
+    <div class="pyramid" id="leaderboard"></div>
+
+    <script>
+        const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1yaDF2SSNcv88Z2FLkv-qrupFlE14rlasQsRfECBFmiQ0GvNkwdEdKRxbYMNsqfWma-fDHcyxZzaN/pub?output=csv";
+
+        // دالة معالجة روابط الصور
+        function formatDriveUrl(url) {
+            if (!url) return "";
+            let fileId = "";
+            if (url.includes('id=')) {
+                fileId = url.split('id=')[1].split('&')[0];
+            } else if (url.includes('/d/')) {
+                fileId = url.split('/d/')[1].split('/')[0];
+            }
+            return fileId ? `https://lh3.googleusercontent.com/d/${fileId}` : url;
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(sheetURL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1);
+
+                let students = rows.map(row => {
+                    const cols = row.split(',');
+                    return {
+                        name: cols[0]?.trim(),
+                        img: formatDriveUrl(cols[1]?.trim()),
+                        score: parseFloat(cols[2]) || 0,
+                        date: cols[3]?.trim() || '',
+                        time: cols[4]?.trim() || ''
+                    };
+                })
+                .filter(s => s.name) 
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 400); // تحديد الحد الأقصى 400 كارت
+
+                const uniqueScores = [...new Set(students.map(s => s.score))].sort((a, b) => b - a);
+                
+                students = students.map(s => {
+                    const rank = uniqueScores.indexOf(s.score) + 1;
+                    const count = students.filter(std => std.score === s.score).length;
+                    return { ...s, rank: rank, isMultiple: count > 1 };
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                displayPyramid(students, uniqueScores[0]);
+            } catch (e) {
+                document.getElementById('loading').innerText = "خطأ في الاتصال بالقاعدة!";
+            }
+        }
+
+        function createCard(s, topScore) {
+            if (!s) return "";
+            const isTopScore = s.score === topScore;
+            const cardClass = isTopScore ? 'first-place' : '';
+            let rankText = s.rank === 1 ? "الأول 👑" : `المركز ${s.rank}${s.isMultiple ? ' مكرر' : ''}`;
+            const fallbackImg = `https://ui-avatars.com/api/?name=${encodeURI(s.name)}&background=random&color=fff`;
+
+            return `
+                <div class="glass-card ${cardClass}">
+                    <div class="rank-tag">${rankText}</div>
+                    <div class="img-wrapper">
+                        <img src="${s.img}" onerror="this.src='${fallbackImg}'">
+                    </div>
+                    <div class="name">${s.name}</div>
+                    <span class="score-tag">${s.score} درجة</span>
+                    <div class="time-tag">${s.date} | ${s.time}</div>
+                </div>
+            `;
+        }
+
+        function displayPyramid(students, topScore) {
+            const container = document.getElementById('leaderboard');
+            let html = "";
+            let index = 0;
+
+            // 1. الجزء الهرمي (أول 4 صفوف: 1، 2، 3، 4) - إجمالي 10 طلاب
+            const startRows = [1, 2, 3, 4];
+            startRows.forEach(size => {
+                if (index < students.length) {
+                    let rowHtml = '<div class="row">';
+                    for (let i = 0; i < size; i++) {
+                        if (students[index]) {
+                            rowHtml += createCard(students[index], topScore);
+                            index++;
+                        }
+                    }
+                    rowHtml += '</div>';
+                    html += rowHtml;
+                }
+            });
+
+            // 2. الجزء المنظم (صفوف من 10 كروت) لبقية الـ 400 طالب
+            while (index < students.length) {
+                let rowHtml = '<div class="row">';
+                for (let i = 0; i < 8; i++) { // هنا حددنا 10 كروت في الصف
+                    if (students[index]) {
+                        rowHtml += createCard(students[index], topScore);
+                        index++;
+                    }
+                }
+                rowHtml += '</div>';
+                html += rowHtml;
+            }
+
+            container.innerHTML = html;
+        }
+
+        loadData();
+        function createBubbles() {
+    const container = document.getElementById('bubbles-bg');
+    const bubbleCount = 25; // عدد الفقاعات اللي بتتحرك في وقت واحد
+
+    for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        
+        // توزيع عشوائي للفقاعات
+        const size = Math.random() * 60 + 20 + 'px'; // حجم بين 20 و 80 بكسل
+        bubble.style.width = size;
+        bubble.style.height = size;
+        bubble.style.left = Math.random() * 100 + '%'; // مكانها بالعرض
+        bubble.style.animationDuration = Math.random() * 5 + 7 + 's'; // سرعة الصعود
+        bubble.style.animationDelay = Math.random() * 10 + 's'; // تأخير البداية عشان ميبدؤوش مع بعض
+        
+        container.appendChild(bubble);
+    }
+}
+
+// تشغيل الوظيفة أول ما الصفحة تفتح
+createBubbles();
+function launchCelebration() {
+    var duration = 6 * 1000; // مدة الضرب (6 ثواني)
+    var end = Date.now() + duration;
+
+    (function frame() {
+        // الضرب من الشمال
+        confetti({ 
+            particleCount: 5, 
+            angle: 60, 
+            spread: 55, 
+            origin: { x: 0 }, 
+            colors: ['#d4af37', '#ffffff', '#8a6d29'] 
+        });
+        // الضرب من اليمين
+        confetti({ 
+            particleCount: 5, 
+            angle: 120, 
+            spread: 55, 
+            origin: { x: 1 }, 
+            colors: ['#d4af37', '#ffffff', '#8a6d29'] 
+        });
+
+        if (Date.now() < end) requestAnimationFrame(frame);
+    }());
+}
+
+/* كود المكتبة المصغر - نوضع هنا لضمان التشغيل 100% */
+ // وظيفة توليد الفقاعات
+function createBubbles() {
+    const bg = document.getElementById('bubbles-bg') || document.body;
+    for (let i = 0; i < 25; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        b.style.left = Math.random() * 100 + '%';
+        b.style.width = b.style.height = (Math.random() * 50 + 20) + 'px';
+        b.style.animationDelay = Math.random() * 10 + 's';
+        bg.appendChild(b);
+    }
+}
+
+// وظيفة ضرب الورق الملون من الجنبين
+function fireConfetti() {
+    var end = Date.now() + (15* 1000); // هيستمر 4 ثواني
+    (function frame() {
+        confetti({ 
+    particleCount: 4, 
+    angle: 60, 
+    spread: 55, 
+    origin: { x: 0, y: 0.7 }, 
+    colors: ['#ffffff', '#FFD700'] // أبيض وأصفر ذهبي
+});
+
+confetti({ 
+    particleCount: 4, 
+    angle: 120, 
+    spread: 55, 
+    origin: { x: 1, y: 0.7 }, 
+    colors: ['#ffffff', '#FFD700'] // أبيض وأصفر ذهبي
+});
+
+if (Date.now() < end) requestAnimationFrame(frame);
+    }());
+}
+
+// تشغيل الحركات فور تحميل الصفحة
+window.onload = function() {
+    createBubbles();
+    fireConfetti();
+};
+
+    </script>
+</body>
+</html>

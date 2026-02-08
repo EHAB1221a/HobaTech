@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل الأبطال | Hoba Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #020617 url('') no-repeat center center fixed;
+            background-size: cover; font-family: 'Cairo', sans-serif; color: #fff;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+        }
+        .register-card {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 30px;
+            padding: 40px; width: 90%; max-width: 450px; text-align: center;
+        }
+        h2 { color: #00f2ff; margin-bottom: 20px; }
+        input {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white;
+        }
+        .btn {
+            background: linear-gradient(45deg, #00f2ff, #0066ff);
+            color: white; border: none; padding: 15px; width: 100%;
+            border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
+        #status { margin-top: 15px; font-size: 0.9rem; }
+        /* حاوية الخلفية المتحركة */
+#bubbles-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* عشان تظهر ورا الكروت وصورتك */
+    overflow: hidden;
+    pointer-events: none; /* عشان متغطيش على الضغط على الكروت */
+}
+
+/* شكل الفقاعة */
+.bubble {
+    position: absolute;
+    bottom: -100px;
+    background: #00f2ff; /* لون الفقاعات الأزرق السماوي */
+    border-radius: 50%;
+    opacity: 0.2; /* درجة الشفافية عشان متداريش الخلفية الأساسية */
+    filter: blur(8px);
+    animation: moveUp 10s infinite linear;
+}
+
+/* حركة الصعود للأعلى */
+@keyframes moveUp {
+    0% { transform: translateY(0) scale(1); opacity: 0.1; }
+    50% { opacity: 0.4; }
+    100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
+}
+/* تنسيق الكارت الأساسي */
+.register-card {
+    background: rgba(255, 255, 255, 0.05); /* تأثير الزجاج */
+    backdrop-filter: blur(15px); /* تغبيش الخلفية ورا الكارت */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 40px 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 
+                0 0 20px rgba(0, 242, 255, 0.2); /* توهج خفيف أزرق */
+    position: relative;
+    z-index: 10;
+    transition: 0.5s;
+}
+
+.register-card:hover {
+    border-color: var(--blue);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.4); /* زيادة التوهج عند الوقوف عليه */
+}
+
+/* عناوين منورة */
+.register-card h2 {
+    color: var(--gold);
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    letter-spacing: 2px;
+}
+
+.register-card h1 {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px var(--blue);
+    animation: glowText 2s infinite alternate;
+}
+
+@keyframes glowText {
+    from { text-shadow: 0 0 10px var(--blue); }
+    to { text-shadow: 0 0 25px var(--blue), 0 0 35px #7000ff; }
+}
+
+/* تنسيق المدخلات (Inputs) */
+input[type="text"], input[type="file"] {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: var(--blue);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* زرار الدخول المنور */
+.btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, var(--blue), #7000ff);
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 242, 255, 0.3);
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 242, 255, 0.5);
+}
+
+#status {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--gold);
+}
+    </style>
+</head>
+<body>
+    <div id="bubbles-bg"></div> <div class="register-card">
+<h1>مسابقة</h1>
+        <h1>Hoba Tech | هوبا تيك</h1>
+        <p style="color: #ccc; margin-bottom: 20px;">سجل بياناتك لدخول الامتحان</p>
+        
+        <input type="text" id="userName" placeholder="الاسم ثلاثي (مهم جداً)">
+        
+        <label style="display:block; text-align:right; font-size:0.8rem; margin:10px 5px 5px; color:var(--blue);">اختر صورتك الشخصية:</label>
+        <input type="file" id="userImg" accept="image/*">
+        
+        <button class="btn" onclick="submitData()">ابدأ الامتحان الآن</button>
+        <div id="status"></div>
+    </div>
+
+<script>
+    // الرابط الجديد بتاعك
+    const scriptURL = "";
+
+    function submitData() {
+    const name = document.getElementById('userName').value;
+    const fileInput = document.getElementById('userImg');
+    const status = document.getElementById('status');
+
+    if (!name || !fileInput.files[0]) {
+        alert("اكتب اسمك وارفع صورتك يا مستشار!");
+        return;
+    }
+
+    status.innerHTML = "جاري تسجيل بياناتك... استغفر حتى ينتهي";
+    
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const imageData = e.target.result;
+
+        // حفظ البيانات في المتصفح عشان صفحة الامتحان تشوفها
+        localStorage.setItem('hobaName', name);
+        localStorage.setItem('hobaImg', imageData);
+
+        // إرسال البيانات
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', // الحل لمشكلة Failed to fetch
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                name: name, 
+                image: imageData,
+                type: 'register'
+            })
+        })
+        .then(() => {
+            // بما إننا استخدمنا no-cors، الكود هيدخل هنا فوراً بمجرد الإرسال
+            status.style.color = "#00ff00";
+            status.innerHTML = "تم التسجيل بنجاح... جاري تحويلك للامتحان ⏳";
+            setTimeout(() => {
+                window.location.href = "الاخت.html"; 
+            }, 2000);
+        })
+        .catch(err => {
+            console.error("Error details:", err);
+            status.style.color = "#ff0000";
+            status.innerHTML = "حدث خطأ في الشبكة، لكن البيانات قد تكون وصلت!";
+        });
+    };
+    reader.readAsDataURL(file);
+
+    }
+    function createBubbles() {
+    const bg = document.getElementById('bubbles-bg');
+    const bubbleCount = 30; // عدد الفقاعات
+
+    for (let i = 0; i < bubbleCount; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        
+        // توزيع عشوائي
+        const size = Math.random() * 50 + 20 + 'px';
+        b.style.width = size;
+        b.style.height = size;
+        b.style.left = Math.random() * 100 + '%'; 
+        b.style.animationDuration = Math.random() * 5 + 7 + 's'; // سرعة مختلفة لكل فقاعة
+        b.style.animationDelay = Math.random() * 10 + 's'; // تأخير البداية
+        
+        bg.appendChild(b);
+    }
+}
+
+// استدعاء الوظيفة (تأكد من وضعها داخل window.onload لو عندك واحدة)
+createBubbles();
+
+</script>
+</body>
+</html>

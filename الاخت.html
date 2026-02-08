@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إختبار النخبة | Hoba Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --blue: #00f2ff; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); }
+        body {
+            background: #020617 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            color: white; font-family: 'Cairo', sans-serif;
+            margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .container {
+            max-width: 800px; width: 100%; background: var(--glass); 
+            backdrop-filter: blur(15px); border: 1px solid var(--border);
+            border-radius: 30px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: var(--blue); font-weight: 900; font-size: 2.5rem; margin: 0; }
+        .header p { color: #888; margin-top: 10px; }
+        
+        .question-card {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            padding: 25px; border-radius: 20px; margin-bottom: 25px; transition: 0.3s;
+        }
+        .question-card:hover { border-color: var(--blue); background: rgba(0, 242, 255, 0.02); }
+        .question-text { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: #eee; }
+        
+        .option {
+            display: block; position: relative; padding: 15px 45px 15px 15px;
+            margin-bottom: 12px; cursor: pointer; background: rgba(255,255,255,0.05);
+            border-radius: 12px; transition: 0.2s; border: 1px solid transparent;
+        }
+        .option:hover { background: rgba(255,255,255,0.1); }
+        .option input { position: absolute; opacity: 0; }
+        .option .checkmark {
+            position: absolute; right: 15px; top: 18px; height: 18px; width: 18px;
+            background-color: transparent; border: 2px solid var(--blue); border-radius: 50%;
+        }
+        .option input:checked ~ .checkmark { background-color: var(--blue); }
+        
+        .btn-submit {
+            background: linear-gradient(45deg, #00f2ff, #0066ff);
+            color: white; border: none; padding: 20px; border-radius: 50px;
+            font-size: 1.3rem; font-weight: 900; cursor: pointer; width: 100%;
+            margin-top: 30px; transition: 0.3s; box-shadow: 0 10px 20px rgba(0, 242, 255, 0.2);
+        }
+        .btn-submit:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 242, 255, 0.4); }
+        
+        #loading { display: none; text-align: center; margin-top: 20px; color: var(--blue); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Hoba Tech Exam ⚖️</h1>
+            <p>اختبار الكفاءة القانونية والتقنية - المستشار إيهاب الدرديري</p>
+        </div>
+
+        <div id="quiz-body">
+            <div class="question-card">
+                <div class="question-text">1. ما هو الإجراء الصحيح عند اكتشاف ثغرة في موقع حكومي؟</div>
+                <label class="option"> الإبلاغ عنها رسمياً (هكر أخلاقي) <input type="radio" name="q1" value="10"><span class="checkmark"></span></label>
+                <label class="option"> استغلالها لتعديل البيانات <input type="radio" name="q1" value="0"><span class="checkmark"></span></label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-text">2. النيابة العسكرية تختص بالتحقيق في الجرائم المتعلقة بـ:</div>
+                <label class="option"> أفراد ومنشآت القوات المسلحة <input type="radio" name="q2" value="10"><span class="checkmark"></span></label>
+                <label class="option"> الخلافات العائلية المدنية <input type="radio" name="q2" value="0"><span class="checkmark"></span></label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-text">3. ما هي اللغة الأساسية لبناء هيكل صفحات الويب؟</div>
+                <label class="option"> HTML <input type="radio" name="q3" value="10"><span class="checkmark"></span></label>
+                <label class="option"> Python <input type="radio" name="q3" value="0"><span class="checkmark"></span></label>
+            </div>
+
+            <button class="btn-submit" onclick="sendResult()">إرسال الإجابات ودخول لوحة الشرف 🚀</button>
+            <div id="loading">جاري إرسال صورتك ودرجتك يا بطل...</div>
+        </div>
+    </div>
+
+    <script>
+        async function sendResult() {
+            const scriptURL = "https://script.google.com/macros/s/AKfycbyRkPfr4YzWyxegpFZ_n1agS5o8u-I4rbat_jF8UovVgdrIDGdeK1u5SMglVCMMKA6J/exec";
+            
+            // 1. سحب البيانات من الذاكرة
+            let userName = localStorage.getItem('hobaName');
+            let userImg = localStorage.getItem('hobaImg') || ""; 
+            
+            if(!userName) {
+                userName = prompt("برجاء إدخال اسمك المسجل به:");
+                if(!userName) return;
+            }
+    
+            // 2. فحص الإجابات
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+    
+            if(!q1 || !q2 || !q3) return alert("يا مستشار، لازم تحل كل الأسئلة!");
+    
+            let score = parseInt(q1.value) + parseInt(q2.value) + parseInt(q3.value);
+            
+            // 3. تجهيز الوقت
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-EG');
+            const timeStr = now.toLocaleTimeString('ar-EG');
+    
+            document.getElementById('loading').style.display = 'block';
+    
+            // 4. إرسال البيانات بنظام JSON (الأنضف والأضمن)
+            try {
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors', // عشان نتخطى حوار الـ CORS
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: userName,
+                        image: userImg,
+                        score: score,
+                        date: dateStr,
+                        time: timeStr
+                    })
+                });
+    
+                function finishExam() {
+    // كود الـ fetch اللي بيبعت للشيت (الرابط اللي عملناه)
+    // ... بعد ما يخلص الإرسال بنجاح:
+    
+    sessionStorage.clear(); // بنفضي الذاكرة تماماً
+    alert("تم الإرسال.. بالتوفيق!");
+    location.reload(); // نرجع الصفحة لأصلها
+}
+                // تحويل المستخدم فوراً
+                statusMsg("عاش يا " + userName + ".. جاري حفظ النتيجة!");
+                setTimeout(() => {
+                    window.location.href = "نتيجة الطلاب.html"; 
+                }, 1500);
+    
+            } catch (err) {
+                console.error(err);
+                alert("حدث خطأ، تأكد من الاتصال بالإنترنت!");
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    
+        function statusMsg(msg) {
+            const loadDiv = document.getElementById('loading');
+            loadDiv.style.display = 'block';
+            loadDiv.innerText = msg;
+        }
+    </script>
+</body>
+</html>
