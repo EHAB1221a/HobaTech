@@ -81,8 +81,8 @@
                 <label class="option"> Python <input type="radio" name="q3" value="0"><span class="checkmark"></span></label>
             </div>
 
-            <button class="btn-submit" onclick="sendResult()">إرسال الإجابات ودخول لوحة الشرف 🚀</button>
-            <div id="loading">جاري إرسال صورتك ودرجتك يا بطل...</div>
+            <button class="btn-submit" onclick="sendResult()">إنهاء الاختبار</button>
+            <div id="loading">جاري  الانهاء انتظر...</div>
         </div>
     </div>
 
@@ -140,7 +140,7 @@
     location.reload(); // نرجع الصفحة لأصلها
 }
                 // تحويل المستخدم فوراً
-                statusMsg("عاش يا " + userName + ".. جاري حفظ النتيجة!");
+                statusMsg("عاش يا " + userName + "..  اجاري حفظ النتيجة انتظر");
                 setTimeout(() => {
                     window.location.href = "نتيجة الطلاب.html"; 
                 }, 1500);
@@ -161,3 +161,4 @@
 </body>
 
 </html>
+
