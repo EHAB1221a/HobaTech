@@ -171,11 +171,11 @@ input:focus {
     const status = document.getElementById('status');
 
     if (!name || !fileInput.files[0]) {
-        alert("اكتب اسمك وارفع صورتك يا مستشار ويفضل صورة وهمية للبنات");
+        alert("اكتب اسمك وارفع صورتك يا مستشار! ويفضل صورة وهمية للبنات");
         return;
     }
 
-    status.innerHTML = "جاري التسجيل... استغفر حتى ينتهي";
+    status.innerHTML = "جاري تسجيل بياناتك... استغفر حتى ينتهي";
     
     const file = fileInput.files[0];
     const reader = new FileReader();
@@ -201,7 +201,7 @@ input:focus {
         .then(() => {
             // بما إننا استخدمنا no-cors، الكود هيدخل هنا فوراً بمجرد الإرسال
             status.style.color = "#00ff00";
-            status.innerHTML = "تم التسجيل بنجاح.. ⏳";
+            status.innerHTML = "تم التسجيل بنجاح... ⏳";
             setTimeout(() => {
                 window.location.href = "الاخت.html"; 
             }, 2000);
@@ -241,4 +241,3 @@ createBubbles();
 </script>
 </body>
 </html>
-
