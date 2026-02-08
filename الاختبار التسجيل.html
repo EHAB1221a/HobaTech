@@ -171,7 +171,7 @@ input:focus {
     const status = document.getElementById('status');
 
     if (!name || !fileInput.files[0]) {
-        alert("اكتب اسمك وارفع صورتك يا مستشار! ويفضل صورة وهمية للبنات");
+        alert("اكتب اسمك وارفع صورتك يا مستشار!");
         return;
     }
 
@@ -201,7 +201,7 @@ input:focus {
         .then(() => {
             // بما إننا استخدمنا no-cors، الكود هيدخل هنا فوراً بمجرد الإرسال
             status.style.color = "#00ff00";
-            status.innerHTML = "تم التسجيل بنجاح... ⏳";
+            status.innerHTML = "تم التسجيل بنجاح... جاري تحويلك للامتحان ⏳";
             setTimeout(() => {
                 window.location.href = "الاخت.html"; 
             }, 2000);
