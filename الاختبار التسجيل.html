@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
     <meta charset="UTF-8">
     <title>تسجيل الأبطال | Hoba Tech</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
@@ -171,7 +172,7 @@ input:focus {
     const status = document.getElementById('status');
 
     if (!name || !fileInput.files[0]) {
-        alert("اكتب اسمك وارفع صورتك يا مستشار!");
+        alert("اكتب اسمك وارفع صورتك يا مستشار! ويفضل صورة وهمية للبنات");
         return;
     }
 
@@ -201,7 +202,7 @@ input:focus {
         .then(() => {
             // بما إننا استخدمنا no-cors، الكود هيدخل هنا فوراً بمجرد الإرسال
             status.style.color = "#00ff00";
-            status.innerHTML = "تم التسجيل بنجاح... جاري تحويلك للامتحان ⏳";
+            status.innerHTML = "تم التسجيل بنجاح... ⏳";
             setTimeout(() => {
                 window.location.href = "الاخت.html"; 
             }, 2000);
