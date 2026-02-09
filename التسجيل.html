@@ -84,10 +84,13 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const SHEET_URL = 'https://sheetdb.io/api/v1/cyat9pb9wpa0k';
+    
+    // استخدم الرابط الخاص بك هنا
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwNXXdDzHT8pI12QyMXIzQicDruL1M2rnVR9j1E4fEKexVnjUzf-q2tJPfB8x7ZXC2G6w/exec';
 
     let clicks = 0;
 
+    // جعل الدوال تعمل مع الأزرار في HTML
     window.toggle = (mode) => {
         clicks = 0;
         document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none';
@@ -99,71 +102,76 @@
         else if(mode === 'forgot') desc.innerText = 'استعادة كلمة السر';
         else desc.innerText = 'مرحباً بك يا مستشار';
 
-        document.getElementById('signup-btn').innerText = "تأكيد الاشتراك";
-        document.getElementById('signup-btn').style.background = "";
         document.getElementById('error-msg').innerText = "";
     };
 
     window.handleSignup = async () => {
-        const name = document.getElementById('s-name').value;
-        const phone = document.getElementById('s-phone').value;
+        const name = document.getElementById('s-name').value.trim();
+        const phone = document.getElementById('s-phone').value.trim();
         const group = document.getElementById('s-group').value;
-        const email = document.getElementById('s-email').value;
-        const pass = document.getElementById('s-pass').value;
+        const email = document.getElementById('s-email').value.trim();
+        const pass = document.getElementById('s-pass').value.trim();
         const btn = document.getElementById('signup-btn');
         const msg = document.getElementById('error-msg');
 
-        if(!name || !phone || !group || !email || !pass) { msg.innerText = "كمل بياناتك يا مستشار"; return; }
+        if(!name || !phone || !group || !email || !pass) { 
+            msg.innerText = "كمل بياناتك يا مستشار"; 
+            return; 
+        }
 
         clicks++;
         if(clicks === 1) {
-            btn.innerText = "تم انشاء حسابك بنجاح اضغط مرة أخرى للدخول ";
+            btn.innerText = "اضغط مرة أخرى للتأكيد والدخول";
             btn.style.background = "#28a745";
-            msg.innerText = "تحزير يرجي عدم مشاركة بيناتك مع اي شخص ";
+            msg.style.color = "#ffcc00";
+            msg.innerText = "تحذير: يرجى عدم مشاركة بياناتك مع أي شخص";
             return;
         }
 
         btn.disabled = true;
-        msg.innerText = "جاري انشاء الحساب استغفر حتي ينتهي";
+        btn.innerText = "جاري إنشاء الحساب...";
 
         try {
+            // 1. Firebase Auth
             const res = await createUserWithEmailAndPassword(auth, email, pass);
-            setDoc(doc(db, "users", res.user.uid), { fullName: name, phone, group, email, role: "user" });
+            
+            // 2. Firestore Database
+            await setDoc(doc(db, "users", res.user.uid), { fullName: name, phone, group, email, role: "عضو" });
 
-          // إرسال للجوجل شيت في الخلفية مع إضافة "عضو"
-fetch(SHEET_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-        data: [{
-            name: name, 
-            phone: phone, 
-            email: email, 
-            group: group, 
-            password: pass, 
-            role: "عضو" // دي الإضافة اللي كانت ناقصة يا وحش
-        }]
-    }),
-    keepalive: true
-});
+            // 3. Google Sheets (الرابط المباشر)
+            const finalSheetUrl = `${SHEET_URL}?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(group)}&role=عضو`;
+            
+            await fetch(finalSheetUrl, { mode: 'no-cors' });
 
-            window.location.assign("داش 4.html");
+            msg.style.color = "#00ff00";
+            msg.innerText = "تم التسجيل بنجاح! جاري التحويل...";
+
+            setTimeout(() => {
+                window.location.assign("داش 4.html");
+            }, 1000);
+
         } catch (e) {
-            clicks = 0; btn.disabled = false; btn.innerText = "تأكيد الاشتراك";
-            msg.innerText = "خطأ: " + e.message;
+            clicks = 0; 
+            btn.disabled = false; 
+            btn.innerText = "تأكيد الاشتراك";
+            btn.style.background = "";
+            msg.style.color = "#ff4444";
+            msg.innerText = "خطأ: " + (e.code === 'auth/email-already-in-use' ? "الإيميل مسجل مسبقاً" : e.message);
         }
     };
 
     window.handleLogin = () => {
-        const email = document.getElementById('l-email').value;
-        const pass = document.getElementById('l-pass').value;
+        const email = document.getElementById('l-email').value.trim();
+        const pass = document.getElementById('l-pass').value.trim();
+        if(!email || !pass) return;
+
         signInWithEmailAndPassword(auth, email, pass)
             .then(() => window.location.assign("داش 4.html"))
             .catch(() => document.getElementById('error-msg').innerText = "بيانات الدخول غلط!");
     };
 
     window.handleReset = async () => {
-        const email = document.getElementById('f-email').value;
+        const email = document.getElementById('f-email').value.trim();
         const msg = document.getElementById('error-msg');
         const btn = document.getElementById('reset-btn');
 
@@ -176,7 +184,7 @@ fetch(SHEET_URL, {
             await sendPasswordResetEmail(auth, email);
             msg.style.color = "#00ff00";
             msg.innerText = "تم إرسال رابط التغيير لبريدك";
-            btn.innerText = "تم الإرسال ";
+            btn.innerText = "تم الإرسال";
         } catch (e) {
             btn.disabled = false;
             btn.innerText = "إرسال رابط التعيين";
@@ -187,6 +195,7 @@ fetch(SHEET_URL, {
 </script>
 </body>
 </html>
+
 
 
 
