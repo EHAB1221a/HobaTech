@@ -69,62 +69,38 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    
     const firebaseConfig = {
-        apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-        authDomain: "hoba-tech.firebaseapp.com",
-        projectId: "hoba-tech",
-        storageBucket: "hoba-tech.firebasestorage.app",
-        messagingSenderId: "465948708700",
-        appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
+      apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+      authDomain: "hoba-tech.firebaseapp.com",
+      projectId: "hoba-tech",
+      appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
     };
-
+    
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
-    
-    // استخدم الرابط الخاص بك هنا
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwNXXdDzHT8pI12QyMXIzQicDruL1M2rnVR9j1E4fEKexVnjUzf-q2tJPfB8x7ZXC2G6w/exec';
+    const SHEET_URL = "https://script.google.com/macros/s/AKfycbwNXXdDzHT8pI12QyMXIzQicDruL1M2rnVR9j1E4fEKexVnjUzf-q2tJPfB8x7ZXC2G6w/exec";
 
-    let clicks = 0;
-
-    // جعل الدوال تعمل مع الأزرار في HTML
-    window.toggle = (mode) => {
-        clicks = 0;
-        document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none';
-        document.getElementById('signup-box').style.display = mode === 'signup' ? 'block' : 'none';
-        document.getElementById('forgot-box').style.display = mode === 'forgot' ? 'block' : 'none';
-        
-        const desc = document.getElementById('card-desc');
-        if(mode === 'signup') desc.innerText = 'انضم لعائلة هوبا تيك';
-        else if(mode === 'forgot') desc.innerText = 'استعادة كلمة السر';
-        else desc.innerText = 'مرحباً بك يا مستشار';
-
+    // دالة التبديل بين الشاشات
+    window.toggle = (view) => {
+        document.getElementById('login-box').style.display = view === 'login' ? 'block' : 'none';
+        document.getElementById('signup-box').style.display = view === 'signup' ? 'block' : 'none';
         document.getElementById('error-msg').innerText = "";
     };
 
+    // دالة إنشاء حساب
     window.handleSignup = async () => {
-        const name = document.getElementById('s-name').value.trim();
-        const phone = document.getElementById('s-phone').value.trim();
-        const group = document.getElementById('s-group').value;
-        const email = document.getElementById('s-email').value.trim();
-        const pass = document.getElementById('s-pass').value.trim();
-        const btn = document.getElementById('signup-btn');
-        const msg = document.getElementById('error-msg');
+        const btn = document.getElementById("signup-btn");
+        const msg = document.getElementById("error-msg");
+        const name = document.getElementById("s-name").value.trim();
+        const phone = document.getElementById("s-phone").value.trim();
+        const email = document.getElementById("s-email").value.trim();
+        const group = document.getElementById("s-group").value;
+        const pass = document.getElementById("s-pass").value.trim();
 
-        if(!name || !phone || !group || !email || !pass) { 
-            msg.innerText = "كمل بياناتك يا مستشار"; 
-            return; 
-        }
-
-        clicks++;
-        if(clicks === 1) {
-            btn.innerText = "اضغط مرة أخرى للتأكيد والدخول";
-            btn.style.background = "#28a745";
-            msg.style.color = "#ffcc00";
-            msg.innerText = "تحذير: يرجى عدم مشاركة بياناتك مع أي شخص";
+        if (!name || !phone || !email || !group || !pass) {
+            msg.innerText = "يرجى إكمال جميع البيانات";
             return;
         }
 
@@ -132,69 +108,32 @@
         btn.innerText = "جاري إنشاء الحساب...";
 
         try {
-            // 1. Firebase Auth
-            const res = await createUserWithEmailAndPassword(auth, email, pass);
-            
-            // 2. Firestore Database
-            await setDoc(doc(db, "users", res.user.uid), { fullName: name, phone, group, email, role: "عضو" });
+            // 1. إنشاء الحساب في Firebase
+            await createUserWithEmailAndPassword(auth, email, pass);
 
-            // 3. Google Sheets (الرابط المباشر)
-            const finalSheetUrl = `${SHEET_URL}?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(group)}&role=عضو`;
+            // 2. إرسال البيانات لجوجل شيت باستخدام fetch
+            const finalUrl = `${SHEET_URL}?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(group)}&role=عضو`;
             
-            await fetch(finalSheetUrl, { mode: 'no-cors' });
+            await fetch(finalUrl, { mode: 'no-cors' });
 
             msg.style.color = "#00ff00";
             msg.innerText = "تم التسجيل بنجاح! جاري التحويل...";
-
+            
             setTimeout(() => {
-                window.location.assign("داش 4.html");
-            }, 1000);
+                window.location.href = "داش 4.html";
+            }, 1500);
 
-        } catch (e) {
-            clicks = 0; 
-            btn.disabled = false; 
-            btn.innerText = "تأكيد الاشتراك";
-            btn.style.background = "";
-            msg.style.color = "#ff4444";
-            msg.innerText = "خطأ: " + (e.code === 'auth/email-already-in-use' ? "الإيميل مسجل مسبقاً" : e.message);
-        }
-    };
-
-    window.handleLogin = () => {
-        const email = document.getElementById('l-email').value.trim();
-        const pass = document.getElementById('l-pass').value.trim();
-        if(!email || !pass) return;
-
-        signInWithEmailAndPassword(auth, email, pass)
-            .then(() => window.location.assign("داش 4.html"))
-            .catch(() => document.getElementById('error-msg').innerText = "بيانات الدخول غلط!");
-    };
-
-    window.handleReset = async () => {
-        const email = document.getElementById('f-email').value.trim();
-        const msg = document.getElementById('error-msg');
-        const btn = document.getElementById('reset-btn');
-
-        if (!email) { msg.innerText = "اكتب البريد الأول!"; return; }
-
-        btn.disabled = true;
-        btn.innerText = "جاري الإرسال...";
-
-        try {
-            await sendPasswordResetEmail(auth, email);
-            msg.style.color = "#00ff00";
-            msg.innerText = "تم إرسال رابط التغيير لبريدك";
-            btn.innerText = "تم الإرسال";
         } catch (e) {
             btn.disabled = false;
-            btn.innerText = "إرسال رابط التعيين";
-            msg.style.color = "#ff4444";
-            msg.innerText = "خطأ: البريد غير مسجل";
+            btn.innerText = "تأكيد الاشتراك";
+            msg.innerText = "خطأ: " + (e.code === 'auth/email-already-in-use' ? "الإيميل مستخدم بالفعل" : "حدث خطأ حاول مرة أخرى");
+            console.error(e);
         }
     };
 </script>
 </body>
 </html>
+
 
 
 
