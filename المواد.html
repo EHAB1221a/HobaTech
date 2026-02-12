@@ -377,6 +377,34 @@
     100% { opacity: 1; }
 }
 .hologram-screen { animation: flicker 0.1s infinite alternate; }
+        /* المكتبة: جعلها مرنة */
+.library-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 20px; 
+}
+
+/* تعديل حاوية الورقة (ميثاق المحاضرة) للموبايل */
+.old-paper-container {
+    width: 95%; /* بدل العرض الثابت */
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px 20px; /* تقليل المسافات في الموبايل */
+    box-sizing: border-box;
+    overflow-wrap: break-word; /* منع خروج النص */
+}
+
+/* جعل النصوص مرنة */
+.neon-text {
+    font-size: clamp(1.2rem, 5vw, 2rem);
+}
+
+/* تنسيق الأزرار لتناسب الموبايل */
+.btn {
+    width: 100%; /* تملأ العرض في الموبايل */
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
 
 
 </style>
@@ -760,4 +788,5 @@ ${examLink ? `
         </script>
         
     </body>
+
 </html>
