@@ -416,6 +416,21 @@
         padding: 20px 15px !important; /* مساحة أكبر للنص في الشاشات الضيقة */
     }
 }
+        /* التنسيق للشاشات الكبيرة (الكمبيوتر واللاب توب) */
+@media (min-width: 992px) {
+    .library-grid { 
+        /* هنا نجبرها تكون 3 أعمدة متساوية فقط */
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 30px;
+    }
+}
+
+/* التنسيق للشاشات المتوسطة (التابلت) */
+@media (min-width: 600px) and (max-width: 991px) {
+    .library-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
 </style>
 </head>
 <body>
@@ -789,4 +804,5 @@ ${examLink ? `
     </body>
 
 </html>
+
 
