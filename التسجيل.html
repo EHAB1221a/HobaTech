@@ -181,9 +181,16 @@
 </div>
 
 <script type="module">
+    // 1. استيراد المكتبات (تم إضافة sendPasswordResetEmail هنا)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import { 
+        getAuth, 
+        createUserWithEmailAndPassword, 
+        signInWithEmailAndPassword, 
+        sendPasswordResetEmail  // <-- دي اللي كانت ناقصة يا بطل
+    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
     
+    // 2. إعدادات Firebase الخاصة بك
     const firebaseConfig = {
       apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
       authDomain: "hoba-tech.firebaseapp.com",
@@ -195,14 +202,49 @@
     const auth = getAuth(app);
     const SHEET_URL = "https://script.google.com/macros/s/AKfycby8m3sDLRcTCmg8g6O-wvEFxgawEQ9bozWHVEgcrZG5hPqiFrFOAQszngFSHRhd94OTgw/exec";
 
+    // 3. دالة التبديل بين الشاشات
     window.toggle = (view) => {
         document.getElementById('login-box').style.display = view === 'login' ? 'block' : 'none';
         document.getElementById('signup-box').style.display = view === 'signup' ? 'block' : 'none';
         document.getElementById('forgot-box').style.display = view === 'forgot' ? 'block' : 'none';
         document.getElementById('error-msg').innerText = "";
-        document.getElementById('card-desc').innerText = view === 'signup' ? 'NEW PROTOCOL SETUP' : 'AUTHENTICATING USER...';
+        document.getElementById('card-desc').innerText = 
+            view === 'signup' ? 'NEW PROTOCOL SETUP' : 
+            view === 'forgot' ? 'RECOVERING IDENTITY...' : 'AUTHENTICATING USER...';
     };
 
+    // 4. دالة إعادة تعيين كلمة السر (المعدلة)
+    window.handleReset = async () => {
+        const emailInput = document.getElementById("f-email");
+        const msg = document.getElementById("error-msg");
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            msg.style.color = "#ff4444";
+            msg.innerText = "يرجى كتابة البريد الإلكتروني أولاً";
+            return;
+        }
+
+        try {
+            console.log("جاري محاولة إرسال رابط التعيين لـ:", email);
+            await sendPasswordResetEmail(auth, email);
+            msg.style.color = "#00f2ff"; 
+            msg.innerText = "تم إرسال الرابط! افحص بريدك (والـ Spam)";
+        } catch (error) {
+            console.error("Firebase Error Code:", error.code);
+            msg.style.color = "#ff4444";
+            
+            if (error.code === 'auth/user-not-found') {
+                msg.innerText = "هذا الإيميل غير مسجل في النظام";
+            } else if (error.code === 'auth/invalid-email') {
+                msg.innerText = "صيغة الإيميل غير صحيحة";
+            } else {
+                msg.innerText = "حدث خطأ: " + error.code;
+            }
+        }
+    };
+
+    // 5. دالة تسجيل الدخول
     window.handleLogin = async () => {
         const email = document.getElementById("l-email").value.trim();
         const pass = document.getElementById("l-pass").value.trim();
@@ -216,10 +258,12 @@
             msg.innerText = "ACCESS GRANTED... Redirecting";
             setTimeout(() => { window.location.href = "داش 4.html"; }, 1000);
         } catch (e) {
+            msg.style.color = "#ff4444";
             msg.innerText = "ACCESS DENIED: بيانات غير صحيحة";
         }
     };
 
+    // 6. دالة إنشاء الحساب
     window.handleSignup = async () => {
         const btn = document.getElementById("signup-btn");
         const msg = document.getElementById("error-msg");
@@ -248,9 +292,11 @@
         } catch (e) {
             btn.disabled = false;
             btn.innerText = "INITIALIZE ACCOUNT";
+            msg.style.color = "#ff4444";
             msg.innerText = "ERROR: " + (e.code === 'auth/email-already-in-use' ? "الإيميل مسجل مسبقاً" : "فشل النظام");
         }
     };
+</script>
 </script>
 </body>
 </html>
