@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المكتبة الرقمية | HOBA TECH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        :root {
+            --glow-color: #0044cc;
+            --bg-dark: #08090a;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: #050505; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: transparent; color: white; overflow-x: hidden; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: -1; }
+
+        /* زر القائمة */
+        .menu-toggle {
+            position: fixed; top: 20px; right: 20px; font-size: 25px;
+            color: white; cursor: pointer; z-index: 1001;
+            background: var(--glow-color); width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; box-shadow: 0 0 15px var(--glow-color); transition: 0.3s;
+        }
+        .menu-toggle:hover { transform: scale(1.1); box-shadow: 0 0 25px var(--glow-color); }
+
+        /* السايد بار */
+        .sidebar {
+            position: fixed; top: 0; right: -300px; width: 280px; height: 100vh;
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(0, 68, 204, 0.3); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 80px 20px; z-index: 1000;
+        }
+        .sidebar.active { right: 0; box-shadow: -10px 0 30px rgba(0, 68, 204, 0.2); }
+
+        .nav-link {
+            padding: 15px; margin-bottom: 10px; border-radius: 12px;
+            color: white; text-decoration: none; display: flex; align-items: center; gap: 12px;
+            transition: 0.3s; font-weight: 700; border: 1px solid transparent; cursor: pointer;
+        }
+        .nav-link:hover, .nav-link.active { background: rgba(0, 68, 204, 0.2); border-color: var(--glow-color); color: var(--glow-color); }
+
+        .container { padding: 100px 50px; transition: 0.5s; }
+
+        /* ستايل الأقسام والبطاقات */
+        .section-card { background: var(--glass); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); max-width: 900px; margin: 0 auto; }
+        
+        /* الرئيسية */
+        .dashboard-header { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-bottom: 50px; }
+        .progress-radar { background: rgba(0, 68, 204, 0.05); border: 2px solid rgba(0, 68, 204, 0.2); border-radius: 30px; padding: 30px; text-align: center; }
+        .circle-wrap { width: 130px; height: 130px; background: #111; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; border: 4px solid var(--glow-color); box-shadow: 0 0 20px var(--glow-color); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 35px var(--glow-color); } }
+        .status-card { background: var(--glass); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        .stats-row { display: flex; justify-content: space-around; margin-top: 20px; }
+        .stat-box span { display: block; font-size: 28px; font-weight: 900; color: var(--glow-color); }
+
+        /* المكتبة */
+        .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .lib-card { background: rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; transition: 0.4s; cursor: pointer; position: relative; }
+        .lib-card:hover { transform: translateY(-5px); border-color: var(--glow-color); background: rgba(0, 68, 204, 0.05); }
+        .lib-card i { font-size: 40px; color: var(--glow-color); margin-bottom: 15px; }
+        .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .lib-card {
+            background: rgba(255, 255, 255, 0.02); border-radius: 25px; padding: 40px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;
+            transition: 0.4s; position: relative; cursor: pointer;
+        }
+        .library-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+        .lib-card:hover {
+            transform: translateY(-10px); border-color: var(--glow-color);
+            box-shadow: 0 0 30px rgba(0, 68, 204, 0.4), inset 0 0 15px rgba(0, 68, 204, 0.2);
+            background: rgba(0, 68, 204, 0.05);
+        }
+        .lib-card i { font-size: 50px; color: var(--glow-color); margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--glow-color)); }
+        .badge { background: #333; padding: 5px 15px; border-radius: 8px; font-size: 11px; position: absolute; top: 20px; left: 20px; }
+
+        /* القوائم (أعضاء/طلبات) */
+        .list-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px 20px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,68,204,0.1); }
+        .btn-accept { background: #0088ff; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        .btn-reject { background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-right: 5px; }
+
+        /* الإعدادات */
+        .setting-group { margin-bottom: 15px; }
+        .setting-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 13px; }
+        .setting-group input { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
+        .setting-group input:focus { border-color: var(--glow-color); }
+        .profile-img-section { text-align: center; margin-bottom: 25px; }
+        .profile-img-section img { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--glow-color); }
+
+        .btn-save { background: var(--glow-color); color: white; border: none; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-logout { background: transparent; color: #ff4444; border: 1px solid #ff4444; width: 100%; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; }
+
+        /* الأنيميشن والأقسام */
+        .page-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 2000; display: none; padding: 50px; }
+
+        .hoba-brand {
+    text-align: center;
+    margin-bottom: 30px;
+    cursor: default;
+}
+
+/* تأثير النيون للجملة الأساسية */
+.neon-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    text-transform: uppercase;
+    /* الأنيميشن اللي بيخليها تنور وتطفي بشكل فخم */
+    animation: neon-glow 2s ease-in-out infinite alternate;
+}
+
+/* الجملة الثانوية بأنيميشن تدفق الألوان */
+.sub-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #00d2ff, #9d50bb, #00d2ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-flow 3s linear infinite;
+    margin-top: 5px;
+}
+
+/* أنيميشن إضاءة النيون */
+@keyframes neon-glow {
+    from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00d2ff, 0 0 40px #00d2ff;
+    }
+    to {
+        text-shadow: 0 0 5px #fff, 0 0 10px #00d2ff, 0 0 15px #00d2ff, 0 0 20px #00d2ff;
+        transform: scale(1.02); /* حركة نبض خفيفة */
+    }
+}
+
+/* أنيميشن تدفق الألوان */
+@keyframes text-flow {
+    to { background-position: 200% center; }
+}
+.download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(0, 210, 255, 0.1);
+    border: 1px dashed var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 10px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-blue);
+    transform: translateY(-2px);
+}
+
+.download-btn .icon {
+    font-style: normal;
+    font-size: 1.1rem;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background: rgba(0, 68, 204, 0.15);
+    color: white;
+    text-decoration: none;
+
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 16px;
+
+    border: 1px solid rgba(0, 68, 204, 0.4);
+    box-shadow: 0 0 15px rgba(0, 68, 204, 0.3);
+
+    transition: 0.3s ease;
+}
+
+.btn i {
+    font-size: 20px;
+    color: var(--glow-color);
+}
+
+.btn:hover {
+    background: var(--glow-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px var(--glow-color);
+}
+
+.btn:hover i {
+    color: white;
+}
+
+.list-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   /* يمين فعليًا مع RTL */
+    gap: 4px;                  /* قلّلنا المسافة */
+
+    background: linear-gradient(
+        135deg,
+        rgba(0, 68, 204, 0.12),
+        rgba(255, 255, 255, 0.03)
+    );
+
+    padding: 16px 20px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+
+    border: 1px solid rgba(0, 68, 204, 0.35);
+    box-shadow: 0 0 16px rgba(0, 68, 204, 0.15);
+
+    cursor: pointer;
+    transition: 0.35s ease;
+
+    direction: rtl;
+    text-align: right;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.list-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(0, 68, 204, 0.25),
+        transparent
+    );
+    opacity: 0;
+    transition: 0.4s ease;
+}
+
+.list-item:hover::before {
+    opacity: 1;
+}
+.old-paper-container {
+    background: #f2e3c9;
+    background-image: url('');
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 60px 50px;
+    position: relative;
+    .full-page-lecture {
+    /* حط رابط الصورة اللي معاك هنا */
+    background-image: url('WhatsApp Image 2026-02-11 at 6.47.16 PM.jpeg'); 
+    background-size: 100% 100%; /* عشان تفرش على كامل المساحة */
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* عشان تاخد طول الصفحة كله */
+    min-height: 100vh; 
+    width: 100%;
+    
+    /* أهم جزء: المسافات اللي بتخلي النص جوه البرواز */
+    padding: 12% 15% 10% 15%; 
+    box-sizing: border-box;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scroll-content {
+    width: 100%;
+    font-family: 'Amiri', serif;
+    color: #3e2723; /* البني الفخم */
+    font-size: 24px;
+    line-height: 1.8;
+    text-align: justify;
+    direction: rtl;
+}
+    /* حركة الحواف المشرشرة */
+    filter: drop-shadow(10px 10px 20px rgba(0,0,0,0.4));
+    clip-path: polygon(
+        0% 2%, 5% 0%, 10% 2%, 15% 0%, 20% 1%, 25% 0%, 30% 2%, 35% 0%, 40% 1%, 45% 0%, 50% 2%, 55% 0%, 60% 1%, 65% 0%, 70% 2%, 75% 0%, 80% 1%, 85% 0%, 90% 2%, 95% 0%, 100% 2%,
+        100% 98%, 95% 100%, 90% 98%, 85% 100%, 80% 99%, 75% 100%, 70% 98%, 65% 100%, 60% 99%, 55% 100%, 50% 98%, 45% 100%, 40% 99%, 35% 100%, 30% 98%, 25% 100%, 20% 99%, 15% 100%, 10% 98%, 5% 100%, 0% 98%
+    );
+    
+    /* تدرج لوني على الحواف لإيهام الحرق */
+    box-shadow: inset 0 0 50px rgba(139, 69, 19, 0.3);
+    border: none;
+}
+
+/* عشان الخط يبقى "رايق" ومش معفن */
+.paper-content {
+    font-family: 'Amiri', serif !important; /* الخط التاريخي الفخم */
+    font-size: 24px;
+    color: #3e2723;
+    line-height: 2;
+    font-weight: 500;
+}
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+/* حاوية الشاشة الهولوجرام */
+.hologram-screen {
+    background: rgba(0, 20, 40, 0.85); /* خلفية زرقاء غامقة شفافة */
+    backdrop-filter: blur(10px); /* تأثير الزجاج الضبابي */
+    border: 2px solid #00f2ff; /* إطار مضيء */
+    border-radius: 20px;
+    padding: 40px;
+    margin: 20px auto;
+    max-width: 1000px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.5), inset 0 0 15px rgba(0, 242, 255, 0.2);
+    overflow: hidden;
+    color: #e0faff;
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl;
+}
+
+/* تأثير خطوط المسح (Scanning Lines) */
+.hologram-screen::before {
+    content: " ";
+    position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 242, 255, 0.05) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.hologram-header {
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 242, 255, 0.3);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+}
+
+.hologram-header h2 {
+    color: #00f2ff;
+    text-shadow: 0 0 10px #00f2ff;
+    font-size: 28px;
+    margin: 0;
+}
+
+.hologram-content {
+    font-size: 20px;
+    line-height: 1.8;
+    text-align: justify;
+    white-space: pre-wrap;
+}
+
+/* حركة بسيطة عشان يحس إنه هولوجرام بجد */
+@keyframes flicker {
+    0% { opacity: 0.97; }
+    5% { opacity: 0.92; }
+    10% { opacity: 0.98; }
+    100% { opacity: 1; }
+}
+.hologram-screen { animation: flicker 0.1s infinite alternate; }
+
+
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+    <div id="library" class="page-section">
+        <div class="overlay">
+            <div class="header-main">
+                <div class="hoba-brand">
+                    <p class="neon-text">Hoba Tech | هوبا تيك</p>
+                </div>
+            </div>
+        <h1 style="text-align: center;">سبحان الله وبحمده سبحان  الله العظيم.</h1>
+        <div class="library-grid">
+    
+            <div class="lib-card" onclick="openSubject('المنظمات الدولية')">
+                <i class="fas fa-globe"></i>
+                <h3>المنظمات الدولية</h3>
+                <p>قريباً..</p>
+            </div>
+
+            <div class="lib-card" onclick="openSubject('القانون الدستوري')">
+                <i class="fas fa-university"></i>
+                <h3>القانون الدستوري</h3>
+                <p>قريباً..</p>
+            </div>
+        
+            <div class="lib-card" onclick="openSubject('حماية البيئة')" style="">
+                <i class="fas fa-tree" style="color: #23d10c;"></i>
+                <h3 style="color: #ffffff;">تشريعات حماية البيئة</h3>
+                <p style="color: #e8f5e9;">قريباً..</p>
+            </div>
+    
+            <div class="lib-card" onclick="openSubject('مصطلحات فرنسية')">
+                <i class="fas fa-book-reader"></i>
+                <h3>مصطلحات قانونية باللغة الفرنسية</h3>
+                <p>قريباً..</p>
+            </div>
+    
+            <div class="lib-card" onclick="openSubject('القضايا المجتمعية')">
+                <i class="fas fa-users-cog"></i>
+                <h3>القضايا المجتمعية</h3>
+                <p>قريباً..</p>
+            </div>
+    
+            <div class="lib-card" onclick="openSubject('تاريخ النظم')">
+                <i class="fas fa-scroll"></i>
+                <h3>تاريخ النظم القانونية</h3>
+                <p>قريباً..</p>
+            </div>
+    
+        </div>
+    </div>
+
+    <script>
+        /* ===============================
+           1️⃣ السايدبار والتنقل
+        ================================ */
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+        }
+        
+        function showPage(pageId) {
+            document.querySelectorAll(".page-section").forEach(sec => {
+                sec.classList.remove("active");
+            });
+        
+            document.getElementById(pageId).classList.add("active");
+        
+            document.querySelectorAll(".nav-link").forEach(link => {
+                link.classList.remove("active");
+            });
+        
+            if (event && event.target.classList.contains("nav-link")) {
+                event.target.classList.add("active");
+            }
+        
+            if (pageId === "library" && libraryData.length === 0) {
+                loadLibrary();
+            }
+        
+            toggleSidebar();
+        }
+        
+        /* ===============================
+           2️⃣ إعداد المكتبة الرقمية
+        ================================ */
+const LIB_API = 'https://script.google.com/macros/s/AKfycbx4AkYjatVjczcKWYEOp1gCc2mOK_QO-37E-acLv6EYlI4n5DODxnJgVaMRw7RH-tV2/exec?action=getLibrary';
+        let libraryData = [];
+        
+        async function loadLibrary() {
+            const grid = document.querySelector('#library .library-grid');
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;padding:50px">
+                  جاري تحميل المواد استغفر حتي ينتهي...
+                </div>`;
+        
+            try {
+                const res = await fetch(LIB_API);
+                libraryData = await res.json();
+                renderSubjects();
+            } catch (e) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:50px;color:#ff4444">
+                        فشل تحميل البيانات
+                    </div>`;
+            }
+        }
+        
+        function renderSubjects() {
+            const grid = document.querySelector('#library .library-grid');
+            const title = document.querySelector('#library h1');
+        
+            title.innerText = "حقيبة المواد";
+            grid.innerHTML = "";
+        
+            const subjects = [
+                { name: 'المنظمات الدولية', icon: 'fa-globe' },
+                { name: 'القانون الدستوري', icon: 'fa-university' },
+                { name: 'تشريعات حماية البيئة', icon: 'fa-tree' },
+                { name: 'مصطلحات قانونية باللغة الفرنسية', icon: 'fa-book-reader' },
+                { name: 'القضايا المجتمعية', icon: 'fa-users-cog' },
+                { name: 'تاريخ النظم القانونية', icon: 'fa-scroll' }
+            ];
+        
+            subjects.forEach(sub => {
+                const hasContent = libraryData.some(item =>
+                    item.subject.trim().includes(sub.name.trim())
+                );
+        
+                grid.innerHTML += `
+                <div class="lib-card"
+                    style="${!hasContent ? 'opacity:.5;cursor:not-allowed;' : ''}"
+                    onclick="${hasContent ? `showLessons('${sub.name}')` : "alert('قريباً..')"}">
+                    
+                    ${hasContent ? '<span class="badge" style="background:var(--glow-color);color:white">متاح</span>' : ''}
+                    
+                    <i class="fas ${sub.icon}"></i>
+                    <h3>${sub.name}</h3>
+                    <p>${hasContent ? 'اضغط للمشاهدة' : 'قريباً..'}</p>
+                </div>`;
+            });
+        }
+        
+        function showLessons(subjectName) {
+            const grid = document.querySelector('#library .library-grid');
+            const title = document.querySelector('#library h1');
+        
+            const lessons = libraryData.filter(item =>
+                item.subject.trim().includes(subjectName.trim())
+            );
+        
+            title.innerHTML = `
+                <button onclick="renderSubjects()"
+                    style="background:var(--glow-color);color:white;border:none;
+                           padding:8px 15px;border-radius:8px;cursor:pointer;
+                           font-family:'Cairo'">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </button>
+                ${subjectName}`;
+        
+            grid.innerHTML = "";
+        
+            lessons.forEach((l, i) => {
+                grid.innerHTML += `
+                <div class="list-item"
+                    style="grid-column:1/-1;cursor:pointer"
+onclick="showContent('${l.title}', \`${l.content}\`, '${l.pdf}', '${l.video}', '${l.audio}', '${l.exam}')"
+        
+                    <div style="display:flex;gap:15px;align-items:center">
+                        <span style="color:var(--glow-color);font-weight:bold">#${i + 1}</span>
+                        <span>${l.title} - ${l.lessonNo}</span>
+                    </div>
+        
+                    <i class="fas fa-chevron-left"></i>
+                </div>`;
+            });
+        }
+        
+        let lastSubjectName = '';
+
+        function showContent(titleText, contentText, pdfLink, videoLink, audioLink, examLink) {
+    const grid = document.querySelector('#library .library-grid');
+    const title = document.querySelector('#library h1');
+
+    title.innerHTML = `
+        <button onclick="showLessons(lastSubjectName)"
+            style="background:var(--glow-color);color:white;border:none;
+                   padding:8px 15px;border-radius:8px;cursor:pointer;
+                   font-family:'Cairo'">
+            <i class="fas fa-arrow-right"></i> رجوع
+        </button>
+        ${titleText}
+    `;
+
+    grid.innerHTML = `
+<div style="grid-column:1/-1; padding:40px 20px; direction:rtl; font-family:'Amiri', serif;">
+
+    <div style="
+        max-width:950px;
+        margin:0 auto;
+        padding:70px 60px;
+        background:#f5e6cc;
+        background-image:url('');
+        border:1px solid #caa472;
+        box-shadow:
+            0 10px 40px rgba(0,0,0,0.35),
+            inset 0 0 120px rgba(120,72,30,0.12);
+        position:relative;
+    ">
+
+        <!-- زخرفة علوية -->
+        <div style="
+            text-align:center;
+            margin-bottom:60px;
+        ">
+            <h1 style="
+                font-size:38px;
+                color:#4e342e;
+                margin:0;
+                letter-spacing:1px;
+                border-bottom:4px double #8b5e3c;
+                display:inline-block;
+                padding-bottom:12px;
+            ">
+                ميثاق المحاضرة
+            </h1>
+
+            <h2 style="
+                margin-top:20px;
+                font-size:26px;
+                color:#6d4c41;
+                font-weight:600;
+            ">
+                ${titleText}
+            </h2>
+        </div>
+
+        <!-- المحتوى -->
+        <div style="
+            font-size:23px;
+            line-height:2.1;
+            color:#3e2723;
+            text-align:justify;
+            font-weight:500;
+            white-space:pre-line;
+        ">
+            ${contentText}
+        </div>
+
+        <!-- خط سفلي زخرفي -->
+        <div style="
+            margin-top:70px;
+            border-top:2px solid #8b5e3c;
+            opacity:0.4;
+        "></div>
+
+        <!-- ختم -->
+        <div style="
+            position:absolute;
+            bottom:40px;
+            left:40px;
+            width:110px;
+            height:110px;
+            background:#8b0000;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-weight:bold;
+            font-size:15px;
+            text-align:center;
+            border:5px double #600000;
+            transform:rotate(-12deg);
+            box-shadow:0 8px 20px rgba(0,0,0,0.4);
+            letter-spacing:1px;
+        ">
+            HOBA<br>TECH
+        </div>
+
+    </div>
+</div>
+
+${pdfLink ? `
+<div>
+    <a href="${pdfLink}" target="_blank" class="btn">
+        <i class="fas fa-file-pdf"></i> فتح PDF توضيحي
+    </a>
+</div>` : ''}
+
+${videoLink ? `
+<div>
+    <a href="${videoLink}" target="_blank" class="btn">
+        <i class="fas fa-play-circle"></i> مشاهدة الفيديو
+    </a>
+</div>` : ''}
+
+${audioLink && audioLink.length > 10 ? `
+<div>
+    <a href="${audioLink}" target="_blank" class="btn">
+        <i class="fas fa-headphones"></i> استماع للشرح
+    </a>
+</div>` : ''}
+
+${examLink ? `
+<div>
+    <a href="${examLink}" target="_blank" class="btn">
+        <i class="fas fa-pen-to-square"></i> دخول الامتحان
+    </a>
+</div>` : ''}
+
+`;
+}
+
+
+        /* ===============================
+           3️⃣ الخلفية المتحركة
+        ================================ */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        
+        let particles = [];
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.dx = Math.random() * 0.5 - 0.25;
+                this.dy = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.dx;
+                this.y += this.dy;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = "#0044cc";
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 80; i++) {
+                particles.push(new Particle());
+            }
+        }
+        
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        
+        window.addEventListener("resize", () => {
+            resizeCanvas();
+            initParticles();
+        });
+        
+        initParticles();
+        animateParticles();
+        loadLibrary();
+
+        </script>
+        
+    </body>
+</html>
