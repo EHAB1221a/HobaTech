@@ -4,41 +4,154 @@
     <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOBA TECH | تسجيل الدخول</title>
+    <title>HOBA TECH | نظام الدخول الهولوغرامي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        :root { --main: #0044cc; --bg: #050505; --card: rgba(255, 255, 255, 0.05); }
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-        .bg-glow { position: absolute; width: 300px; height: 300px; background: var(--main); filter: blur(150px); border-radius: 50%; z-index: -1; opacity: 0.3; animation: move 10s infinite alternate; }
-        @keyframes move { from { transform: translate(-50%, -50%); } to { transform: translate(50%, 50%); } }
-        .auth-card { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid rgba(0,68,204,0.3); width: 350px; text-align: center; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
-        h2 { color: var(--main); font-size: 28px; margin-bottom: 5px; }
-        p { font-size: 14px; color: #bbb; margin-bottom: 20px; }
-        input, select { width: 100%; padding: 12px; margin-top: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none; box-sizing: border-box; font-family: 'Cairo'; }
-        input:focus { border-color: var(--main); }
-        .btn-auth { width: 100%; padding: 12px; background: var(--main); border: none; color: white; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 15px; }
-        .btn-auth:hover { box-shadow: 0 0 20px var(--main); }
-        .switch { margin-top: 20px; font-size: 13px; color: #aaa; }
-        .switch span { color: var(--main); cursor: pointer; font-weight: bold; text-decoration: underline; }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;700&display=swap');
+        
+        :root { 
+            --main: #00f2ff; /* اللون الأزرق الهولوغرامي الجديد */
+            --bg: #050a0f; 
+            --card-bg: rgba(0, 20, 40, 0.7);
+        }
+
+        body { 
+            margin: 0; 
+            font-family: 'Cairo', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* تأثير الشبكة المتحركة في الخلفية */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+        }
+
+        .bg-glow { 
+            position: absolute; 
+            width: 400px; 
+            height: 400px; 
+            background: var(--main); 
+            filter: blur(150px); 
+            border-radius: 50%; 
+            z-index: -1; 
+            opacity: 0.15; 
+            animation: move 12s infinite alternate; 
+        }
+
+        @keyframes move { from { transform: translate(-30%, -30%); } to { transform: translate(30%, 30%); } }
+
+        /* الكارت الهولوغرامي */
+        .auth-card { 
+            background: var(--card-bg); 
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            border: 2px solid var(--main); 
+            width: 360px; 
+            text-align: center; 
+            backdrop-filter: blur(15px); 
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0, 242, 255, 0.1); 
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* خط المسح الضوئي */
+        .auth-card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 242, 255, 0.4);
+            box-shadow: 0 0 10px var(--main);
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        h2 { 
+            font-family: 'Orbitron', sans-serif;
+            color: var(--main); 
+            font-size: 28px; 
+            margin-bottom: 5px; 
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px var(--main);
+        }
+
+        p { font-size: 14px; color: #88c9cc; margin-bottom: 25px; }
+
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 12px; 
+            background: rgba(0, 242, 255, 0.05); 
+            border: 1px solid rgba(0, 242, 255, 0.2); 
+            border-radius: 8px; 
+            color: white; 
+            outline: none; 
+            box-sizing: border-box; 
+            font-family: 'Cairo'; 
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--main); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+
+        .btn-auth { 
+            width: 100%; 
+            padding: 14px; 
+            background: transparent; 
+            border: 1px solid var(--main); 
+            color: var(--main); 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            margin-top: 20px; 
+            font-family: 'Orbitron', 'Cairo';
+            text-transform: uppercase;
+        }
+
+        .btn-auth:hover { 
+            background: var(--main); 
+            color: #050a0f; 
+            box-shadow: 0 0 25px var(--main); 
+        }
+
+        .switch { margin-top: 20px; font-size: 13px; color: #888; }
+        .switch span { color: var(--main); cursor: pointer; font-weight: bold; }
         #error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; }
-    </style>
+
+        ::placeholder { color: rgba(0, 242, 255, 0.4); }
+   
+   </style>
 </head>
 <body>
 
+<div class="grid-bg"></div>
 <div class="bg-glow"></div>
 
 <div class="auth-card">
     <h2 id="card-title">HOBA TECH</h2>
-    <p id="card-desc">مرحباً بك يا مستشار</p>
+    <p id="card-desc"> مرحبا بكم في هوبا تيك| HOBA TECH</p>
 
     <div id="login-box">
         <input type="email" id="l-email" placeholder="البريد الإلكتروني">
         <input type="password" id="l-pass" placeholder="كلمة السر">
-        <button class="btn-auth" id="login-btn" onclick="handleLogin()">دخول</button>
+        <button class="btn-auth" onclick="handleLogin()">ACCESS SYSTEM</button>
         <div class="switch">
-            ليس لديك حساب؟ <span onclick="toggle('signup')">أنشئ حسابك الآن</span><br><br>
-            <span onclick="toggle('forgot')">نسيت كلمة السر؟</span>
+            ليس لديك تصريح؟ <span onclick="toggle('signup')">إنشاء بروتوكول جديد</span><br><br>
+            <span onclick="toggle('forgot')">استعادة الهوية؟</span>
         </div>
     </div>
 
@@ -48,36 +161,29 @@
         <select id="s-group">
             <option value="" disabled selected>اختر الفرقة</option>
             <option>الفرقة الأولى</option>
-            <option disabled>الفرقة التانية 🔒</option>
-            <option disabled>الفرقة التالثة 🔒</option>
+            <option disabled>الفرقة الثانية 🔒</option>
+            <option disabled>الفرقة الثالثة 🔒</option>
             <option disabled>الفرقة الرابعة 🔒</option>
         </select>
         <input type="email" id="s-email" placeholder="البريد الإلكتروني">
         <input type="password" id="s-pass" placeholder="كلمة السر">
-        <button class="btn-auth" id="signup-btn" onclick="handleSignup()">تأكيد الاشتراك</button>
-        <div class="switch">عندك حساب؟ <span onclick="toggle('login')">سجل دخولك</span></div>
+        <button class="btn-auth" id="signup-btn" onclick="handleSignup()">INITIALIZE ACCOUNT</button>
+        <div class="switch">لديك تصريح دخول؟ <span onclick="toggle('login')">تسجيل الدخول</span></div>
     </div>
 
     <div id="forgot-box" style="display: none;">
         <input type="email" id="f-email" placeholder="أدخل البريد الإلكتروني للمساعدة">
-        <button class="btn-auth" id="reset-btn" onclick="handleReset()">إرسال رابط التعيين</button>
-        <div class="switch">تذكرت كلمة السر؟ <span onclick="toggle('login')">رجوع للدخول</span></div>
+        <button class="btn-auth" onclick="handleReset()">RESET PASSWORD</button>
+        <div class="switch">تذكرت الهوية؟ <span onclick="toggle('login')">رجوع للدخول</span></div>
     </div>
 
     <div id="error-msg"></div>
 </div>
 
 <script type="module">
-    // استيراد مكتبات Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { 
-        getAuth, 
-        createUserWithEmailAndPassword, 
-        signInWithEmailAndPassword, 
-        sendPasswordResetEmail 
-    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
     
-    // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
       apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
       authDomain: "hoba-tech.firebaseapp.com",
@@ -89,47 +195,31 @@
     const auth = getAuth(app);
     const SHEET_URL = "https://script.google.com/macros/s/AKfycby8m3sDLRcTCmg8g6O-wvEFxgawEQ9bozWHVEgcrZG5hPqiFrFOAQszngFSHRhd94OTgw/exec";
 
-    // 1. دالة التبديل بين الشاشات (محدثة لتشمل نسيت كلمة السر)
     window.toggle = (view) => {
         document.getElementById('login-box').style.display = view === 'login' ? 'block' : 'none';
         document.getElementById('signup-box').style.display = view === 'signup' ? 'block' : 'none';
         document.getElementById('forgot-box').style.display = view === 'forgot' ? 'block' : 'none';
         document.getElementById('error-msg').innerText = "";
-        document.getElementById('error-msg').style.color = "#ff4444";
+        document.getElementById('card-desc').innerText = view === 'signup' ? 'NEW PROTOCOL SETUP' : 'AUTHENTICATING USER...';
     };
 
-    // 2. دالة تسجيل الدخول (جديدة)
     window.handleLogin = async () => {
-        const btn = document.getElementById("login-btn");
-        const msg = document.getElementById("error-msg");
         const email = document.getElementById("l-email").value.trim();
         const pass = document.getElementById("l-pass").value.trim();
+        const msg = document.getElementById("error-msg");
 
-        if (!email || !pass) {
-            msg.innerText = "يرجى إدخال البريد الإلكتروني وكلمة السر";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "جاري التحقق...";
+        if(!email || !pass) { msg.innerText = "أدخل بيانات الدخول"; return; }
 
         try {
             await signInWithEmailAndPassword(auth, email, pass);
             msg.style.color = "#00ff00";
-            msg.innerText = "تم تسجيل الدخول بنجاح! جاري التحويل...";
-            setTimeout(() => {
-                window.location.href = "داش 4.html";
-            }, 1500);
+            msg.innerText = "ACCESS GRANTED... Redirecting";
+            setTimeout(() => { window.location.href = "داش 4.html"; }, 1000);
         } catch (e) {
-            btn.disabled = false;
-            btn.innerText = "دخول";
-            msg.style.color = "#ff4444";
-            msg.innerText = "خطأ: تأكد من صحة البيانات";
-            console.error(e);
+            msg.innerText = "ACCESS DENIED: بيانات غير صحيحة";
         }
     };
 
-    // 3. دالة إنشاء حساب (معدلة)
     window.handleSignup = async () => {
         const btn = document.getElementById("signup-btn");
         const msg = document.getElementById("error-msg");
@@ -140,62 +230,25 @@
         const pass = document.getElementById("s-pass").value.trim();
 
         if (!name || !phone || !email || !group || !pass) {
-            msg.style.color = "#ff4444";
-            msg.innerText = "يرجى إكمال جميع البيانات";
+            msg.innerText = "برجاء إكمال جميع الحقول";
             return;
         }
 
         btn.disabled = true;
-        btn.innerText = "جاري إنشاء الحساب...";
+        btn.innerText = "PROCESSING...";
 
         try {
-            // إنشاء المستخدم في Firebase
             await createUserWithEmailAndPassword(auth, email, pass);
-
-            // إرسال البيانات لجوجل شيت
             const finalUrl = `${SHEET_URL}?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(group)}&role=عضو`;
             await fetch(finalUrl, { mode: 'no-cors' });
 
             msg.style.color = "#00ff00";
-            msg.innerText = "تم التسجيل بنجاح! جاري التحويل...";
-            
-            setTimeout(() => {
-                window.location.href = "داش 4.html";
-            }, 1500);
-
+            msg.innerText = "PROTOCOL ESTABLISHED!";
+            setTimeout(() => { window.location.href = "داش 4.html"; }, 1500);
         } catch (e) {
             btn.disabled = false;
-            btn.innerText = "تأكيد الاشتراك";
-            msg.style.color = "#ff4444";
-            msg.innerText = "خطأ: الإيميل مستخدم بالفعل أو البيانات غير صالحة";
-        }
-    };
-
-    // 4. دالة استعادة كلمة السر (جديدة)
-    window.handleReset = async () => {
-        const email = document.getElementById("f-email").value.trim();
-        const msg = document.getElementById("error-msg");
-        const btn = document.getElementById("reset-btn");
-
-        if (!email) {
-            msg.style.color = "#ff4444";
-            msg.innerText = "يرجى إدخال البريد الإلكتروني أولاً";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "جاري الإرسال...";
-
-        try {
-            await sendPasswordResetEmail(auth, email);
-            msg.style.color = "#00ff00";
-            msg.innerText = "تم إرسال رابط تعيين كلمة السر لبريدك الإلكتروني";
-        } catch (e) {
-            msg.style.color = "#ff4444";
-            msg.innerText = "خطأ: هذا البريد غير مسجل لدينا";
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "إرسال رابط التعيين";
+            btn.innerText = "INITIALIZE ACCOUNT";
+            msg.innerText = "ERROR: " + (e.code === 'auth/email-already-in-use' ? "الإيميل مسجل مسبقاً" : "فشل النظام");
         }
     };
 </script>
