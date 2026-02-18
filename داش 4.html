@@ -10,6 +10,20 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "9b9b67f5-6f3d-4d2a-8fd5-80153d4fa6fd",
+          serviceWorkerPath: "OneSignalSDKWorker.js",
+          serviceWorkerParam: { scope: "/" },
+          notifyButton: {
+            enable: true,
+            // باقي إعدادات الجرس اللي كتبناها قبل كدة
+          },
+        });
+      });
+    </script>
         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المكتبة الرقمية | HOBA TECH</title>
@@ -790,34 +804,10 @@ document.getElementById('deleteAccountBtn').onclick = function () {
   });
 };
 
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "9b9b67f5-6f3d-4d2a-8fd5-80153d4fa6fd",
-      // 👇 السطرين دول هم "السر" عشان يحلوا مشكلة الـ 404 على جيت هوب
-      serviceWorkerPath: "OneSignalSDKWorker.js",
-      serviceWorkerParam: { scope: "/" },
-      // 👆 ضيفهم قبل الـ notifyButton
-      notifyButton: {
-        enable: true, 
-        size: 'medium', 
-        theme: 'default',
-        position: 'bottom-right',
-        text: {
-            'tip.state.unsubscribed': 'الاشتراك في الإشعارات',
-            'tip.state.subscribed': "أنت مشترك في الإشعارات",
-            'tip.state.blocked': "لقد حظرت الإشعارات",
-            'message.prenotify': 'اضغط هنا للاشتراك في إشعارات هوبا تيك',
-            'dialog.main.title': 'إدارة إشعارات الموقع',
-            'dialog.main.button.subscribe': 'اشتراك',
-            'dialog.main.button.unsubscribe': 'إلغاء الاشتراك',
-        }
-      },
-    });
-  });
 </script>
 </body>
 </html>
+
 
 
 
