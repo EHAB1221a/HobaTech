@@ -416,7 +416,10 @@ OneSignalDeferred.push(async function(OneSignal) {
     box-shadow: -10px 0 30px rgba(0, 68, 204, 0.2);
 }
 
-            .news-footer {
+/* الفانوس المتعلق في النص */
+
+/* شريط الأخبار الهولوغرامي */
+.news-footer {
     position: fixed; bottom: 0; left: 0; width: 100%; height: 50px;
     background: rgba(0, 5, 15, 0.95);
     border-top: 2px solid var(--hologram-blue);
@@ -567,10 +570,13 @@ OneSignalDeferred.push(async function(OneSignal) {
     to { transform: translateX(-50%) rotate(4deg); }
 }
 
+
     </style>
 </head>
 <body>
-
+    <div class="hanging-lantern-center">
+        <i class="fa-solid fa-moon"></i> <div class="hanging-text">رمضان كريم</div>
+    </div>
   <!-- خلفية متحركة -->
 <canvas id="bg-canvas"></canvas>
 
@@ -578,7 +584,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 <div class="menu-toggle">
     <i class="fas fa-bars"></i>
 </div>
-        <div class="hanging-lantern-center">
+<div class="hanging-lantern-center">
     <i class="fa-solid fa-moon"></i> <div class="hanging-text">رمضان كريم</div>
 </div>
 <div class="ramadan-lights">
@@ -609,10 +615,11 @@ OneSignalDeferred.push(async function(OneSignal) {
         <div class="nav-link" onclick="showPage('settings')"><i class="fas fa-cog"></i> الإعدادات</div>
         <a href="index.html" style="text-decoration: none;"><div class="nav-link"><i class="fas fa-sign-out-alt"></i> خروج</div></a>  
     </div>
-<div class="news-footer">
+    <div class="news-footer">
         <div class="footer-label"><i class="fas fa-satellite-dish"></i> LIVE FEED</div>
         <div class="footer-scroll" id="hoba-ticker-container">
             </div>
+    </div>
     <div class="container">
         <div id="home" class="page-section active">
             <div class="dashboard-header">
@@ -911,7 +918,8 @@ const particles = Array.from({length:80},()=>({
     vx:Math.random()-.5,
     vy:Math.random()-.5
 }));
-        let allNews = [];
+
+let allNews = [];
 let currentIndex = 0;
 
 async function fetchHobaNews() {
@@ -957,7 +965,6 @@ window.onload = () => {
     fetchHobaNews();
     nextCase();
 };
-
 
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -1035,21 +1042,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
     }
   });
 };
-<!-- start webpushr code --> <script>(function(w,d, s, id) {if(typeof(w.webpushr)!=='undefined') return;w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};var js, fjs = d.getElementsByTagName(s)[0];js = d.createElement(s); js.id = id;js.async=1;js.src = "https://cdn.webpushr.com/app.min.js";fjs.parentNode.appendChild(js);}(window,document, 'script', 'webpushr-jssdk'));webpushr('setup',{'key':'BK4AKE9hGhv1L2hLeVaGQd536CSU_wfkiQe-GXTrPv4dplQoN11zM2UInQj0O-90iKhYbbl2lPJDUOBQxzvi2-E' });</script><!-- end webpushr code -->
+
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
