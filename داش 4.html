@@ -968,12 +968,28 @@ async function fetchHobaNews() {
         const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
             allNews = data;
-            currentIndex = 0;
-            displayNextNews();
+            
+            // --- الزيادة هنا يا مستشار ---
+            if (window.innerWidth <= 768) {
+                // للموبايل: حط كل الأخبار جنب بعض وخلي الـ CSS (الـ Marquee) يحركهم
+                document.getElementById('hoba-ticker-container').innerText = allNews.join("  ★  ");
+            } else {
+                // للديسكتوب: كمل النظام القديم (تبديل خبر بخبر)
+                currentIndex = 0;
+                displayNextNews();
+            }
+            // --------------------------
+
         }
     } catch (error) {
         allNews = ["HOBA TECH: نظام الحماية نشط", "أهلاً بك يا مستشار في غرفتك الخاصة"];
-        displayNextNews();
+        
+        // برضه في حالة الخطأ نطبق نفس القاعدة
+        if (window.innerWidth <= 768) {
+            document.getElementById('hoba-ticker-container').innerText = allNews.join("  ★  ");
+        } else {
+            displayNextNews();
+        }
     }
 }
 
@@ -1089,5 +1105,6 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
