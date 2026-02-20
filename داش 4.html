@@ -571,57 +571,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 }
 
 /* --- ضبط شريط الأخبار للموبايل --- */
-@media (max-width: 768px) {
-    /* تنسيق الحاوية الرئيسية للشريط */
-    .news-footer {
-        height: 40px !important;
-        padding-left: 0 !important;
-        background-color: #000000; /* التأكد من أن الخلفية سوداء */
-    }
 
-    /* تنسيق مربع "LIVE FEED" */
-    .footer-label {
-        font-size: 10px !important;
-        padding: 0 10px !important;
-        white-space: nowrap;
-        min-width: 70px;
-        z-index: 10; /* لضمان بقاء المربع فوق النص المتحرك */
-    }
-
-    /* منطقة حركة النص */
-    .footer-scroll {
-        display: block !important;
-        position: relative !important;
-        width: 100% !important;
-        overflow: hidden !important;
-        height: 100% !important;
-    }
-
-    /* النص المتحرك - هنا تم تعديل اللون للأبيض */
-    #hoba-ticker-container {
-        display: inline-block !important;
-        white-space: nowrap !important;
-        position: absolute !important;
-        right: 0 !important;
-        
-        /* التعديل المطلوب: اللون الأبيض */
-        color: #ffffff !important; 
-        font-weight: bold; /* جعل الخط عريضاً قليلاً للوضوح */
-        font-size: 15px !important;
-        
-        opacity: 1 !important;
-        visibility: visible !important;
-        
-        /* استدعاء الأنيميشن */
-        animation: mobileRun 15s linear infinite !important;
-    }
-}
-
-/* حركة الشريط السلسة */
-@keyframes mobileRun {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-150%); } 
-}
             @media (max-width: 768px) {
     .footer-scroll {
         display: flex !important;
@@ -1148,6 +1098,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
