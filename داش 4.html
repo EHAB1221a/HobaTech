@@ -585,8 +585,8 @@ OneSignalDeferred.push(async function(OneSignal) {
     /* تصغير كلمة LIVE FEED جداً عشان متضايقش الخبر */
     .footer-label {
         font-size: 8px !important; /* تصغير الخط */
-        padding: 2px 6px !important; /* تقليل الحواف */
-        min-width: 70px !important; /* عرض صغير للمربع */
+        padding: 3px 6px !important; /* تقليل الحواف */
+        min-width: 40px !important; /* عرض صغير للمربع */
         height: auto !important;
         background: red; /* لو عايزها واضحة */
         z-index: 99; /* عشان تفضل فوق النص */
@@ -609,18 +609,27 @@ OneSignalDeferred.push(async function(OneSignal) {
         position: absolute;
         right: 0;
         /* الأنيميشن اللي بيحرك من اليمين لليسار */
-        animation: move-rtl 30s linear infinite !important;
+        animation: move-rtl 55s linear infinite !important;
     }
 }
 
 /* حركة من اليمين (بره الشاشة) لليسار (بره الشاشة) */
 @keyframes move-rtl {
     0% {
-        transform: translateX(90%); /* يبدأ من أقصى اليمين */
+        /* يبدأ من خارج الشاشة تماماً جهة اليسار */
+        transform: translateX(-100%); 
     }
     100% {
-        transform: translateX(-150%); /* ينتهي في أقصى اليسار */
+        /* ينتهي خارج الشاشة تماماً جهة اليمين */
+        transform: translateX(100%); 
     }
+}
+
+/* تعديل إضافي عشان التناسب */
+#hoba-ticker-container {
+    left: 0; /* نغير الاتجاه الافتراضي لليسار */
+    right: auto;
+    animation: move-rtl 25s linear infinite !important;
 }
     </style>
 </head>
@@ -1117,6 +1126,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
