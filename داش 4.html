@@ -574,36 +574,34 @@ OneSignalDeferred.push(async function(OneSignal) {
 
       /* --- ضبط شريط الأخبار للموبايل --- */
 @media (max-width: 768px) {
-    /* الحاوية السوداء الكبيرة */
+    /* الحاوية السوداء - رجعناها مكانها الطبيعي */
     .news-footer {
-        height: 40px !important; 
+        height: 35px !important; 
         background-color: #000 !important;
         display: flex !important;
         align-items: center !important;
-        position: relative;
+        position: relative !important; /* خليناه يرجع لمكانه الطبيعي وسط الصفحة */
         overflow: hidden !important;
-        direction: rtl; /* لضمان أن الترتيب يبدأ من اليمين */
+        width: 100% !important;
+        margin: 10px 0; /* مسافة بسيطة فوق وتحت الشريط */
     }
 
-    /* مستطيل LIVE FEED - كامل وبدون قص */
+    /* مستطيل LIVE FEED - شيك ومستطيل صريح */
     .footer-label {
-        background-color: #ff0000 !important; /* أحمر صريح */
+        background-color: #ff0000 !important;
         color: #fff !important;
         font-weight: bold !important;
-        font-size: 11px !important;
-        padding: 0 12px !important; /* مسافة داخلية جانبية */
-        height: 100% !important; /* يأخذ ارتفاع الشريط بالكامل ليظهر كمستطيل */
+        font-size: 10px !important;
+        height: 100% !important; /* واخد طول الشريط كله */
         display: flex !important;
         align-items: center !important;
-        justify-content: center !important;
-        z-index: 999 !important; /* فوق النص دائماً */
-        box-shadow: 5px 0 10px rgba(0,0,0,0.5); /* ظل بسيط ليفصلها عن الكلام */
-        min-width: 80px !important; 
-        border: none !important; /* التأكد من عدم وجود إطار */
-        border-radius: 0 !important; /* مستطيل حاد الزوايا (مفيش قص) */
+        padding: 0 12px !important;
+        z-index: 100 !important;
+        flex-shrink: 0; /* عشان ميتضغطش */
+        border-radius: 0 !important; /* مستطيل حاد مش مقصوص */
     }
 
-    /* منطقة حركة النص */
+    /* منطقة النص المتحرك */
     .footer-scroll {
         flex: 1;
         height: 100%;
@@ -611,26 +609,28 @@ OneSignalDeferred.push(async function(OneSignal) {
         overflow: hidden !important;
     }
 
-    /* النص المتحرك - من اليمين لليسار */
+    /* النص المتحرك - متسنتر بالظبط */
     #hoba-ticker-container {
         display: inline-block !important;
         white-space: nowrap !important;
         color: #ffffff !important;
-        font-size: 15px !important;
-        line-height: 40px; /* نفس ارتفاع الحاوية للتوسط */
+        font-size: 14px !important;
         position: absolute;
-        /* الأنيميشن من اليمين لليسار */
-        animation: ticker-move-rtl 20s linear infinite !important;
+        top: 50% !important; /* سنتر راسي */
+        transform: translateY(-50%) !important; /* ميزان في النص */
+        right: 0;
+        /* استدعاء الأنيميشن */
+        animation: move-rtl-mobile 20s linear infinite !important;
     }
 }
 
-/* تعريف الحركة من أقصى اليمين لأقصى اليسار */
-@keyframes ticker-move-rtl {
+/* الأنيماشن المعدل عشان يفضل في النص وهو بيتحرك */
+@keyframes move-rtl-mobile {
     0% {
-        transform: translateX(100%); /* يبدأ من خارج الشاشة يميناً */
+        transform: translate(100%, -50%); /* يبدأ من اليمين وهو في النص */
     }
     100% {
-        transform: translateX(-100%); /* يختفي خارج الشاشة يساراً */
+        transform: translate(-150%, -50%); /* يروح لليسار وهو في النص */
     }
 }
     </style>
@@ -1128,6 +1128,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
