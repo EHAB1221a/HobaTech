@@ -622,6 +622,37 @@ OneSignalDeferred.push(async function(OneSignal) {
     0% { transform: translateX(100%); }
     100% { transform: translateX(-150%); } 
 }
+            @media (max-width: 768px) {
+    .footer-scroll {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        position: relative !important;
+        overflow: hidden !important;
+        height: 40px !important;
+        background-color: #000 !important; /* خلفية سوداء */
+    }
+
+    #hoba-ticker-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* تنسيق الخبر القادم من جوجل شيت */
+    .dynamic-news-item {
+        position: absolute;
+        white-space: nowrap; /* الخبر يظهر في سطر واحد كامل */
+        color: #ffffff !important; /* اللون الأبيض */
+        font-size: 15px !important;
+        font-weight: bold;
+        visibility: hidden;
+        display: inline-block;
+    }
+}
     </style>
 </head>
 <body>
@@ -1117,6 +1148,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
