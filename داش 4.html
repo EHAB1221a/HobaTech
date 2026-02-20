@@ -581,7 +581,7 @@ OneSignalDeferred.push(async function(OneSignal) {
         left: 0 !important;        /* من البداية */
         right: 0 !important;       /* للنهاية */
         width: 100% !important;
-        height: 40px !important; 
+        height: 28px !important; 
         background-color: #000 !important;
         display: flex !important;
         align-items: center !important;
@@ -591,21 +591,29 @@ OneSignalDeferred.push(async function(OneSignal) {
     }
 
     /* مستطيل LIVE FEED - أحمر صريح وكامل */
-    .footer-label {
-        background-color: #ff0000 !important;
-        color: #fff !important;
-        font-weight: bold !important;
-        font-size: 10px !important;
-        height: 100% !important; /* مستطيل واخد الارتفاع كله */
-        display: flex !important;
-        align-items: center !important;
-        padding: 0 15px !important;
-        z-index: 1000 !important;
-        flex-shrink: 0; 
-        border-radius: 0 !important; /* مستطيل حاد بدون قص */
-        text-transform: uppercase;
-    }
+  .footer-label {
+    background-color: #ff0000 !important;
+    color: #fff !important;
+    font-weight: bold !important;
+    font-size: 9px !important;    /* تصغير الخط شوية */
+    height: 100% !important; 
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 8px !important;    /* تقليل العرض الداخلي (الوافر) */
+    z-index: 1000 !important;
+    flex-shrink: 0 !important; 
+    border-radius: 0 !important; 
+    margin: 0 !important;         /* حذف أي مسافات خارجية */
+    text-transform: uppercase;
+    /* التأكد من أنه لازق في طرف الشاشة */
+    position: relative;
+    right: 0; 
+}
 
+/* تأكيد أن الحاوية الأم لا تترك مسافة في البداية */
+.news-footer {
+    padding-right: 0 !important; /* حذف أي مسافة داخلية من اليمين */
+}
     /* منطقة النص المتحرك */
     .footer-scroll {
         flex: 1;
@@ -623,17 +631,19 @@ OneSignalDeferred.push(async function(OneSignal) {
         position: absolute;
         top: 50% !important;
         /* الأنيميشن بيبدأ من اليمين (100%) لليسار (-100%) */
-        animation: move-rtl-bottom 20s linear infinite !important;
+        animation: move-rtl-bottom 66s linear infinite !important;
     }
 }
 
 /* الأنيماشن لضمان السنتر والحركة من اليمين */
 @keyframes move-rtl-bottom {
     0% {
-        transform: translate(100%, -50%); /* البداية من اليمين خارج الشاشة */
+        /* البداية من أقصى اليسار خارج الشاشة */
+        transform: translate(-100%, -50%); 
     }
     100% {
-        transform: translate(-150%, -50%); /* النهاية في اليسار خارج الشاشة */
+        /* النهاية في أقصى اليمين خارج الشاشة */
+        transform: translate(150%, -50%); 
     }
 }
     </style>
@@ -1131,6 +1141,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
