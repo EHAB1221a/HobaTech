@@ -1004,7 +1004,11 @@ window.onload = () => {
     fetchHobaNews();
     nextCase();
 };
-
+// زود السطر ده تحت تعريف المصفوفة newsItems مباشرة
+if (window.innerWidth <= 768) {
+    // بيجمع الأخبار كلها في سطر واحد للموبايل فقط
+    document.getElementById('hoba-ticker-container').innerText = newsItems.join("  ★  ");
+}
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach(p=>{
@@ -1085,4 +1089,5 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
