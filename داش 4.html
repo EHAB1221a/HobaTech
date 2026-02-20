@@ -572,35 +572,54 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 /* --- ضبط شريط الأخبار للموبايل --- */
 
-            @media (max-width: 768px) {
-    .footer-scroll {
+      /* --- ضبط شريط الأخبار للموبايل --- */
+@media (max-width: 768px) {
+    /* تصغير الحاوية الكبيرة */
+    .news-footer {
+        height: 35px !important; /* تقليل الارتفاع شوية */
+        background-color: #000 !important;
         display: flex !important;
-        align-items: center;
-        justify-content: center;
-        position: relative !important;
+        align-items: center !important;
+    }
+
+    /* تصغير كلمة LIVE FEED جداً عشان متضايقش الخبر */
+    .footer-label {
+        font-size: 8px !important; /* تصغير الخط */
+        padding: 2px 6px !important; /* تقليل الحواف */
+        min-width: 50px !important; /* عرض صغير للمربع */
+        height: auto !important;
+        background: red; /* لو عايزها واضحة */
+        z-index: 99; /* عشان تفضل فوق النص */
+    }
+
+    /* منطقة حركة النص */
+    .footer-scroll {
+        flex: 1;
         overflow: hidden !important;
-        height: 40px !important;
-        background-color: #000 !important; /* خلفية سوداء */
-    }
-
-    #hoba-ticker-container {
         position: relative;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: block !important;
     }
 
-    /* تنسيق الخبر القادم من جوجل شيت */
-    .dynamic-news-item {
+    /* النص اللي جاي من جوجل شيت */
+    #hoba-ticker-container {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        color: #ffffff !important; /* اللون الأبيض اللي طلبته */
+        font-size: 14px !important;
         position: absolute;
-        white-space: nowrap; /* الخبر يظهر في سطر واحد كامل */
-        color: #ffffff !important; /* اللون الأبيض */
-        font-size: 15px !important;
-        font-weight: bold;
-        visibility: hidden;
-        display: inline-block;
+        right: 0;
+        /* الأنيميشن اللي بيحرك من اليمين لليسار */
+        animation: move-rtl 12s linear infinite !important;
+    }
+}
+
+/* حركة من اليمين (بره الشاشة) لليسار (بره الشاشة) */
+@keyframes move-rtl {
+    0% {
+        transform: translateX(90%); /* يبدأ من أقصى اليمين */
+    }
+    100% {
+        transform: translateX(-150%); /* ينتهي في أقصى اليسار */
     }
 }
     </style>
@@ -1098,6 +1117,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
