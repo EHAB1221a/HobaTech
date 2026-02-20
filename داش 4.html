@@ -570,7 +570,46 @@ OneSignalDeferred.push(async function(OneSignal) {
     to { transform: translateX(-50%) rotate(4deg); }
 }
 
+/* --- ضبط شريط الأخبار للموبايل --- */
+@media (max-width: 768px) {
+    /* تصغير ارتفاع الشريط عشان يناسب شاشة الفون */
+    .news-footer {
+        height: 40px !important;
+        padding-left: 0 !important;
+    }
 
+    /* تصغير المربع اللي مكتوب فيه LIVE FEED */
+    .footer-label {
+        font-size: 10px !important;
+        padding: 0 10px !important;
+        white-space: nowrap;
+        min-width: 70px;
+    }
+
+    /* جعل النص يتحرك من اليمين للشمال عشان يظهر كله */
+    .footer-scroll {
+        display: block !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #hoba-ticker-container {
+        font-size: 14px !important;
+        white-space: nowrap !important;
+        display: inline-block !important;
+        position: absolute;
+        right: 0;
+        /* سرعة الحركة 10 ثواني - تقدر تغيرها */
+        animation: marquee-mobile 10s linear infinite !important;
+        padding-right: 100%; /* عشان يبدأ من بره الشاشة */
+    }
+}
+
+/* حركة الشريط في الموبايل */
+@keyframes marquee-mobile {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
     </style>
 </head>
 <body>
@@ -1046,3 +1085,4 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
