@@ -572,46 +572,23 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 /* --- ضبط شريط الأخبار للموبايل --- */
 @media (max-width: 768px) {
-    /* تصغير ارتفاع الشريط عشان يناسب شاشة الفون */
+    /* تنسيق الحاوية الرئيسية للشريط */
     .news-footer {
         height: 40px !important;
         padding-left: 0 !important;
+        background-color: #000000; /* التأكد من أن الخلفية سوداء */
     }
 
-    /* تصغير المربع اللي مكتوب فيه LIVE FEED */
+    /* تنسيق مربع "LIVE FEED" */
     .footer-label {
         font-size: 10px !important;
         padding: 0 10px !important;
         white-space: nowrap;
         min-width: 70px;
+        z-index: 10; /* لضمان بقاء المربع فوق النص المتحرك */
     }
 
-    /* جعل النص يتحرك من اليمين للشمال عشان يظهر كله */
-    .footer-scroll {
-        display: block !important;
-        position: relative;
-        overflow: hidden;
-    }
-
-    #hoba-ticker-container {
-        font-size: 14px !important;
-        white-space: nowrap !important;
-        display: inline-block !important;
-        position: absolute;
-        right: 0;
-        /* سرعة الحركة 10 ثواني - تقدر تغيرها */
-        animation: marquee-mobile 10s linear infinite !important;
-        padding-right: 100%; /* عشان يبدأ من بره الشاشة */
-    }
-}
-
-/* حركة الشريط في الموبايل */
-@keyframes marquee-mobile {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
-            @media (max-width: 768px) {
-    /* نضمن إن الحاوية ظاهرة */
+    /* منطقة حركة النص */
     .footer-scroll {
         display: block !important;
         position: relative !important;
@@ -620,23 +597,30 @@ OneSignalDeferred.push(async function(OneSignal) {
         height: 100% !important;
     }
 
-    /* نضمن إن النص لونه واضح وظاهر */
+    /* النص المتحرك - هنا تم تعديل اللون للأبيض */
     #hoba-ticker-container {
         display: inline-block !important;
         white-space: nowrap !important;
         position: absolute !important;
         right: 0 !important;
-        color: var(--glow-color) !important;
+        
+        /* التعديل المطلوب: اللون الأبيض */
+        color: #ffffff !important; 
+        font-weight: bold; /* جعل الخط عريضاً قليلاً للوضوح */
         font-size: 15px !important;
-        opacity: 1 !important; /* التأكد من عدم الاختفاء */
+        
+        opacity: 1 !important;
         visibility: visible !important;
+        
+        /* استدعاء الأنيميشن */
         animation: mobileRun 15s linear infinite !important;
     }
 }
 
+/* حركة الشريط السلسة */
 @keyframes mobileRun {
     0% { transform: translateX(100%); }
-    100% { transform: translateX(-150%); } /* يخرج تماماً من الشاشة */
+    100% { transform: translateX(-150%); } 
 }
     </style>
 </head>
@@ -1133,6 +1117,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
