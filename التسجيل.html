@@ -1,302 +1,522 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOBA TECH | نظام الدخول الهولوغرامي</title>
+    <title>HOBA TECH | NEXUS SYSTEM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;700&display=swap');
-        
-        :root { 
-            --main: #00f2ff; /* اللون الأزرق الهولوغرامي الجديد */
-            --bg: #050a0f; 
-            --card-bg: rgba(0, 20, 40, 0.7);
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;600;900&family=Orbitron:wght@400;700;900&display=swap');
+
+        :root {
+            --neon: #00f2ff;
+            --purple: #bc13fe;
+            --dark: #010409;
+            --glass: rgba(255, 255, 255, 0.03);
+            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body { 
-            margin: 0; 
-            font-family: 'Cairo', sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 100vh; 
-            overflow: hidden; 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--dark);
+            font-family: 'Cairo', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            color: white;
         }
 
-        /* تأثير الشبكة المتحركة في الخلفية */
-        .grid-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -2;
-        }
+        /* محرك الخلفية */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; }
 
-        .bg-glow { 
-            position: absolute; 
-            width: 400px; 
-            height: 400px; 
-            background: var(--main); 
-            filter: blur(150px); 
-            border-radius: 50%; 
-            z-index: -1; 
-            opacity: 0.15; 
-            animation: move 12s infinite alternate; 
-        }
-
-        @keyframes move { from { transform: translate(-30%, -30%); } to { transform: translate(30%, 30%); } }
-
-        /* الكارت الهولوغرامي */
-        .auth-card { 
-            background: var(--card-bg); 
-            padding: 40px 30px; 
-            border-radius: 20px; 
-            border: 2px solid var(--main); 
-            width: 360px; 
-            text-align: center; 
-            backdrop-filter: blur(15px); 
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0, 242, 255, 0.1); 
+        .main-wrapper {
             position: relative;
-            animation: float 4s ease-in-out infinite;
+            z-index: 10;
+            display: flex;
+            width: 100%;
+            height: 100%;
         }
 
-        /* خط المسح الضوئي */
-        .auth-card::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(0, 242, 255, 0.4);
-            box-shadow: 0 0 10px var(--main);
-            animation: scan 4s linear infinite;
+        /* الجانب الأيمن: لوحة المعلومات */
+        .info-panel {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 5% 8%;
+            animation: slideInRight 1s ease forwards;
         }
 
-        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
 
-        h2 { 
-            font-family: 'Orbitron', sans-serif;
-            color: var(--main); 
-            font-size: 28px; 
-            margin-bottom: 5px; 
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px var(--main);
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        p { font-size: 14px; color: #88c9cc; margin-bottom: 25px; }
-
-        input, select { 
-            width: 100%; 
-            padding: 12px; 
-            margin-top: 12px; 
-            background: rgba(0, 242, 255, 0.05); 
-            border: 1px solid rgba(0, 242, 255, 0.2); 
-            border-radius: 8px; 
-            color: white; 
-            outline: none; 
-            box-sizing: border-box; 
-            font-family: 'Cairo'; 
-            transition: 0.3s;
+        .pulse-dot {
+            width: 10px; height: 10px; background: #00ff88; border-radius: 50%;
+            box-shadow: 0 0 15px #00ff88; animation: pulse 1.5s infinite;
         }
 
-        input:focus { border-color: var(--main); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
 
-        .btn-auth { 
-            width: 100%; 
-            padding: 14px; 
-            background: transparent; 
-            border: 1px solid var(--main); 
-            color: var(--main); 
-            border-radius: 8px; 
-            font-weight: bold; 
-            font-size: 16px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            margin-top: 20px; 
-            font-family: 'Orbitron', 'Cairo';
-            text-transform: uppercase;
+        .info-panel h2 {
+            font-family: 'Orbitron'; font-size: 3.5rem; line-height: 1.1; margin-bottom: 20px;
+            background: linear-gradient(to bottom, #fff, var(--neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .btn-auth:hover { 
-            background: var(--main); 
-            color: #050a0f; 
-            box-shadow: 0 0 25px var(--main); 
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 500px; margin-top: 40px; }
+
+        .stat-item {
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.05);
+            padding: 20px; border-radius: 20px; backdrop-filter: blur(10px);
+            transition: var(--transition);
         }
 
-        .switch { margin-top: 20px; font-size: 13px; color: #888; }
-        .switch span { color: var(--main); cursor: pointer; font-weight: bold; }
-        #error-msg { color: #ff4444; font-size: 12px; margin-top: 10px; min-height: 18px; }
+        .stat-item:hover { border-color: var(--neon); background: rgba(0,242,255,0.05); transform: translateY(-5px); }
 
-        ::placeholder { color: rgba(0, 242, 255, 0.4); }
-   
-   </style>
+        .stat-item i { color: var(--neon); font-size: 1.5rem; margin-bottom: 10px; display: block; }
+
+        /* الجانب الأيسر: الفورم */
+        .auth-panel {
+            flex: 0.8; display: flex; align-items: center; justify-content: center;
+            padding: 40px; animation: slideInLeft 1s ease forwards;
+        }
+
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+
+        .auth-card {
+            width: 100%; max-width: 420px; padding: 50px;
+            background: rgba(255, 255, 255, 0.02); border: 1.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px; backdrop-filter: blur(40px);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8); text-align: center;
+            position: relative; overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--neon), transparent);
+            animation: borderFlow 3s linear infinite;
+        }
+
+        @keyframes borderFlow { 0% { left: -100%; } 100% { left: 100%; } }
+
+        .input-group { position: relative; margin-bottom: 15px; }
+
+        .input-group input, .input-group select {
+            width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px; color: #fff; text-align: center; outline: none; transition: 0.3s; font-family: 'Cairo';
+        }
+
+        .input-group input:focus { border-color: var(--neon); background: rgba(0,242,255,0.03); box-shadow: 0 0 15px rgba(0,242,255,0.1); }
+
+        .action-btn {
+            width: 100%; padding: 18px; margin-top: 20px;
+            background: linear-gradient(135deg, var(--purple), var(--neon)); border: none;
+            border-radius: 18px; color: #fff; font-family: 'Orbitron'; font-weight: 900;
+            cursor: pointer; transition: 0.4s; letter-spacing: 2px;
+        }
+
+        .action-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(0,242,255,0.4); filter: brightness(1.1); }
+
+        .hidden { display: none; }
+
+        @media (max-width: 1000px) { .info-panel { display: none; } .auth-panel { flex: 1; } }
+ 
+        .nexus-reactor {
+    position: relative;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+/* المفاعل المركزي */
+.core-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-core {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, var(--neon) 0%, transparent 70%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    box-shadow: 0 0 30px var(--neon);
+}
+
+.main-core i { font-size: 25px; color: #fff; }
+
+.core-ring {
+    position: absolute;
+    border: 2px solid var(--neon);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: corePulse 3s infinite ease-out;
+}
+
+.core-ring:nth-child(1) { width: 80px; height: 80px; animation-delay: 0s; }
+.core-ring:nth-child(2) { width: 120px; height: 120px; animation-delay: 1s; }
+.core-ring:nth-child(3) { width: 160px; height: 160px; animation-delay: 2s; }
+
+/* عقد البيانات المتصلة */
+.data-node {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 250px;
+}
+
+.data-node.top { top: -20px; right: -50px; flex-direction: row-reverse; }
+.data-node.bottom { bottom: -20px; left: -50px; }
+
+.node-content {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-radius: 15px;
+    border-left: 3px solid var(--neon);
+    backdrop-filter: blur(5px);
+    animation: float 4s infinite ease-in-out;
+}
+
+.node-line {
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--neon), transparent);
+    position: relative;
+}
+
+.node-line::after {
+    content: '';
+    position: absolute;
+    width: 6px; height: 6px; background: var(--neon);
+    border-radius: 50%; top: -2px; left: 0;
+    box-shadow: 0 0 10px var(--neon);
+    animation: flow 2s infinite linear;
+}
+
+/* الأنميشن */
+@keyframes corePulse {
+    0% { transform: scale(0.5); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes flow {
+    0% { left: 100%; opacity: 0; }
+    50% { opacity: 1; }
+    100% { left: 0%; opacity: 0; }
+}
+
+.fa-spin-slow { animation: fa-spin 10s infinite linear; }
+
+/* التعديل عشان يشتغل على كل الشاشات */
+@media (max-width: 768px) {
+    .nexus-reactor {
+        height: auto;
+        flex-direction: column; /* يخلي الحاجات تحت بعض في الموبايل */
+        gap: 30px;
+        padding: 40px 0;
+    }
+
+    .core-wrapper {
+        order: 1; /* المفاعل يبقى في النص */
+        width: 80px;
+        height: 80px;
+    }
+
+    .data-node {
+        position: relative !important; /* يلغي التثبيت العشوائي */
+        right: auto !important;
+        left: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+        width: 100% !important;
+        justify-content: center;
+    }
+
+    .data-node.top { order: 0; } /* الآية تبقى فوق */
+    .data-node.bottom { order: 2; } /* البصمة تبقى تحت */
+
+    .node-line {
+        display: none; /* نخفي الخطوط في الموبايل عشان الزحمة */
+    }
+
+    .node-content {
+        width: 90%;
+        text-align: center;
+        font-size: 12px;
+    }
+}
+ </style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
-<div class="bg-glow"></div>
+<canvas id="bg-canvas"></canvas>
 
-<div class="auth-card">
-    <h2 id="card-title">HOBA TECH</h2>
-    <p id="card-desc"> مرحبا بكم في هوبا تيك| HOBA TECH</p>
+<div class="main-wrapper">
+    <div class="info-panel">
+        <div class="status-header">
+            <div class="pulse-dot"></div>
+            <span style="letter-spacing: 2px; font-size: 12px; opacity: 0.8; font-family: 'Orbitron';">BEYOND THE LIMITS •• TOWARDS THE BETTER</span>
+        </div>
+        <h2>welcome to<br><span style="color: var(--neon);">HobaTech</span></h2>
+        <p style="color: rgba(255,255,255,0.5); font-weight: 300; max-width: 400px; line-height: 1.8;"> في رحاب العلم نلتقي، وفي طريق النجاح نرتقي..هوبا تيك بوابتك الآمنة نحو غدٍ أفضل</p>
+        
+        <div class="nexus-reactor">
+            <div class="core-wrapper">
+                <div class="core-ring"></div>
+                <div class="core-ring"></div>
+                <div class="core-ring"></div>
+                <div class="main-core">
+                    <i class="fas fa-atom fa-spin-slow"></i>
+                </div>
+            </div>
+        
+            
+                <div class="data-node bottom">
+                    <div class="node-line"></div>
+                    <div class="node-content">
+                        <i class="fas fa-fingerprint"></i>
+                        <strong>لقد حان الوقت لتضع بصمتك ابدأ الان...</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div id="login-box">
-        <input type="email" id="l-email" placeholder="البريد الإلكتروني">
-        <input type="password" id="l-pass" placeholder="كلمة السر">
-        <button class="btn-auth" onclick="handleLogin()">ACCESS SYSTEM</button>
-        <div class="switch">
-            ليس لديك تصريح؟ <span onclick="toggle('signup')">إنشاء بروتوكول جديد</span><br><br>
-            <span onclick="toggle('forgot')">استعادة الهوية؟</span>
+    <div class="auth-panel">
+        <div class="auth-card">
+            <img src="1769979851931.png" style="width: 80px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--neon));" alt="">
+            <h3 style="font-family: 'Orbitron'; margin-bottom: 30px; letter-spacing: 4px;">مرحبا بكم في هوبا تيك</h3>
+
+            <div id="login-box">
+                <div class="input-group"><input type="email" id="l-email" placeholder="البريد الإلكتروني"></div>
+                <div class="input-group"><input type="password" id="l-pass" placeholder="كلمة السر"></div>
+                
+                <button class="action-btn" onclick="handleLogin()">تسجيل الدخول</button>
+                
+                <p style="margin-top: 15px; font-size: 11px;">
+                    <span onclick="toggleResetModal(true)" style="color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s;" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">
+                        نسيت كلمة السر؟
+                    </span>
+                </p>
+                <div id="reset-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+                    <div class="auth-card" style="max-width: 350px; border: 1px solid var(--neon);">
+                        <i class="fas fa-fingerprint" style="font-size: 2rem; color: var(--neon); margin-bottom: 20px;"></i>
+                        <h4 style="margin-bottom: 20px; font-family: 'Orbitron'; color: #fff;">استعادة كلمة السر</h4>
+                        <div class="input-group">
+                            <input type="email" id="reset-email" placeholder="البريد الإلكتروني">
+                        </div>
+                        <button class="action-btn" onclick="sendResetEmail()">إرسال الرابط</button>
+                        <p onclick="toggleResetModal(false)" style="margin-top: 15px; font-size: 11px; cursor: pointer; color: #ff4444;">إلغاء</p>
+                    </div>
+                </div>     
+                <p style="margin-top:20px; font-size:12px; opacity: 0.7;">
+                    طالب جديد؟ <span onclick="view('signup')" style="color:var(--neon); cursor:pointer; font-weight:900;">انضم إلينا</span>
+                </p>
+            </div>
+
+            <div id="signup-box" class="hidden">
+                <div style="display:flex; gap:10px; margin-bottom:12px;">
+                    <input type="text" id="s-name" class="nano-input" placeholder="الاسم" style="width:50%; padding:15px; border-radius:15px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); color:#fff; text-align:center;">
+                    <input type="tel" id="s-phone" class="nano-input" placeholder="الهاتف" style="width:50%; padding:15px; border-radius:15px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); color:#fff; text-align:center;">
+                </div>
+                <div class="input-group">
+                    <select id="s-group"><option value="" disabled selected>الفرقة</option><option>الفرقة الأولى</option></select>
+                </div>
+                <div class="input-group"><input type="email" id="s-email" placeholder="البريد الإلكتروني"></div>
+                <div class="input-group"><input type="password" id="s-pass" placeholder="كلمة السر"></div>
+                <button class="action-btn" id="s-btn" onclick="handleSignup()">انشاء حسابي</button>
+                <p style="margin-top:25px; font-size:12px;">لدي حساب؟ <span onclick="view('login')" style="color:var(--neon); cursor:pointer; font-weight:900;">تسجيل دخول</span></p>
+            </div>
+            <div id="msg" style="margin-top:15px; font-size:11px;"></div>
         </div>
     </div>
-
-    <div id="signup-box" style="display: none;">
-        <input type="text" id="s-name" placeholder="الاسم الكامل">
-        <input type="tel" id="s-phone" placeholder="رقم الموبايل">
-        <select id="s-group">
-            <option value="" disabled selected>اختر الفرقة</option>
-            <option>الفرقة الأولى</option>
-            <option disabled>الفرقة الثانية 🔒</option>
-            <option disabled>الفرقة الثالثة 🔒</option>
-            <option disabled>الفرقة الرابعة 🔒</option>
-        </select>
-        <input type="email" id="s-email" placeholder="البريد الإلكتروني">
-        <input type="password" id="s-pass" placeholder="كلمة السر">
-        <button class="btn-auth" id="signup-btn" onclick="handleSignup()">INITIALIZE ACCOUNT</button>
-        <div class="switch">لديك تصريح دخول؟ <span onclick="toggle('login')">تسجيل الدخول</span></div>
-    </div>
-
-    <div id="forgot-box" style="display: none;">
-        <input type="email" id="f-email" placeholder="أدخل البريد الإلكتروني للمساعدة">
-        <button class="btn-auth" onclick="handleReset()">RESET PASSWORD</button>
-        <div class="switch">تذكرت الهوية؟ <span onclick="toggle('login')">رجوع للدخول</span></div>
-    </div>
-
-    <div id="error-msg"></div>
 </div>
 
 <script type="module">
-    // 1. استيراد المكتبات (تم إضافة sendPasswordResetEmail هنا)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { 
-        getAuth, 
-        createUserWithEmailAndPassword, 
-        signInWithEmailAndPassword, 
-        sendPasswordResetEmail  // <-- دي اللي كانت ناقصة يا بطل
-    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-    
-    // 2. إعدادات Firebase الخاصة بك
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
       authDomain: "hoba-tech.firebaseapp.com",
       projectId: "hoba-tech",
       appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
     };
-    
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const SHEET_URL = "https://script.google.com/macros/s/AKfycby8m3sDLRcTCmg8g6O-wvEFxgawEQ9bozWHVEgcrZG5hPqiFrFOAQszngFSHRhd94OTgw/exec";
 
-    // 3. دالة التبديل بين الشاشات
-    window.toggle = (view) => {
-        document.getElementById('login-box').style.display = view === 'login' ? 'block' : 'none';
-        document.getElementById('signup-box').style.display = view === 'signup' ? 'block' : 'none';
-        document.getElementById('forgot-box').style.display = view === 'forgot' ? 'block' : 'none';
-        document.getElementById('error-msg').innerText = "";
-        document.getElementById('card-desc').innerText = 
-            view === 'signup' ? 'NEW PROTOCOL SETUP' : 
-            view === 'forgot' ? 'RECOVERING IDENTITY...' : 'AUTHENTICATING USER...';
+    // محرك خلفية النانو
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.onresize = resize; resize();
+
+    class P {
+        constructor() { this.init(); }
+        init() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.v = Math.random() * 0.5 + 0.2;
+            this.size = Math.random() * 1.5;
+        }
+        update() {
+            this.y -= this.v;
+            if(this.y < 0) this.init();
+        }
+        draw() {
+            ctx.fillStyle = 'rgba(0, 242, 255, 0.3)';
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+        }
+    }
+    for(let i=0; i<150; i++) particles.push(new P());
+    function loop() {
+        ctx.fillStyle = 'rgba(1, 4, 9, 0.15)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(loop);
+    }
+    loop();
+
+    window.view = (v) => {
+        document.getElementById('login-box').classList.toggle('hidden', v === 'signup');
+        document.getElementById('signup-box').classList.toggle('hidden', v === 'login');
     };
 
-    // 4. دالة إعادة تعيين كلمة السر (المعدلة)
-    window.handleReset = async () => {
-        const emailInput = document.getElementById("f-email");
-        const msg = document.getElementById("error-msg");
-        const email = emailInput.value.trim();
-
-        if (!email) {
-            msg.style.color = "#ff4444";
-            msg.innerText = "يرجى كتابة البريد الإلكتروني أولاً";
-            return;
-        }
-
-        try {
-            console.log("جاري محاولة إرسال رابط التعيين لـ:", email);
-            await sendPasswordResetEmail(auth, email);
-            msg.style.color = "#00f2ff"; 
-            msg.innerText = "تم إرسال الرابط! افحص بريدك (والـ Spam)";
-        } catch (error) {
-            console.error("Firebase Error Code:", error.code);
-            msg.style.color = "#ff4444";
-            
-            if (error.code === 'auth/user-not-found') {
-                msg.innerText = "هذا الإيميل غير مسجل في النظام";
-            } else if (error.code === 'auth/invalid-email') {
-                msg.innerText = "صيغة الإيميل غير صحيحة";
-            } else {
-                msg.innerText = "حدث خطأ: " + error.code;
-            }
-        }
-    };
-
-    // 5. دالة تسجيل الدخول
     window.handleLogin = async () => {
-        const email = document.getElementById("l-email").value.trim();
-        const pass = document.getElementById("l-pass").value.trim();
-        const msg = document.getElementById("error-msg");
+    const e = document.getElementById("l-email").value;
+    const p = document.getElementById("l-pass").value;
+    const m = document.getElementById("msg");
 
-        if(!email || !pass) { msg.innerText = "أدخل بيانات الدخول"; return; }
+    if (!e || !p) {
+        m.style.color = "#ffcc00";
+        m.innerText = "برجاء إدخال البريد وكلمة السر";
+        return;
+    }
 
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            msg.style.color = "#00ff00";
-            msg.innerText = "ACCESS GRANTED... Redirecting";
-            setTimeout(() => { window.location.href = "داش 4.html"; }, 1000);
-        } catch (e) {
-            msg.style.color = "#ff4444";
-            msg.innerText = "ACCESS DENIED: بيانات غير صحيحة";
-        }
-    };
+    try {
+        await signInWithEmailAndPassword(auth, e, p);
+        m.style.color = "#00ff88"; 
+        m.innerText = "ACCESS GRANTED.. جاري الدخول";
+        setTimeout(() => location.href = "داش 4.html", 1000);
+    } catch (error) {
+        m.style.color = "#ff4444"; 
+        // رسائل خطأ أكثر ذكاءً
+        if (error.code === 'auth/user-not-found') m.innerText = "هذا الحساب غير موجود";
+        else if (error.code === 'auth/wrong-password') m.innerText = "كلمة السر غير صحيحة";
+        else m.innerText = "فشل تسجيل الدخول.. تأكد من بياناتك";
+    }
+};
 
-    // 6. دالة إنشاء الحساب
+// وظيفة استعادة كلمة السر (الجديدة)
+window.handleResetPassword = async () => {
+    const e = document.getElementById("l-email").value;
+    const m = document.getElementById("msg");
+
+    if (!e) {
+        m.style.color = "#ffcc00";
+        m.innerText = "اكتب بريدك الإلكتروني أولاً في خانة الدخول";
+        return;
+    }
+
+    // استيراد الدالة من مكتبة فايربيس
+    const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js");
+
+    try {
+        await sendPasswordResetEmail(auth, e);
+        m.style.color = "#00f2ff";
+        m.innerText = "تم إرسال رابط إعادة تعيين السر لبريدك";
+    } catch (error) {
+        m.style.color = "#ff4444";
+        m.innerText = "خطأ: تأكد من صحة البريد الإلكتروني";
+    }
+};
+
     window.handleSignup = async () => {
-        const btn = document.getElementById("signup-btn");
-        const msg = document.getElementById("error-msg");
-        const name = document.getElementById("s-name").value.trim();
-        const phone = document.getElementById("s-phone").value.trim();
-        const email = document.getElementById("s-email").value.trim();
+        const btn = document.getElementById("s-btn");
+        const name = document.getElementById("s-name").value;
+        const phone = document.getElementById("s-phone").value;
+        const email = document.getElementById("s-email").value;
         const group = document.getElementById("s-group").value;
-        const pass = document.getElementById("s-pass").value.trim();
+        const pass = document.getElementById("s-pass").value;
+        const m = document.getElementById("msg");
 
-        if (!name || !phone || !email || !group || !pass) {
-            msg.innerText = "برجاء إكمال جميع الحقول";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "PROCESSING...";
+        if(!email || !pass || !name| !group) { m.innerText = "برجاء ملء جميع الحقول"; return; }
+        btn.innerText = "جاري انشاء الحساب انتظر..."; btn.disabled = true;
 
         try {
             await createUserWithEmailAndPassword(auth, email, pass);
-            const finalUrl = `${SHEET_URL}?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(group)}&role=عضو`;
-            await fetch(finalUrl, { mode: 'no-cors' });
-
-            msg.style.color = "#00ff00";
-            msg.innerText = "PROTOCOL ESTABLISHED!";
-            setTimeout(() => { window.location.href = "داش 4.html"; }, 1500);
-        } catch (e) {
-            btn.disabled = false;
-            btn.innerText = "INITIALIZE ACCOUNT";
-            msg.style.color = "#ff4444";
-            msg.innerText = "ERROR: " + (e.code === 'auth/email-already-in-use' ? "الإيميل مسجل مسبقاً" : "فشل النظام");
+            const q = `?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(group)}&role=عضو`;
+            fetch(SHEET_URL + q, { mode: 'no-cors' });
+            m.style.color = "#00ff88"; m.innerText = "تم تسجيل الدخول بنجاح";
+            setTimeout(() => location.href = "داش 4.html", 1500);
+        } catch (err) {
+            btn.innerText = "انشاء حسابي"; btn.disabled = false;
+            m.style.color = "#ff4444"; m.innerText = "ERROR: " + err.code;
         }
     };
-</script>
+   // فتح وقفل الواجهة المنبثقة
+// دي الوظيفة اللي بتفتح وبتقفل الشباك
+window.toggleResetModal = (show) => {
+    const modal = document.getElementById('reset-modal');
+    if (modal) {
+        if (show) {
+            modal.style.setProperty('display', 'flex', 'important');
+        } else {
+            modal.style.setProperty('display', 'none', 'important');
+        }
+    } else {
+        console.error("عذراً: الـ reset-modal مش موجود في الـ HTML أصلاً!");
+    }
+};
+// تحديث وظيفة الضغط على "نسيت كلمة السر" في الفورم الرئيسي
+window.handleResetPassword = () => {
+    toggleResetModal(true); // نفتح الواجهة المنبثقة بدلاً من الإرسال المباشر
+};
+
+// وظيفة الإرسال الفعلية من داخل الواجهة المنبثقة
+window.sendResetEmail = async () => {
+    const e = document.getElementById("reset-email").value;
+    const m = document.getElementById("msg"); // الرسالة هتظهر في الفورم الرئيسي بعد القفل
+
+    if (!e) {
+        alert("برجاء كتابة البريد الإلكتروني");
+        return;
+    }
+
+    const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js");
+
+    try {
+        await sendPasswordResetEmail(auth, e);
+        toggleResetModal(false); // نقفل الواجهة
+        m.style.color = "#00f2ff";
+        m.innerText = " تم إرسال رابط الاستعادة.. تفقد بريدك و الا spam";
+    } catch (error) {
+        alert("خطأ: تأكد من صحة البريد الإلكتروني");
+    }
+};
 </script>
 </body>
 </html>
