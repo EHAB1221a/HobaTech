@@ -1137,26 +1137,28 @@ document.getElementById('deleteAccountBtn').onclick = function () {
     }
   });
 };
-window.addEventListener('load', () => {
-        const rtdb = firebase.database();
-        const visitsRef = rtdb.ref('visits');
+const rtdb = firebase.database();
+    const visitsRef = rtdb.ref('visits');
 
-        if (!sessionStorage.getItem('is_visitor')) {
-            // تنفيذ الزيادة في قاعدة البيانات
-            visitsRef.transaction((currentValue) => {
-                return (currentValue || 0) + 1;
-            }, (error, committed, snapshot) => {
-                if (committed) {
-                    // وضع علامة في متصفح الزائر عشان ميتحسبش تاني لو عمل ريفريش
-                    sessionStorage.setItem('is_visitor', 'true');
-                    console.log('تم تسجيل زيارة جديدة بنجاح!');
-                }
-            });
+    if (!sessionStorage.getItem('counted')) {
+        visitsRef.transaction(current => (current || 0) + 1);
+        sessionStorage.setItem('counted', 'true');
+    }
+
+    // تشغيل عداد "النشطين الآن"
+    const activeRef = rtdb.ref('active_now');
+    const connectedRef = rtdb.ref('.info/connected');
+
+    connectedRef.on('value', (snap) => {
+        if (snap.val() === true) {
+            activeRef.transaction(current => (current || 0) + 1);
+            activeRef.onDisconnect().transaction(current => (current > 0 ? current - 1 : 0));
         }
     });
 </script>
 </body>
 </html>
+
 
 
 
