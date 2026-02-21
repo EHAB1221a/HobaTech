@@ -1076,7 +1076,19 @@ if (window.innerWidth <= 768) {
         appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
         measurementId: "G-EBHF8FEDB2"
     };
+if (typeof firebase !== 'undefined') {
+        // إجبار الفايربيس على استخدام Force Refresh و Long Polling
+        // ده بيخلي الموبايل يبعت البيانات غصب عن أي حماية
+        if (!firebase.apps.length) {
+            firebase.initializeApp(trackConfig);
+            // السطر السحري لحل مشكلة الموبايل
+            firebase.database().getRepo().repoGeneral_ .forceWebSockets_ = false; 
+        }
 
+        const db = firebase.database();
+
+        // زيادة الإجمالي فوراً
+        db.ref('visits').transaction(c => (c || 0) + 1);
     // 2. التأكد من التفعيل بدون تكرار
     let trackApp = !firebase.apps.length 
         ? firebase.initializeApp(trackConfig) 
@@ -1182,6 +1194,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
