@@ -1155,9 +1155,26 @@ const rtdb = firebase.database();
             activeRef.onDisconnect().transaction(current => (current > 0 ? current - 1 : 0));
         }
     });
+        // التأكد من أن Firebase يعمل
+    if (typeof firebase !== 'undefined') {
+        const rtdb = firebase.database();
+        
+        // أول ما الصفحة تحمل
+        window.addEventListener('load', () => {
+            // بنستخدم sessionStorage عشان لو الزائر عمل Refresh في نفس اللحظة ميعدش زيارتين
+            if (!sessionStorage.getItem('visited_now')) {
+                rtdb.ref('visits').transaction((currentValue) => {
+                    return (currentValue || 0) + 1;
+                });
+                // سجل إننا عديناه خلاص
+                sessionStorage.setItem('visited_now', 'true');
+            }
+        });
+    }
 </script>
 </body>
 </html>
+
 
 
 
