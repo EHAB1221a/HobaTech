@@ -1113,6 +1113,9 @@ if (window.innerWidth <= 768) {
 
     console.log("Nexus Tracking: System Online");
 })();
+        window.addEventListener('load', () => {
+        setTimeout(startTracking, 1000);
+    });
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach(p=>{
@@ -1193,6 +1196,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
