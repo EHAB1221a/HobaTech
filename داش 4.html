@@ -1092,6 +1092,16 @@ if (window.innerWidth <= 768) {
     }
 // السطر ده هو اللي "بيصحصح" المتصفح عشان يبعت البيانات فوراً
     trackDb.goOnline();
+                db.ref('visits').transaction(function(current) {
+                return (current || 0) + 1;
+            }, function(error) {
+                if (error) {
+                    // لو الـ transaction فشلت (بسبب حماية الموبايل)، جرب الـ set المباشر
+                    db.ref('visits').once('value').then(s => {
+                        db.ref('visits').set((s.val() || 0) + 1);
+                    });
+                }
+            });
     // 4. تحديث النشطين الآن (Live)
     const activeRef = trackDb.ref('active_now');
     activeRef.transaction(current => (current || 0) + 1);
@@ -1181,6 +1191,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
