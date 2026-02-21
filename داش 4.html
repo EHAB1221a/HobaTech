@@ -1191,9 +1191,24 @@ const rtdb = firebase.database();
             }
         });
     }
+if (!sessionStorage.getItem('counted')) {
+          rtdb.ref('visits').transaction(current => (current || 0) + 1);
+          sessionStorage.setItem('counted', 'true'); 
+      }
+
+      // 2. كود النشطين الآن
+      const activeRef = rtdb.ref('active_now');
+      rtdb.ref('.info/connected').on('value', (snap) => {
+          if (snap.val() === true) {
+              activeRef.transaction(c => (c || 0) + 1);
+              activeRef.onDisconnect().transaction(c => (c > 0 ? c - 1 : 0));
+          }
+      });
+        
 </script>
 </body>
 </html>
+
 
 
 
