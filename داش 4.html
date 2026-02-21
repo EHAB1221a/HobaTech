@@ -1090,7 +1090,8 @@ if (window.innerWidth <= 768) {
         trackDb.ref('visits').transaction(current => (current || 0) + 1);
         sessionStorage.setItem('visited_this_session', 'true');
     }
-
+// السطر ده هو اللي "بيصحصح" المتصفح عشان يبعت البيانات فوراً
+    trackDb.goOnline();
     // 4. تحديث النشطين الآن (Live)
     const activeRef = trackDb.ref('active_now');
     activeRef.transaction(current => (current || 0) + 1);
@@ -1180,6 +1181,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
