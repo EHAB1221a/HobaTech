@@ -1076,43 +1076,42 @@ if (window.innerWidth <= 768) {
         appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
         measurementId: "G-EBHF8FEDB2"
     };
-if (typeof firebase !== 'undefined') {
-        // إجبار الفايربيس على استخدام Force Refresh و Long Polling
-        // ده بيخلي الموبايل يبعت البيانات غصب عن أي حماية
-        if (!firebase.apps.length) {
-            firebase.initializeApp(trackConfig);
-            // السطر السحري لحل مشكلة الموبايل
-            firebase.database().getRepo().repoGeneral_ .forceWebSockets_ = false; 
-        }
-
-        const db = firebase.database();
-
-        // زيادة الإجمالي فوراً
-        db.ref('visits').transaction(c => (c || 0) + 1);
-    // 2. التأكد من التفعيل بدون تكرار
-    let trackApp = !firebase.apps.length 
-        ? firebase.initializeApp(trackConfig) 
-        : firebase.app(); // يستخدم التطبيق الموجود فعلياً إذا كان مفعلاً
+// 1. التأكد من تشغيل Firebase مرة واحدة فقط
+    let trackApp;
+    if (!firebase.apps.length) {
+        trackApp = firebase.initializeApp(trackConfig);
+        // السطر السحري: إجبار الموبايل على استخدام بروتوكول HTTP العادي بدلاً من WebSockets
+        try {
+            firebase.database().getRepo().repoGeneral_.forceWebSockets_ = false;
+        } catch (e) { console.log("WS Bypass Active"); }
+    } else {
+        trackApp = firebase.app();
+    }
 
     const trackDb = trackApp.database();
+    
+    // تصحيح الاتصال فوراً
+    trackDb.goOnline();
 
-    // 3. منع احتساب الزيارة عند عمل Refresh (اختياري ولكن احترافي)
-    // نستخدم sessionStorage للتأكد من أن الزيارة تُحسب مرة واحدة في كل "جلسة متصفح"
+    // 2. زيادة إجمالي الزيارات (بشرط ألا تكون "إعادة تحميل" Refresh)
     if (!sessionStorage.getItem('visited_this_session')) {
         trackDb.ref('visits').transaction(current => (current || 0) + 1);
+        // علامة في المتصفح إن الشخص ده اتحسب خلاص في الجلسة دي
         sessionStorage.setItem('visited_this_session', 'true');
     }
-// السطر ده هو اللي "بيصحصح" المتصفح عشان يبعت البيانات فوراً
-    trackDb.goOnline();
-              
-    // 4. تحديث النشطين الآن (Live)
+
+    // 3. تحديث النشطين الآن (Live)
     const activeRef = trackDb.ref('active_now');
+    
+    // زيادة عند الدخول
     activeRef.transaction(current => (current || 0) + 1);
     
-    // إنقاص العداد عند إغلاق الصفحة
+    // إنقاص العداد تلقائياً عند إغلاق الصفحة (الموبايل واللاب)
     activeRef.onDisconnect().transaction(current => {
         return (current || 0) <= 0 ? 0 : current - 1;
     });
+
+    console.log("Nexus Tracking: System Online");
 })();
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -1194,6 +1193,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
