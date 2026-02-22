@@ -92,7 +92,29 @@
     }
     .animate-gradient-xy { background-size: 400% 400%; animation: gradient-xy 15s ease infinite; }
   
-  
+  max-width: 100%;
+    overflow-x: hidden; /* يمنع الهزة اليمين والشمال نهائياً */
+    position: relative;
+    height: 100%;
+    -webkit-overflow-scrolling: touch; /* يخلي السكرول ناعم جداً على الآيفون */
+}
+
+/* يضمن إن أي عنصر ميتخطاش حدود الشاشة */
+* {
+    box-sizing: border-box;
+}
+
+/* لو فيه أي صورة أو لوجو بيتحرك ميبوظش الأبعاد */
+#login-overlay, .main-content {
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+/* تحسين شكل السكرول بار عشان مياخدش مساحة من الشاشة */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
   </style>
 </head>
 <body class="p-4 md:p-12">
@@ -567,4 +589,5 @@ window.addEventListener('load', () => {
 });
     </script>
 </body>
+
 </html>
