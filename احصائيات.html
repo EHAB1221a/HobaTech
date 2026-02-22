@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Ultimate Dashboard</title>
+    <link rel="icon" type="image/png" href="1769979851931.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #06b6d4;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #050505;
+            color: white;
+            overflow-x: hidden;
+        }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .main-content { position: relative; z-index: 10; }
+
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .neon-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .time-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+        }
+        .time-btn.active {
+            background: linear-gradient(45deg, #6366f1, #06b6d4);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            border: none;
+        }
+
+        @keyframes float {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(30px, 50px); }
+    }
+    @keyframes float-slow {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(-40px, -20px); }
+    }
+    .animate-float { animation: float 10s ease-in-out infinite; }
+    .animate-float-slow { animation: float-slow 15s ease-in-out infinite; }
+
+    /* أنيميشن خط الليزر (Scan) */
+    @keyframes scan {
+        0% { top: -10%; }
+        100% { top: 110%; }
+    }
+    .animate-scan { animation: scan 3s linear infinite; }
+
+    /* أنيميشن الحلقات */
+    .animate-spin-slow { animation: spin 8s linear infinite; }
+    .animate-reverse-spin { animation: spin 12s linear reverse infinite; }
+
+    /* لمعة الزرار */
+    @keyframes shine {
+        100% { transform: translateX(100%); }
+    }
+    .animate-shine { animation: shine 0.6s ease-in-out; }
+
+    /* تدرج الألوان المتغير */
+    @keyframes gradient-xy {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    .animate-gradient-xy { background-size: 400% 400%; animation: gradient-xy 15s ease infinite; }
+  
+  
+  </style>
+</head>
+<body class="p-4 md:p-12">
+
+    <div id="particles-js"></div>
+    <div class="bg-glow top-0 left-0"></div>
+    <div class="bg-glow bottom-0 right-0"></div>
+
+    <div class="max-w-7xl mx-auto main-content">
+        
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div>
+                <span class="text-indigo-500 font-bold tracking-[0.3em] text-xs uppercase">Main Intelligence</span>
+                <h1 class="text-6xl font-black mt-2 tracking-tighter">المركز <span class="text-transparent bg-clip-text bg-gradient-to-l from-cyan-400 to-indigo-500">الرقمي</span></h1>
+            </div>
+            
+            <div class="flex gap-2 p-1.5 liquid-glass rounded-2xl">
+                <button onclick="changeMode('daily')" id="btn-daily" class="time-btn px-8 py-2.5 rounded-xl text-sm font-bold">يومي</button>
+                <button onclick="changeMode('weekly')" id="btn-weekly" class="time-btn active px-8 py-2.5 rounded-xl text-sm font-bold">أسبوعي</button>
+                <button onclick="changeMode('monthly')" id="btn-monthly" class="time-btn px-8 py-2.5 rounded-xl text-sm font-bold">شهري</button>
+            </div>
+        </div>
+
+        <!-- الإحصائيات -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <!-- إجمالي الزيارات -->
+            <div class="liquid-glass neon-card p-8 group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+                    </span>
+                </div>
+                <p class="text-slate-400 text-sm font-bold mb-1 uppercase tracking-tighter">ضغط العمل الحالي</p>
+                <div class="flex items-baseline gap-1">
+                    <h3 class="text-4xl font-black tracking-tight text-white" id="live-pulsate">85</h3>
+                    <span class="text-orange-400 text-xl font-bold">%</span>
+                </div>
+            </div>
+
+            <!-- النشطين الآن -->
+            <div class="liquid-glass neon-card p-8 group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-500/10 text-cyan-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h-2m-2 0H8m6 0h2M8 12a2 2 0 114 0 2 2 0 01-4 0z"></path>
+                        </svg>
+                    </div>
+                    <span id="trend-2" class="text-cyan-400 text-xs font-bold pulse-live">🔴 LIVE</span>
+                </div>
+                <p class="text-slate-400 text-sm font-bold mb-1 uppercase tracking-tighter">اجمالي الزيارات
+                </p>
+                <h3 class="text-4xl font-black tracking-tight" id="stat-2">0</h3>
+            </div>
+
+            <!-- عدد المشتركين -->
+            <div class="liquid-glass neon-card p-8 group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 rounded-2xl bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <span id="trend-2" class="text-cyan-400 text-xs font-bold pulse-live">🔴 LIVE</span>
+                </div>
+                <p class="text-slate-400 text-sm font-bold mb-1 uppercase tracking-tighter">الاعضاء المشتركون حتي الان</p>
+                <h3 class="text-4xl font-black tracking-tight text-white" id="stat-3">0</h3>
+            </div>
+
+            <!-- أداء النظام -->
+            <div class="liquid-glass neon-card p-8 md:col-span-1">
+                 <p class="text-slate-400 text-sm font-bold mb-4 uppercase tracking-tighter">أداء النظام</p>
+                 <div class="flex items-center gap-4">
+                     <div class="h-2 flex-1 bg-white/5 rounded-full overflow-hidden">
+                         <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 w-[85%]"></div>
+                     </div>
+                     <span class="font-mono text-cyan-400 text-sm">85%</span>
+                 </div>
+            </div>
+        </div>
+
+        <!-- الرسم البياني -->
+        <div class="liquid-glass p-10 mb-12">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-black tracking-widest uppercase">Analytics Stream</h2>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-indigo-500 rounded-full animate-ping"></span>
+                    <span class="text-xs font-mono opacity-50">SYNCING REAL-TIME DATA</span>
+                </div>
+            </div>
+            <div class="h-[450px]">
+                <canvas id="nexusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- الأعضاء المشتركين -->
+        <div id="new-member-toast" class="fixed bottom-10 left-10 transform translate-y-20 opacity-0 transition-all duration-500 z-[100] liquid-glass p-4 flex items-center gap-4 border-l-4 border-indigo-500">
+            <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-xl">👤</div>
+            <div>
+                <p class="text-xs text-indigo-400 font-bold uppercase tracking-widest">عضو جديد انضم الآن</p>
+                <h4 id="new-member-name" class="text-white font-bold">---</h4>
+            </div>
+        </div>
+
+       <div id="login-overlay" class="fixed inset-0 z-[999] bg-[#020205] flex items-center justify-center p-6 overflow-hidden">
+    
+        <div id="login-overlay" class="fixed inset-0 z-[999] bg-[#020205] flex items-center justify-center p-6 overflow-hidden">
+    
+            <div class="absolute inset-0">
+                <div class="absolute w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px] top-[-10%] left-[-10%]"></div>
+                <div class="absolute w-[500px] h-[500px] bg-cyan-600/5 rounded-full blur-[100px] bottom-[-10%] right-[-10%]"></div>
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+            </div>
+        
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-indigo-500/20 rounded-[3rem] blur-xl opacity-40"></div>
+                
+                <div class="relative bg-black/60 backdrop-blur-[40px] p-12 max-w-md w-[380px] sm:w-[450px] text-center border border-white/10 rounded-[3rem] shadow-2xl">
+                    
+                    <div class="relative inline-block mb-10">
+                        <div class="absolute inset-0 bg-cyan-500/10 blur-2xl rounded-full animate-pulse"></div>
+                        
+                        <div class="absolute -inset-3 border border-cyan-500/20 rounded-full animate-spin-slow"></div>
+                        <div class="absolute -inset-6 border border-purple-500/10 rounded-full animate-reverse-spin"></div>
+                        
+                        <div class="relative w-28 h-28 rounded-full border border-white/20 p-1 bg-white/5 backdrop-blur-sm overflow-hidden shadow-2xl">
+                            <img src="1769979851931.png" alt="Logo" 
+                                 class="w-full h-full object-cover rounded-full filter contrast-[1.1] brightness-105">
+                            
+                            <div class="absolute top-0 left-0 w-full h-1 bg-cyan-400/40 shadow-[0_0_10px_cyan] animate-scan"></div>
+                        </div>
+                    </div>
+        
+                    <h2 class="text-4xl font-black mb-2 bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent tracking-tighter">ADMIN PORTAL</h2>
+                    <p class="text-cyan-400/40 mb-10 text-[10px] tracking-[0.4em] uppercase font-bold italic">System Identity Verified</p>
+                    
+                    <div class="space-y-6">
+                        <div class="relative group/input">
+                            <input type="password" id="admin-pass" placeholder="ENTER ACCESS CODE" 
+                                   class="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-center text-cyan-300 placeholder:text-cyan-900 outline-none focus:border-cyan-500/50 focus:bg-cyan-500/5 transition-all duration-500 tracking-[0.6em] font-mono">
+                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-cyan-500 group-focus-within/input:w-3/4 transition-all duration-700"></div>
+                        </div>
+                        
+                        <button onclick="checkAccess()" 
+                                class="relative w-full overflow-hidden rounded-2xl py-5 bg-cyan-500/10 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-500 group/btn">
+                            <span class="relative z-10 text-cyan-400 font-black tracking-[0.2em] group-hover/btn:text-white transition-colors uppercase">Authorize Access</span>
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent -translate-x-full group-hover/btn:animate-shine"></div>
+                        </button>
+                    </div>
+        
+                    <p id="error-msg" class="text-red-500 mt-8 text-[10px] hidden tracking-widest uppercase font-bold animate-pulse">
+                        Access Denied: Terminal Locked
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        
+    <div class="absolute inset-0">
+        <div class="absolute w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px] top-[-10%] left-[-10%]"></div>
+        <div class="absolute w-[500px] h-[500px] bg-cyan-600/5 rounded-full blur-[100px] bottom-[-10%] right-[-10%]"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+    </div>
+
+    <div class="relative group">
+        <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-indigo-500/20 rounded-[3rem] blur-xl opacity-40"></div>
+        
+        <div class="relative bg-black/60 backdrop-blur-[40px] p-12 max-w-md w-[380px] sm:w-[450px] text-center border border-white/10 rounded-[3rem] shadow-2xl">
+            
+            <div class="relative inline-block mb-10">
+                <div class="absolute inset-0 bg-cyan-500/10 blur-2xl rounded-full animate-pulse"></div>
+                
+                <div class="absolute -inset-3 border border-cyan-500/20 rounded-full animate-spin-slow"></div>
+                <div class="absolute -inset-6 border border-purple-500/10 rounded-full animate-reverse-spin"></div>
+                
+                <div class="relative w-28 h-28 rounded-full border border-white/20 p-1 bg-white/5 backdrop-blur-sm overflow-hidden shadow-2xl">
+                    <img src="1769979851931.png" alt="Logo" 
+                         class="w-full h-full object-cover rounded-full filter contrast-[1.1] brightness-105">
+                    
+                    <div class="absolute top-0 left-0 w-full h-1 bg-cyan-400/40 shadow-[0_0_10px_cyan] animate-scan"></div>
+                </div>
+            </div>
+
+            <h2 class="text-4xl font-black mb-2 bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent tracking-tighter">ADMIN PORTAL</h2>
+            <p class="text-cyan-400/40 mb-10 text-[10px] tracking-[0.4em] uppercase font-bold italic">System Identity Verified</p>
+            
+            <div class="space-y-6">
+                <div class="relative group/input">
+                    <input type="password" id="admin-pass" placeholder="ENTER ACCESS CODE" 
+                           class="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-center text-cyan-300 placeholder:text-cyan-900 outline-none focus:border-cyan-500/50 focus:bg-cyan-500/5 transition-all duration-500 tracking-[0.6em] font-mono">
+                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-cyan-500 group-focus-within/input:w-3/4 transition-all duration-700"></div>
+                </div>
+                
+                <button onclick="checkAccess()" 
+                        class="relative w-full overflow-hidden rounded-2xl py-5 bg-cyan-500/10 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-500 group/btn">
+                    <span class="relative z-10 text-cyan-400 font-black tracking-[0.2em] group-hover/btn:text-white transition-colors uppercase">Authorize Access</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent -translate-x-full group-hover/btn:animate-shine"></div>
+                </button>
+            </div>
+
+            <p id="error-msg" class="text-red-500 mt-8 text-[10px] hidden tracking-widest uppercase font-bold animate-pulse">
+                Access Denied: Terminal Locked
+            </p>
+        </div>
+    </div>
+</div>
+    <script>
+       // Firebase Config
+const firebaseConfig = {
+    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+    authDomain: "hoba-tech.firebaseapp.com",
+    databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+    projectId: "hoba-tech",
+    storageBucket: "hoba-tech.firebasestorage.app",
+    messagingSenderId: "465948708700",
+    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
+    measurementId: "G-EBHF8FEDB2"
+};
+
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const rtdb = firebase.database();
+
+// ✅ دالة الأنميشن للأرقام (مهمة جداً عشان الأرقام تظهر)
+function animateValue(id, end) {
+    const obj = document.getElementById(id);
+    if (!obj) return;
+    let start = parseInt(obj.innerText.replace(/,/g, '')) || 0;
+    const duration = 1000;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        obj.innerText = Math.floor(progress * (end - start) + start).toLocaleString();
+        if (progress < 1) window.requestAnimationFrame(step);
+    }
+    window.requestAnimationFrame(step);
+}
+
+// ✅ جلب البيانات الحية من Firebase
+function loadLiveData() {
+    console.log("بروتوكول الربط يعمل...");
+
+    rtdb.ref('visits').on('value', snap => {
+        animateValue('stat-1', snap.val() || 0);
+    });
+
+    rtdb.ref('active_now').on('value', snap => {
+        document.getElementById('stat-2').innerText = (snap.val() || 0).toLocaleString();
+    });
+
+    rtdb.ref('subscribers').on('value', snap => {
+        animateValue('stat-3', snap.val() || 0);
+    });
+}
+
+/* ================= إدارة المشتركين الجدد (Toast) ================= */
+/* ================= تحديث عداد المشتركين من الشيت ================= */
+const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlSJb7p6v6RTvawyrUcMMPwFmPfzxueT5lkmkP_vwi3mZAvGA/exec?action=read';
+
+async function updateMemberCount() {
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        
+        if (Array.isArray(data)) {
+            const totalMembers = data.length; // هنا الـ "عَد" بيحصل
+            
+            // تحديث الرقم في العداد الكبير فوق مع أنميشن
+            animateValue('stat-3', totalMembers);
+            
+            // تحديث لو فيه إشعار لعضو جديد (الـ Toast اللي عملناه)
+            if (lastCount !== 0 && totalMembers > lastCount) {
+                showToast(data[0].name); // بيظهر اسم آخر واحد سجل
+            }
+            lastCount = totalMembers;
+        }
+    } catch (error) {
+        console.error('خطأ في جلب بيانات الشيت:', error);
+    }
+}
+
+// دالة إظهار الإشعار (Toast)
+function showToast(name) {
+    const toast = document.getElementById('new-member-toast');
+    document.getElementById('new-member-name').innerText = name || "طالب جديد";
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+    }, 5000);
+}
+
+// تعديل في الـ window load عشان يشتغل تلقائي
+window.addEventListener('load', () => {
+    loadLiveData(); // زيارات الفايربيس
+    updateMemberCount(); // عداد الشيت
+    setInterval(updateMemberCount, 10000); // يحدث كل 20 ثانية
+});
+
+// --- بقية أكواد الـ Chart و الـ Particles زي ما هي ---
+particlesJS("particles-js", { "particles": { "number": { "value": 40 }, "color": { "value": "#ffffff" }, "opacity": { "value": 0.1 }, "size": { "value": 2 }, "line_linked": { "enable": true, "distance": 200, "color": "#ffffff", "opacity": 0.05, "width": 1 }, "move": { "enable": true, "speed": 1 } } });
+
+const modes = {
+    daily: { labels: ['12am', '4am', '8am', '12pm', '4pm', '8pm'], data: [20, 50, 15, 80, 120, 90], color: '#06b6d4' },
+    weekly: { labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'], data: [400, 700, 550, 900, 1100, 850, 1200], color: '#6366f1' },
+    monthly: { labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'], data: [12000, 18000, 15000, 25000, 22000, 30000], color: '#10b981' }
+};
+
+let myChart;
+const ctx = document.getElementById('nexusChart').getContext('2d');
+
+function drawChart(mode) {
+    if (myChart) myChart.destroy();
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, modes[mode].color + '44');
+    gradient.addColorStop(1, 'transparent');
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: modes[mode].labels, datasets: [{ data: modes[mode].data, borderColor: modes[mode].color, borderWidth: 4, fill: true, backgroundColor: gradient, tension: 0.5 }] },
+        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.3)' } } } }
+    });
+}
+
+function changeMode(mode) {
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + mode).classList.add('active');
+    drawChart(mode);
+}
+
+/// ✅ وظيفة صفحة الإحصاءات هي العرض فقط
+function loadLiveData() {
+    // جلب إجمالي الزيارات من CountAPI (بيشتغل على كل الأجهزة)
+    async function getGlobalVisits() {
+        try {
+            const res = await fetch('https://api.countapi.xyz/get/hoba-tech-nexus/visits');
+            const data = await res.json();
+            animateValue('stat-1', data.value || 0);
+        } catch (e) { console.log("Error loading count"); }
+    }
+
+    // تحديث الرقم كل 10 ثواني
+    getGlobalVisits();
+    setInterval(getGlobalVisits, 10000);
+
+    // خلي الـ active_now زي ما هي من Firebase (لأنها غالباً هتشتغل عادي)
+    rtdb.ref('active_now').on('value', (snap) => {
+        animateValue('stat-2', snap.val() || 0);
+    });
+}
+
+// تشغيل عند التحميل
+window.addEventListener('load', () => {
+    loadLiveData();      // قراءة البيانات من فايربيس
+    drawChart('weekly'); // رسم البياني
+    if (typeof syncMembers === 'function') syncMembers(); // قراءة عدد المشتركين
+});
+
+let lastCount = 0; 
+
+    // دالة عرض الأرقام بأنميشن
+    function animateValue(id, end) {
+        const obj = document.getElementById(id);
+        if (!obj) return;
+        let start = parseInt(obj.innerText.replace(/,/g, '')) || 0;
+        const duration = 1000;
+        let startTime = null;
+
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            obj.innerText = Math.floor(progress * (end - start) + start).toLocaleString();
+            if (progress < 1) window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+    }
+
+    // ربط الداشبورد بالفايربيس (قراءة فقط)
+    function loadLiveData() {
+        const db = firebase.database();
+
+        // قراءة إجمالي الزيارات
+        db.ref('visits').on('value', (snap) => {
+            animateValue('stat-1', snap.val() || 0);
+        });
+
+        // قراءة النشطين الآن
+        db.ref('active_now').on('value', (snap) => {
+            let active = snap.val() || 0;
+            animateValue('stat-2', active < 0 ? 0 : active);
+        });
+    }
+
+    // تشغيل كل الوظائف عند فتح الصفحة
+    window.addEventListener('load', () => {
+        loadLiveData();
+        if (typeof updateMemberCount === 'function') updateMemberCount();
+    });
+    // 1. رابط الـ Web App بتاعك (تأكد إنه بين علامتين التنصيص)
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxBZ2uzh8QnukkGuf8aeq4zw0clxVseUJ6CG6nh0A-2rK6x7sQ34VsfVNBIVB-XPZpoBQ/exec';
+
+async function fetchSubs() {
+    try {
+        // نطلب البيانات من شيت جوجل
+        const res = await fetch(SHEET_URL + '?action=getStats');
+        const data = await res.json();
+        
+        console.log("البيانات وصلت:", data); // عشان تشوفها في الـ Inspect
+
+        // 2. تحديث عداد المشتركين
+        if (data.totalMembers !== undefined) {
+            document.getElementById('stat-subs').innerText = data.totalMembers;
+        }
+
+        // 3. تحديث الرسم البياني (Chart)
+        if (data.dailyStats && data.dailyStats.length > 0) {
+            // استخراج التواريخ والأرقام
+            const dates = data.dailyStats.map(row => row[0]); 
+            const counts = data.dailyStats.map(row => row[1]);
+
+            myChart.data.labels = dates;
+            myChart.data.datasets[0].data = counts;
+            myChart.update(); // تنشيط الرسم البياني
+        }
+    } catch (e) {
+        console.error("خطأ في جلب البيانات: ", e);
+    }
+}
+
+// تشغيل الدالة أول ما الصفحة تفتح
+window.addEventListener('load', fetchSubs);
+
+// حط الباسورد اللي إنت عايزه هنا
+const ADMIN_PASSWORD = "111111"; 
+
+function checkAccess() {
+    const pass = document.getElementById('admin-pass').value;
+    const correctPass = "$Hoba*911*Gate$2415#"; // الباسورد بتاعك
+
+    if (pass === correctPass) {
+        // لو صح: سجل الدخول واخفي الواجهة
+        localStorage.setItem('admin_authenticated', 'true');
+        
+        document.getElementById('login-overlay').classList.add('opacity-0');
+        setTimeout(() => {
+            document.getElementById('login-overlay').style.display = 'none';
+            if (typeof loadLiveData === "function") loadLiveData();
+        }, 500);
+        
+    } else {
+        // لو غلط: اظهر رسالة الخطأ ثانية واحدة وبعدين اطردوا بره
+        const errorMsg = document.getElementById('error-msg');
+        errorMsg.classList.remove('hidden');
+        errorMsg.innerText = " رمز الوصول خطأ.. سوف يتم حظرك اذا حاولت الدخول مجددا ";
+        
+        // تأخير لمدة ثانية عشان يلحق يقرأ الرسالة وبعدين يخرج
+        setTimeout(() => {
+            window.location.href = "index.html"; // تأكد من اسم الصفحة الرئيسية عندك
+        }, 1500);
+    }
+}
+
+// فحص لو كان دخل الباسورد قبل كدة عشان ميسألوش كل شوية
+window.addEventListener('load', () => {
+    if (localStorage.getItem('admin_access') === 'true') {
+        document.getElementById('login-overlay').style.display = 'none';
+    }
+});
+    </script>
+</body>
+</html>
