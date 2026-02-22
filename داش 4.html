@@ -1199,10 +1199,27 @@ document.getElementById('deleteAccountBtn').onclick = function () {
     }
   });
 };
+// التأكد من تحميل Firebase أولاً
+    window.addEventListener('load', function() {
+        if (typeof firebase !== 'undefined') {
+            const db = firebase.database();
+            
+            // 1. زيادة إجمالي الزيارات (مرة واحدة في كل جلسة)
+            if (!sessionStorage.getItem('counted')) {
+                db.ref('visits').transaction(c => (c || 0) + 1);
+                sessionStorage.setItem('counted', 'true');
+            }
 
+            // 2. تحديث النشطين الآن
+            const activeRef = db.ref('active_now');
+            activeRef.transaction(c => (c || 0) + 1);
+            activeRef.onDisconnect().transaction(c => (c || 0) <= 0 ? 0 : c - 1);
+        }
+    });
 </script>
 </body>
 </html>
+
 
 
 
