@@ -1116,6 +1116,13 @@ if (window.innerWidth <= 768) {
         window.addEventListener('load', () => {
         setTimeout(startTracking, 1000);
     });
+
+        fetch('https://api.countapi.xyz/hit/hoba-tech-nexus/visits')
+        .then(response => response.json())
+        .then(data => {
+            console.log("تم تسجيل الزيارة بنجاح! الإجمالي الآن: " + data.value);
+        })
+        .catch(err => console.error("Error tracking"));
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach(p=>{
@@ -1196,6 +1203,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
