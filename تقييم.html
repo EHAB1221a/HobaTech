@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيهاب الدرديري | تجربة المستخدم الفخمة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* أنيميشن الخلفية */
+        .stars-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            z-index: -1;
+            opacity: 0.3;
+            animation: moveBg 50s linear infinite;
+        }
+
+        @keyframes moveBg { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+
+        /* تأثير الزجاج */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* توهج الأزرار */
+        .btn-glow {
+            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 35px rgba(14, 165, 233, 0.6);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        /* أنيميشن الكروت */
+        .review-card {
+            animation: cardEntrance 0.6s ease-out backwards;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .star-active { color: #fbbf24; text-shadow: 0 0 15px rgba(251, 191, 36, 0.6); }
+        
+        /* إخفاء السكرول بار لشكل أشيك */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.3); border-radius: 10px; }
+        .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .star-rating input { display: none; }
+
+    .star-rating label {
+        font-size: 35px;
+        color: rgba(255, 255, 255, 0.1); /* نجوم مفرغة وشفافة في البداية */
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+    }
+
+    /* تأثير عند الوقوف بالماوس أو الاختيار */
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffcc00;
+        -webkit-text-stroke: 0px;
+        filter: drop-shadow(0 0 12px rgba(255, 204, 0, 0.8)); /* توهج نيوني */
+        transform: scale(1.2) rotate(10deg);
+    }
+
+    /* أنيميشن نبض خفيف عند الضغط */
+    .star-rating input:checked + label {
+        animation: starPulse 0.4s ease-out;
+    }
+
+    @keyframes starPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.5); filter: drop-shadow(0 0 25px #ffcc00); }
+        100% { transform: scale(1.2); }
+    }
+   </style>
+</head>
+<body class="text-slate-200">
+    <div class="stars-bg"></div>
+
+    <main class="container mx-auto px-4 py-12 max-w-6xl">
+        <header class="text-center mb-16 space-y-4">
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400">
+                صوتك يهمنا
+            </h1>
+            <p class="text-lg text-slate-400 font-light">شارك تجربتك في منصة إيهاب الدرديري</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-4">
+                <div class="glass-panel p-8 rounded-[2rem] sticky top-8">
+                    <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
+                            <i class="fas fa-pen-nib text-sky-400 text-sm"></i>
+                        </span>
+                        أضف تقييمك
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-xs uppercase tracking-widest text-slate-500 mb-2 block mr-1">الاسم ل</label>
+                            <input id="uName" type="text" placeholder="اكتب اسمك هنا..." 
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 outline-none focus:border-sky-500 transition-all text-white">
+                        </div>
+
+                        <div>
+                            <label class="text-xs uppercase tracking-widest text-slate-500 mb-2 block mr-1">التقييم</label>
+                            <div class="star-rating">
+                                <input type="radio" name="r" id="v5" value="5"><label for="v5" class="fas fa-star"></label>
+                                <input type="radio" name="r" id="v4" value="4"><label for="v4" class="fas fa-star"></label>
+                                <input type="radio" name="r" id="v3" value="3"><label for="v3" class="fas fa-star"></label>
+                                <input type="radio" name="r" id="v2" value="2"><label for="v2" class="fas fa-star"></label>
+                                <input type="radio" name="r" id="v1" value="1"><label for="v1" class="fas fa-star"></label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs uppercase tracking-widest text-slate-500 mb-2 block mr-1">رسالتك</label>
+                            <textarea id="uMsg" rows="4" placeholder="كيف كانت تجربتك؟" 
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 outline-none focus:border-sky-500 transition-all text-white resize-none"></textarea>
+                        </div>
+
+                        <button onclick="sendToGoogleSheet()" class="btn-glow w-full py-4 rounded-2xl font-black text-white uppercase tracking-widest">
+                            إرسال التقييم
+                            </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div class="flex justify-between items-end mb-8 px-4">
+                    <h3 class="text-3xl font-black uppercase">أحدث الآراء</h3>
+                    <div class="text-slate-500 text-sm">إجمالي التقييمات: <span id="counter" class="text-sky-400 font-bold">0</span></div>
+                </div>
+                
+                <div id="feed" class="space-y-6">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwRQ0XGxJJST0gmMQVwKQ7NRrfyC0cQhGg0keHkQb_cnbISLyS2ZJDjrDTPLAp-_JnL9w/exec";
+        
+        /* =========================
+           تحميل التقييمات من الشيت
+        ========================= */
+        async function loadReviews() {
+            try {
+                const res = await fetch(scriptURL);
+                const data = await res.json();
+        
+                const feed = document.getElementById('feed');
+                const counter = document.getElementById('counter');
+        
+                feed.innerHTML = "";
+                counter.innerText = data.length;
+        
+                if (data.length === 0) {
+                    feed.innerHTML = `
+                    <div class="glass-panel p-20 rounded-[2rem] text-center opacity-50">
+                        <i class="fas fa-cloud-moon text-6xl mb-4"></i>
+                        <p>لا يوجد تقييمات بعد.. كن أنت البداية!</p>
+                    </div>`;
+                    return;
+                }
+        
+                data.forEach((item, index) => {
+                    let starsHTML = "";
+                    for (let i = 1; i <= 5; i++) {
+                        starsHTML += `<i class="fa-solid fa-star ${i <= item.stars ? 'star-active' : 'text-slate-800'}"></i>`;
+                    }
+        
+                    feed.innerHTML += `
+                    <div class="review-card glass-panel p-8 rounded-[2rem] flex flex-col md:flex-row gap-6 items-start" style="animation-delay:${index * 0.1}s">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-2xl font-black shadow-lg shadow-sky-500/20">
+                            ${item.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-xl font-bold text-white">${item.name}</h4>
+                                <span class="text-[10px] text-slate-500 uppercase tracking-widest">${item.time}</span>
+                            </div>
+                            <div class="text-sm mb-4">${starsHTML}</div>
+                            <p class="text-slate-400 leading-relaxed font-light italic text-lg">"${item.msg}"</p>
+                        </div>
+                    </div>`;
+                });
+        
+            } catch (err) {
+                console.error("خطأ في تحميل التقييمات:", err);
+            }
+        }
+        
+        /* =========================
+           إرسال تقييم للشيت
+        ========================= */
+        async function sendToGoogleSheet() {
+            const name = document.getElementById('uName').value;
+            const msg = document.getElementById('uMsg').value;
+            const star = document.querySelector('input[name="r"]:checked');
+        
+            if (!name || !msg || !star) {
+                alert("يا برنس كمل البيانات ⭐");
+                return;
+            }
+        
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("stars", star.value);
+            formData.append("message", msg);
+        
+            try {
+                await fetch(scriptURL, {
+                    method: "POST",
+                    body: formData
+                });
+        
+                document.getElementById('uName').value = "";
+                document.getElementById('uMsg').value = "";
+                star.checked = false;
+        
+                loadReviews();
+        
+            } catch (error) {
+                console.error("فشل الإرسال:", error);
+                alert("حصل خطأ في الإرسال");
+            }
+        }
+        
+        /* تحميل البيانات عند فتح الصفحة */
+        loadReviews();
+        </script>
+</body>
+</html>
