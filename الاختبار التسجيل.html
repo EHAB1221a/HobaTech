@@ -3,7 +3,7 @@
 <head>
     <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
     <meta charset="UTF-8">
-    <title>تسجيل الأبطال | Hoba Tech</title>
+    <title>تسجيل في مسابقة الأبطال | Hoba Tech</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -145,6 +145,52 @@ input:focus {
     font-size: 0.9rem;
     color: var(--gold);
 }
+        /* تنسيقات خاصة للشاشات الصغيرة (الموبايل) */
+@media (max-width: 768px) {
+    #quiz-body {
+        padding: 10px; /* تقليل الهوامش الخارجية */
+    }
+
+    .question-card {
+        padding: 15px; /* مساحة داخلية مريحة */
+        margin-bottom: 15px;
+        border-radius: 15px; /* حواف انسيابية للموبايل */
+        width: 100% !important; /* التأكد إن الكارت واخد عرض الشاشة */
+        box-sizing: border-box;
+    }
+
+    .question-text {
+        font-size: 1.1rem !important; /* تصغير الخط شوية عشان مياخدش مساحة كبيرة */
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    .option {
+        display: block; /* وضع الاختيارات فوق بعضها */
+        padding: 12px 15px; /* تكبير منطقة الضغط (مهم جداً للمس) */
+        margin-bottom: 10px;
+        background: rgba(255, 255, 255, 0.05); /* تمييز بسيط للاختيار */
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        position: relative;
+    }
+
+    /* تكبير علامة الصح (Checkmark) عشان تبقى واضحة */
+    .checkmark {
+        top: 50% !important;
+        transform: translateY(-50%);
+        right: 10px !important;
+    }
+
+    /* لو عندك زرار إنهاء (Submit) في الآخر */
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2rem;
+        border-radius: 10px;
+    }
+}
     </style>
 </head>
 <body>
@@ -242,3 +288,4 @@ createBubbles();
 </script>
 </body>
 </html>
+
