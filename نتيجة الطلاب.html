@@ -379,11 +379,20 @@ window.onload = function() {
     createBubbles();
     fireConfetti();
 };
+// ده بيخلي المتصفح يفتكر إن فيه صفحة قبل دي
+    history.pushState(null, null, location.href);
 
+    // 2. بنراقب حدث الـ "popstate" اللي هو الضغط على زرار الرجوع
+    window.onpopstate = function () {
+        // 3. هنا بقى "السر".. بنقول للمتصفح: "لا ياباشا مفيش رجوع، روح للينك ده فوراً"
+        // استبدل اللينك ده بالصفحة اللي أنت عايز يروح لها
+        window.location.href = "داش 4.html"; 
+    };
     </script>
 </body>
 
 </html>
+
 
 
 
