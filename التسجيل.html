@@ -272,7 +272,6 @@
 <body>
 
 <canvas id="bg-canvas"></canvas>
-
 <div class="main-wrapper">
     <div class="info-panel">
         <div class="status-header">
@@ -303,72 +302,109 @@
             </div>
         </div>
 
+
     <div class="auth-panel">
         <div class="auth-card">
-            <img src="1769979851931.png" style="width: 80px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--neon));" alt="">
-            <h3 style="font-family: 'Orbitron'; margin-bottom: 30px; letter-spacing: 4px;">مرحبا بكم في هوبا تيك</h3>
+            <h3 style="font-family: 'Orbitron'; margin-bottom: 30px; letter-spacing: 4px;">LOGIN SYSTEM</h3>
 
             <div id="login-box">
-                <div class="input-group"><input type="email" id="l-email" placeholder="البريد الإلكتروني"></div>
-                <div class="input-group"><input type="password" id="l-pass" placeholder="كلمة السر"></div>
-                
-                <button class="action-btn" onclick="handleLogin()">تسجيل الدخول</button>
-                
-                <p style="margin-top: 15px; font-size: 11px;">
-                    <span onclick="toggleResetModal(true)" style="color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s;" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">
-                        نسيت كلمة السر؟
-                    </span>
-                </p>
-                <div id="reset-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-                    <div class="auth-card" style="max-width: 350px; border: 1px solid var(--neon);">
-                        <i class="fas fa-fingerprint" style="font-size: 2rem; color: var(--neon); margin-bottom: 20px;"></i>
-                        <h4 style="margin-bottom: 20px; font-family: 'Orbitron'; color: #fff;">استعادة كلمة السر</h4>
-                        <div class="input-group">
-                            <input type="email" id="reset-email" placeholder="البريد الإلكتروني">
-                        </div>
-                        <button class="action-btn" onclick="sendResetEmail()">إرسال الرابط</button>
-                        <p onclick="toggleResetModal(false)" style="margin-top: 15px; font-size: 11px; cursor: pointer; color: #ff4444;">إلغاء</p>
-                    </div>
-                </div>     
-                <p style="margin-top:20px; font-size:12px; opacity: 0.7;">
-                    طالب جديد؟ <span onclick="view('signup')" style="color:var(--neon); cursor:pointer; font-weight:900;">انضم إلينا</span>
-                </p>
-            </div>
-
-            <div id="signup-box" class="hidden">
-                <div style="display:flex; gap:10px; margin-bottom:12px;">
-                    <input type="text" id="s-name" class="nano-input" placeholder="الاسم" style="width:50%; padding:15px; border-radius:15px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); color:#fff; text-align:center;">
-                    <input type="tel" id="s-phone" class="nano-input" placeholder="الهاتف" style="width:50%; padding:15px; border-radius:15px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); color:#fff; text-align:center;">
+                <div class="input-group">
+                    <input type="text" id="l-code" placeholder="كود الاشتراك (السيريال)">
                 </div>
                 <div class="input-group">
-                    <select id="s-group"><option value="" disabled selected>الفرقة</option><option>الفرقة الأولى</option></select>
+                    <input type="password" id="l-pass" placeholder="كلمة السر (std#)">
                 </div>
-                <div class="input-group"><input type="email" id="s-email" placeholder="البريد الإلكتروني"></div>
-                <div class="input-group"><input type="password" id="s-pass" placeholder="كلمة السر"></div>
-                <button class="action-btn" id="s-btn" onclick="handleSignup()">انشاء حسابي</button>
-                <p style="margin-top:25px; font-size:12px;">لدي حساب؟ <span onclick="view('login')" style="color:var(--neon); cursor:pointer; font-weight:900;">تسجيل دخول</span></p>
+                
+                <button class="action-btn" onclick="handleLogin()">تحقق من الاشتراك</button>
+                
+                <div id="msg" style="margin-top:20px; font-size:14px; font-weight: bold;"></div>
             </div>
-            <div id="msg" style="margin-top:15px; font-size:11px;"></div>
         </div>
     </div>
 </div>
 
 <script type="module">
+    // 1. استيراد مكتبات Firebase (المحرك الأساسي)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
+    // 2. إعدادات الربط بمشروعك (HOBA-TECH)
     const firebaseConfig = {
-      apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-      authDomain: "hoba-tech.firebaseapp.com",
-      projectId: "hoba-tech",
-      appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
+        apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+        authDomain: "hoba-tech.firebaseapp.com",
+        projectId: "hoba-tech",
+        databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+        appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const SHEET_URL = "https://script.google.com/macros/s/AKfycby8m3sDLRcTCmg8g6O-wvEFxgawEQ9bozWHVEgcrZG5hPqiFrFOAQszngFSHRhd94OTgw/exec";
+    const db = getDatabase(app);
 
-    // محرك خلفية النانو
+    // 3. وظيفة تسجيل الدخول والحماية
+    window.handleLogin = async () => {
+        const code = document.getElementById("l-code").value;
+        const pass = document.getElementById("l-pass").value;
+        const m = document.getElementById("msg");
+
+        if (!code || !pass) {
+            m.style.color = "#ffcc00";
+            m.innerText = "برجاء إدخال البيانات كاملة";
+            return;
+        }
+
+        m.style.color = "#00f2ff";
+        m.innerText = "جاري فحص السيرفر...";
+
+        try {
+            // الوصول لمكان الكود في Firebase
+            const codeRef = ref(db, 'codes/' + code);
+            const snapshot = await get(codeRef);
+
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+
+                // التحقق من الباسورد
+                if (userData.pass === pass) {
+                    
+                    // توليد بصمة فريدة للجهاز (بصمة المتصفح + دقة الشاشة)
+                    const deviceID = navigator.userAgent + window.screen.width; 
+
+                    // فحص الحماية: هل الكود مسجل لجهاز آخر في السيرفر؟
+                    if (userData.device && userData.device !== deviceID) {
+                        m.style.color = "#ff4444";
+                        m.innerText = "⚠️ عذراً.. هذا الكود مفعل على جهاز آخر!";
+                        return;
+                    }
+
+                    // لو أول مرة يدخل، اقفل الكود على جهازه في السيرفر للأبد
+                    if (!userData.device) {
+                        await update(codeRef, { device: deviceID });
+                    }
+
+                    // نجاح الدخول
+                    m.style.color = "#00ff88";
+                    m.innerText = "تم التحقق.. أهلاً يا " + userData.name;
+                    localStorage.setItem('subscriberName', userData.name);
+                    
+                    setTimeout(() => {
+                        location.href = "داش 4.html";
+                    }, 1500);
+
+                } else {
+                    m.style.color = "#ff4444";
+                    m.innerText = "كلمة السر غير صحيحة!";
+                }
+            } else {
+                m.style.color = "#ff4444";
+                m.innerText = "رقم السيريال غير موجود بالسجلات!";
+            }
+        } catch (error) {
+            console.error(error);
+            m.innerText = "خطأ في الاتصال بقاعدة البيانات!";
+        }
+    };
+
+    // 4. محرك الخلفية النيون (الأنميشن)
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -383,10 +419,7 @@
             this.v = Math.random() * 0.5 + 0.2;
             this.size = Math.random() * 1.5;
         }
-        update() {
-            this.y -= this.v;
-            if(this.y < 0) this.init();
-        }
+        update() { this.y -= this.v; if(this.y < 0) this.init(); }
         draw() {
             ctx.fillStyle = 'rgba(0, 242, 255, 0.3)';
             ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
@@ -399,125 +432,7 @@
         requestAnimationFrame(loop);
     }
     loop();
-
-    window.view = (v) => {
-        document.getElementById('login-box').classList.toggle('hidden', v === 'signup');
-        document.getElementById('signup-box').classList.toggle('hidden', v === 'login');
-    };
-
-    window.handleLogin = async () => {
-    const e = document.getElementById("l-email").value;
-    const p = document.getElementById("l-pass").value;
-    const m = document.getElementById("msg");
-
-    if (!e || !p) {
-        m.style.color = "#ffcc00";
-        m.innerText = "برجاء إدخال البريد وكلمة السر";
-        return;
-    }
-
-    try {
-        await signInWithEmailAndPassword(auth, e, p);
-        m.style.color = "#00ff88"; 
-        m.innerText = "ACCESS GRANTED.. جاري الدخول";
-        setTimeout(() => location.href = "داش 4.html", 1000);
-    } catch (error) {
-        m.style.color = "#ff4444"; 
-        // رسائل خطأ أكثر ذكاءً
-        if (error.code === 'auth/user-not-found') m.innerText = "هذا الحساب غير موجود";
-        else if (error.code === 'auth/wrong-password') m.innerText = "كلمة السر غير صحيحة";
-        else m.innerText = "فشل تسجيل الدخول.. تأكد من بياناتك";
-    }
-};
-
-// وظيفة استعادة كلمة السر (الجديدة)
-window.handleResetPassword = async () => {
-    const e = document.getElementById("l-email").value;
-    const m = document.getElementById("msg");
-
-    if (!e) {
-        m.style.color = "#ffcc00";
-        m.innerText = "اكتب بريدك الإلكتروني أولاً في خانة الدخول";
-        return;
-    }
-
-    // استيراد الدالة من مكتبة فايربيس
-    const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js");
-
-    try {
-        await sendPasswordResetEmail(auth, e);
-        m.style.color = "#00f2ff";
-        m.innerText = "تم إرسال رابط إعادة تعيين السر لبريدك";
-    } catch (error) {
-        m.style.color = "#ff4444";
-        m.innerText = "خطأ: تأكد من صحة البريد الإلكتروني";
-    }
-};
-
-    window.handleSignup = async () => {
-        const btn = document.getElementById("s-btn");
-        const name = document.getElementById("s-name").value;
-        const phone = document.getElementById("s-phone").value;
-        const email = document.getElementById("s-email").value;
-        const group = document.getElementById("s-group").value;
-        const pass = document.getElementById("s-pass").value;
-        const m = document.getElementById("msg");
-
-        if(!email || !pass || !name| !group) { m.innerText = "برجاء ملء جميع الحقول"; return; }
-        btn.innerText = "جاري انشاء الحساب انتظر..."; btn.disabled = true;
-
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-            const q = `?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(group)}&role=عضو`;
-            fetch(SHEET_URL + q, { mode: 'no-cors' });
-            m.style.color = "#00ff88"; m.innerText = "تم تسجيل الدخول بنجاح";
-            setTimeout(() => location.href = "داش 4.html", 1500);
-        } catch (err) {
-            btn.innerText = "انشاء حسابي"; btn.disabled = false;
-            m.style.color = "#ff4444"; m.innerText = "ERROR: " + err.code;
-        }
-    };
-   // فتح وقفل الواجهة المنبثقة
-// دي الوظيفة اللي بتفتح وبتقفل الشباك
-window.toggleResetModal = (show) => {
-    const modal = document.getElementById('reset-modal');
-    if (modal) {
-        if (show) {
-            modal.style.setProperty('display', 'flex', 'important');
-        } else {
-            modal.style.setProperty('display', 'none', 'important');
-        }
-    } else {
-        console.error("عذراً: الـ reset-modal مش موجود في الـ HTML أصلاً!");
-    }
-};
-// تحديث وظيفة الضغط على "نسيت كلمة السر" في الفورم الرئيسي
-window.handleResetPassword = () => {
-    toggleResetModal(true); // نفتح الواجهة المنبثقة بدلاً من الإرسال المباشر
-};
-
-// وظيفة الإرسال الفعلية من داخل الواجهة المنبثقة
-window.sendResetEmail = async () => {
-    const e = document.getElementById("reset-email").value;
-    const m = document.getElementById("msg"); // الرسالة هتظهر في الفورم الرئيسي بعد القفل
-
-    if (!e) {
-        alert("برجاء كتابة البريد الإلكتروني");
-        return;
-    }
-
-    const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js");
-
-    try {
-        await sendPasswordResetEmail(auth, e);
-        toggleResetModal(false); // نقفل الواجهة
-        m.style.color = "#00f2ff";
-        m.innerText = " تم إرسال رابط الاستعادة.. تفقد بريدك و الا spam";
-    } catch (error) {
-        alert("خطأ: تأكد من صحة البريد الإلكتروني");
-    }
-};
 </script>
+
 </body>
 </html>
-
