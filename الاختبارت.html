@@ -384,14 +384,14 @@
         let allResults = [];
 // ده بيشيك لو المتصفح فاكر الاسم قبل كدة ولا لأ
 // أولاً: بنسجل بياناتك "بصمة الجهاز" لو مش موجودة
-if (!localStorage.getItem('user_data')) {
-    const myData = { name: "إيهاب أحمد حامد الدردير", code: "LEGAL2026" };
-    localStorage.setItem('user_data', JSON.stringify(myData));
-}
-
-// ثانياً: بنسحب البيانات اللي اتسجلت
-let currentUser = JSON.parse(localStorage.getItem('user_data'));
-
+// أولاً: تعديل الاسم للاسم المفضل (إيهاب الدرديري)
+if (!localStorage.getItem('user_data') || JSON.parse(localStorage.getItem('user_data')).name.includes("أحمد")) {
+        const myData = { name: "إيهاب الدرديري", code: "LEGAL2026" }; // هنا الدلع كله
+        localStorage.setItem('user_data', JSON.stringify(myData));
+        
+        // تحديث المتغير الحالي فوراً
+        currentUser = myData;
+    }
 // ثالثاً: أمر إخفاء شاشة اللوجن فوراً أول ما الصفحة تفتح
 window.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('login-screen')) {
@@ -858,51 +858,38 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         // ========== التهيئة ==========
-        initializeApp();
         async function initializeApp() {
-            try {
-                // 1. ربط الـ SDK لجلب البيانات من فيربيس
-                if (window.dataSdk) {
-                    const result = await window.dataSdk.init(dataHandler);
-                    if (!result.isOk) {
-                        console.error('Failed to initialize Data SDK');
-                    }
+        try {
+            // 2. ربط الـ SDK وجلب الداتا من فيربيس
+            if (window.dataSdk) {
+                const result = await window.dataSdk.init(dataHandler);
+                
+                // 3. لو السيستم لقى "نتائج قديمة" للجهاز ده، يسحب الاسم منها تلقائي
+                if (allResults.length > 0 && !currentUser) {
+                    const lastResult = allResults[allResults.length - 1];
+                    currentUser = { 
+                        name: lastResult.student_name, 
+                        code: lastResult.student_code 
+                    };
+                    localStorage.setItem('user_data', JSON.stringify(currentUser));
                 }
-
-                // 2. السطر السحري: الدخول التلقائي
-                // هنشيك لو فيه بيانات متسجلة، لو مفيش هندخله ببيانات افتراضية
-                if (currentUser) {
-                    // إخفاء اللوجن وإظهار الداشبورد فوراً
-                    showScreen('dashboard-screen'); 
-                    
-                    // تحديث النصوص في الواجهة بالاسم المسحوب
-                    updateHeaderName();
-                    
-                    // تشغيل العدادات والنتائج
-                    updateProgressIndicators();
-                    updateLeaderboard();
-                }
-
-                // بقية إعدادات الـ Element SDK (للتصميم)
-                if (window.elementSdk) {
-                    window.elementSdk.init({
-                        defaultConfig,
-                        onConfigChange: async (newConfig) => {
-                            config = { ...defaultConfig, ...newConfig };
-                            applyConfig();
-                        },
-                        mapToCapabilities: (cfg) => ({
-                            recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined
-                        }),
-                        mapToEditPanelValues: (cfg) => new Map([
-                            ['platform_title', cfg.platform_title || defaultConfig.platform_title],
-                            ['welcome_message', cfg.welcome_message || defaultConfig.welcome_message]
-                        ])
-                    });
-                }
-            } catch (error) {
-                console.error('SDK initialization error:', error);
             }
-        }    </script>
+
+            // 4. الدخول التلقائي: لو فيه اسم (سواء من المتصفح أو الفيربيس) ادخل فوراً
+            if (currentUser) {
+                showScreen('dashboard-screen'); // اخفي اللوجن وافتح المنصة
+                updateHeaderName();
+                updateProgressIndicators();
+                updateLeaderboard();
+            } else {
+                // لو الجهاز جديد خالص ومحدش سجل عليه قبل كدة، اظهر اللوجن مرة واحدة بس
+                showScreen('login-screen');
+            }
+
+        } catch (error) {
+            console.error('حدث خطأ أثناء التحميل التلقائي:', error);
+        }
+    }
+           </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d5544f7b700ee94',t:'MTc3MjMzNzc4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
