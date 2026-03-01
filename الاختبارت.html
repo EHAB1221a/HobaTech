@@ -141,45 +141,63 @@
  </head>
  <body class="h-full bg-gradient-to-br from-[#0a0a1a] via-[#1a1a3a] to-[#0f0f2f] text-white overflow-auto">
   <!-- شاشة تسجيل الدخول -->
-  <div id="login-screen" class="min-h-full flex items-center justify-center p-4">
-   <div class="gradient-border max-w-md w-full">
-    <div class="gradient-border-inner p-8">
-     <div class="text-center mb-8">
-      <div class="text-6xl mb-4 float-animation">
-       ⚖️
-      </div>
-      <h1 id="main-title" class="text-3xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">منصة الامتحانات القانونية</h1>
-      <p id="welcome-text" class="text-gray-400">أدخل كودك للبدء في رحلة التفوق</p>
-     </div>
-     <div class="space-y-4">
-      <div>
-       <label class="block text-cyan-400 text-sm font-bold mb-2">🔑 كود الدخول</label> <input type="text" id="access-code" placeholder="أدخل كودك هنا..." class="w-full px-4 py-3 bg-[#1a1a3a] border-2 border-purple-500/30 rounded-xl text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none transition-all">
-      </div><button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 rounded-xl font-bold text-lg hover:opacity-90 transition-all neon-glow mt-6"> 🚀 دخول </button>
-     </div>
-     <p id="login-status" class="text-center text-gray-400 text-sm mt-4 h-5"></p>
+  <div id="login-screen" class="min-h-full flex items-center justify-center p-4 transition-all duration-500">
+    <div class="gradient-border max-w-md w-full shadow-2xl shadow-purple-500/10">
+        <div class="gradient-border-inner p-8">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-4 float-animation text-shadow-glow">⚖️</div>
+                <h1 id="main-title" class="text-3xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">منصة الامتحانات القانونية</h1>
+                <p id="welcome-text" class="text-gray-400">سجل دخولك يا مستشار للمتابعة</p>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-cyan-400 text-xs font-bold mb-2 mr-1">🔑 كود الوصول (ID)</label>
+                    <input type="text" id="access-code" placeholder="مثال: 38575565602" 
+                           class="w-full px-4 py-3 bg-[#1a1a3a]/80 border-2 border-purple-500/30 rounded-xl text-white placeholder-gray-600 focus:border-cyan-400 focus:outline-none transition-all text-center tracking-widest font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-purple-400 text-xs font-bold mb-2 mr-1">🔒 كلمة المرور السرية</label>
+                    <input type="password" id="access-password" placeholder="••••••••" 
+                           class="w-full px-4 py-3 bg-[#1a1a3a]/80 border-2 border-purple-500/30 rounded-xl text-white placeholder-gray-600 focus:border-cyan-400 focus:outline-none transition-all text-center tracking-[0.5em]">
+                </div>
+
+                <button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 rounded-xl font-bold text-lg hover:opacity-90 hover:scale-[1.02] transition-all neon-glow mt-4 flex items-center justify-center gap-2">
+                   <span>🚀</span> ابدأ رحلة التفوق
+                </button>
+            </div>
+
+            <p id="login-status" class="text-center text-sm mt-6 h-5 transition-all duration-300 font-medium"></p>
+        </div>
     </div>
-   </div>
-  </div><!-- لوحة القيادة - Dashboard -->
-  <div id="dashboard-screen" class="hidden min-h-full">
-   <!-- Header -->
-   <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-       <span class="text-3xl">⚖️</span>
-       <div>
-        <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">منصة الامتحانات القانونية</h1>
-        <p class="text-xs text-gray-400">اختبر نفسك وتفوق</p>
-       </div>
-      </div>
-      <div class="flex items-center gap-4">
-       <div class="text-right">
-        <p class="text-cyan-400 font-bold" id="display-name">أهلاً، أحمد</p>
-        <p class="text-xs text-gray-500" id="display-code">LEGAL2025</p>
-       </div><button onclick="handleLogout()" class="p-2 bg-red-500/20 hover:bg-red-500/40 rounded-lg transition-all" title="تسجيل خروج"> 🚪 </button>
-      </div>
-     </div>
-    </div>
+</div>
+
+<div id="dashboard-screen" class="hidden min-h-full">
+    <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl filter drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">⚖️</span>
+                    <div>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">منصة المستشار إيهاب</h1>
+                        <p class="text-[10px] text-gray-500 tracking-wider uppercase">Legal Excellence Platform</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-cyan-400 font-bold text-sm" id="display-name">جاري التحميل...</p>
+                        <p class="text-[10px] text-gray-500 font-mono" id="display-code">----</p>
+                    </div>
+                    <button onclick="handleLogout()" class="group flex items-center gap-2 px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl transition-all" title="تسجيل خروج">
+                        <span class="text-xs text-red-400 font-bold hidden group-hover:block transition-all">خروج</span>
+                        <span>🚪</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
    </header><!-- محتوى الداشبورد -->
    <main class="max-w-7xl mx-auto px-4 py-8">
     <div class="text-center mb-10">
@@ -1207,3 +1225,4 @@ async function initializeApp() {
 window.addEventListener('load', initializeApp);   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
