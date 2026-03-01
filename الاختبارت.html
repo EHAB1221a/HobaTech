@@ -1,16 +1,21 @@
-
-
 <!doctype html>
 <html lang="ar" dir="rtl" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة الامتحانات القانونية الذكية</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/data_sdk.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
-  <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>منصة المستشار إيهاب الدرديري</title>
+      
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+      
+        <script src="https://cdn.tailwindcss.com"></script>
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+      
+        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+      
+        <style>
         * { font-family: 'Tajawal', sans-serif; }
         
         .neon-glow {
@@ -134,7 +139,8 @@
     </style>
   <style>body { box-sizing: border-box; }</style>
  </head>
- <body class="h-full bg-gradient-to-br from-[#0a0a1a] via-[#1a1a3a] to-[#0f0f2f] text-white overflow-auto"><!-- شاشة تسجيل الدخول -->
+ <body class="h-full bg-gradient-to-br from-[#0a0a1a] via-[#1a1a3a] to-[#0f0f2f] text-white overflow-auto">
+  <!-- شاشة تسجيل الدخول -->
   <div id="login-screen" class="min-h-full flex items-center justify-center p-4">
    <div class="gradient-border max-w-md w-full">
     <div class="gradient-border-inner p-8">
@@ -143,23 +149,24 @@
        ⚖️
       </div>
       <h1 id="main-title" class="text-3xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">منصة الامتحانات القانونية</h1>
-      <p id="welcome-text" class="text-gray-400">أدخل بياناتك للبدء في رحلة التفوق</p>
+      <p id="welcome-text" class="text-gray-400">أدخل كودك للبدء في رحلة التفوق</p>
      </div>
      <div class="space-y-4">
-      <div><label class="block text-cyan-400 text-sm font-bold mb-2">👤 اسمك الكامل</label> <input type="text" id="student-name" placeholder="أحمد محمد..." class="w-full px-4 py-3 bg-[#1a1a3a] border-2 border-purple-500/30 rounded-xl text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none transition-all">
-      </div>
-      <div><label class="block text-cyan-400 text-sm font-bold mb-2">🔑 كود الدخول</label> <input type="text" id="access-code" placeholder="LEGAL2025" class="w-full px-4 py-3 bg-[#1a1a3a] border-2 border-purple-500/30 rounded-xl text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none transition-all">
-      </div><button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 rounded-xl font-bold text-lg hover:opacity-90 transition-all neon-glow mt-6"> 🚀 ابدأ رحلة التفوق </button>
+      <div>
+       <label class="block text-cyan-400 text-sm font-bold mb-2">🔑 كود الدخول</label> <input type="text" id="access-code" placeholder="أدخل كودك هنا..." class="w-full px-4 py-3 bg-[#1a1a3a] border-2 border-purple-500/30 rounded-xl text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none transition-all">
+      </div><button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 rounded-xl font-bold text-lg hover:opacity-90 transition-all neon-glow mt-6"> 🚀 دخول </button>
      </div>
-     <p class="text-center text-gray-500 text-sm mt-6">الكود الافتراضي: <span class="text-cyan-400 font-mono">LEGAL2025</span></p>
+     <p id="login-status" class="text-center text-gray-400 text-sm mt-4 h-5"></p>
     </div>
    </div>
   </div><!-- لوحة القيادة - Dashboard -->
-  <div id="dashboard-screen" class="hidden min-h-full"><!-- Header -->
+  <div id="dashboard-screen" class="hidden min-h-full">
+   <!-- Header -->
    <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4">
      <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3"><span class="text-3xl">⚖️</span>
+      <div class="flex items-center gap-3">
+       <span class="text-3xl">⚖️</span>
        <div>
         <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">منصة الامتحانات القانونية</h1>
         <p class="text-xs text-gray-400">اختبر نفسك وتفوق</p>
@@ -179,7 +186,8 @@
      <h2 class="text-3xl font-black mb-2">📚 اختر المادة الدراسية</h2>
      <p class="text-gray-400">اضغط على أي مادة لبدء الامتحانات</p>
     </div><!-- كروت المواد -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjects-grid"><!-- القانون الإداري -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjects-grid">
+     <!-- القانون الإداري -->
      <div onclick="openSubject('administrative')" class="gradient-border card-hover cursor-pointer relative overflow-hidden">
       <div class="gradient-border-inner p-6">
        <div class="text-5xl mb-4 text-center">
@@ -187,9 +195,11 @@
        </div>
        <h3 class="text-xl font-bold text-center text-cyan-400 mb-2">القانون الإداري</h3>
        <p class="text-gray-400 text-center text-sm mb-4">10 امتحانات شاملة</p>
-       <div class="flex items-center justify-center gap-2 text-green-400 text-sm"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> متاح الآن
+       <div class="flex items-center justify-center gap-2 text-green-400 text-sm">
+        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> متاح الآن
        </div>
-       <div class="mt-4 text-center"><span id="progress-administrative" class="text-xs text-purple-400">0/10 مكتمل</span>
+       <div class="mt-4 text-center">
+        <span id="progress-administrative" class="text-xs text-purple-400">0/10 مكتمل</span>
         <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
          <div id="progress-bar-administrative" class="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all" style="width: 0%"></div>
         </div>
@@ -203,9 +213,11 @@
        </div>
        <h3 class="text-xl font-bold text-center text-cyan-400 mb-2">القانون الدستوري</h3>
        <p class="text-gray-400 text-center text-sm mb-4">10 امتحانات شاملة</p>
-       <div class="flex items-center justify-center gap-2 text-green-400 text-sm"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> متاح الآن
+       <div class="flex items-center justify-center gap-2 text-green-400 text-sm">
+        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> متاح الآن
        </div>
-       <div class="mt-4 text-center"><span id="progress-constitutional" class="text-xs text-purple-400">0/10 مكتمل</span>
+       <div class="mt-4 text-center">
+        <span id="progress-constitutional" class="text-xs text-purple-400">0/10 مكتمل</span>
         <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
          <div id="progress-bar-constitutional" class="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all" style="width: 0%"></div>
         </div>
@@ -222,7 +234,8 @@
        </div>
        <h3 class="text-xl font-bold text-center text-gray-400 mb-2">قانون البيئة</h3>
        <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm"><span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
+       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
+        <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
        </div>
       </div>
      </div><!-- القانون الجنائي - قريباً -->
@@ -236,7 +249,8 @@
        </div>
        <h3 class="text-xl font-bold text-center text-gray-400 mb-2">القانون الجنائي</h3>
        <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm"><span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
+       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
+        <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
        </div>
       </div>
      </div><!-- القانون المدني - قريباً -->
@@ -250,7 +264,8 @@
        </div>
        <h3 class="text-xl font-bold text-center text-gray-400 mb-2">القانون المدني</h3>
        <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm"><span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
+       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
+        <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
        </div>
       </div>
      </div><!-- القانون التجاري - قريباً -->
@@ -264,38 +279,45 @@
        </div>
        <h3 class="text-xl font-bold text-center text-gray-400 mb-2">القانون التجاري</h3>
        <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm"><span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
+       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
+        <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
        </div>
       </div>
      </div>
     </div>
    </main>
   </div><!-- مركز الاختبارات -->
-  <div id="exams-center" class="hidden min-h-full"><!-- Header -->
+  <div id="exams-center" class="hidden min-h-full">
+   <!-- Header -->
    <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4">
-     <div class="flex items-center justify-between"><button onclick="backToDashboard()" class="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-all"> <span>→</span> <span>العودة للمواد</span> </button>
+     <div class="flex items-center justify-between">
+      <button onclick="backToDashboard()" class="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-all"> <span>→</span> <span>العودة للمواد</span> </button>
       <div class="text-center">
        <h1 id="subject-title" class="text-xl font-bold text-cyan-400">القانون الإداري</h1>
        <p class="text-xs text-gray-400">اختر امتحانك</p>
       </div>
-      <div class="flex items-center gap-2"><span class="text-gray-400" id="exam-display-name">أحمد</span> <button onclick="handleLogout()" class="p-2 bg-red-500/20 hover:bg-red-500/40 rounded-lg transition-all"> 🚪 </button>
+      <div class="flex items-center gap-2">
+       <span class="text-gray-400" id="exam-display-name">أحمد</span> <button onclick="handleLogout()" class="p-2 bg-red-500/20 hover:bg-red-500/40 rounded-lg transition-all"> 🚪 </button>
       </div>
      </div>
     </div>
    </header>
    <main class="max-w-7xl mx-auto px-4 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><!-- قائمة الامتحانات -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+     <!-- قائمة الامتحانات -->
      <div class="lg:col-span-2">
       <h2 class="text-2xl font-bold mb-6 flex items-center gap-2"><span>📝</span> <span>قائمة الامتحانات</span></h2>
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="exams-list"><!-- سيتم ملؤها بـ JavaScript -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="exams-list">
+       <!-- سيتم ملؤها بـ JavaScript -->
       </div>
      </div><!-- لوحة الشرف -->
      <div class="lg:col-span-1">
       <div class="gradient-border sticky top-24">
        <div class="gradient-border-inner p-6">
         <h2 class="text-xl font-bold text-center mb-4 flex items-center justify-center gap-2"><span class="text-yellow-400">🏆</span> <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">لوحة الشرف</span></h2>
-        <div id="leaderboard" class="space-y-2 max-h-96 overflow-y-auto scrollbar-thin"><!-- سيتم ملؤها بـ JavaScript -->
+        <div id="leaderboard" class="space-y-2 max-h-96 overflow-y-auto scrollbar-thin">
+         <!-- سيتم ملؤها بـ JavaScript -->
          <div class="text-center text-gray-500 py-8">
           <div class="text-4xl mb-2">
            🏅
@@ -313,12 +335,14 @@
   <div id="exam-screen" class="hidden min-h-full">
    <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
     <div class="max-w-4xl mx-auto px-4 py-4">
-     <div class="flex items-center justify-between"><button onclick="backToExamsList()" class="text-cyan-400 hover:text-cyan-300 transition-all"> ← رجوع </button>
+     <div class="flex items-center justify-between">
+      <button onclick="backToExamsList()" class="text-cyan-400 hover:text-cyan-300 transition-all"> ← رجوع </button>
       <div class="text-center">
        <h1 id="exam-title" class="text-lg font-bold text-cyan-400">الامتحان رقم 1</h1>
        <p id="exam-progress" class="text-xs text-gray-400">السؤال 1 من 10</p>
       </div>
-      <div id="timer" class="bg-purple-500/20 px-4 py-2 rounded-lg"><span class="text-purple-400 font-mono">00:00</span>
+      <div id="timer" class="bg-purple-500/20 px-4 py-2 rounded-lg">
+       <span class="text-purple-400 font-mono">00:00</span>
       </div>
      </div>
     </div>
@@ -328,10 +352,12 @@
      <div class="gradient-border-inner p-8">
       <div id="question-container">
        <h2 id="question-text" class="text-xl font-bold mb-6 leading-relaxed">نص السؤال هنا...</h2>
-       <div id="options-container" class="space-y-3"><!-- الخيارات -->
+       <div id="options-container" class="space-y-3">
+        <!-- الخيارات -->
        </div>
       </div>
-      <div class="flex justify-between mt-8"><button id="prev-btn" onclick="prevQuestion()" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all disabled:opacity-50"> ← السابق </button> <button id="next-btn" onclick="nextQuestion()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 rounded-xl transition-all"> التالي → </button> <button id="submit-btn" onclick="submitExam()" class="hidden px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 rounded-xl transition-all"> ✓ إنهاء الامتحان </button>
+      <div class="flex justify-between mt-8">
+       <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all disabled:opacity-50"> ← السابق </button> <button id="next-btn" onclick="nextQuestion()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 rounded-xl transition-all"> التالي → </button> <button id="submit-btn" onclick="submitExam()" class="hidden px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 rounded-xl transition-all"> ✓ إنهاء الامتحان </button>
       </div>
      </div>
     </div>
@@ -346,7 +372,8 @@
      <h1 id="result-title" class="text-3xl font-black mb-2">ممتاز!</h1>
      <p id="result-message" class="text-gray-400 mb-6">أداء رائع، واصل التفوق!</p>
      <div class="bg-[#1a1a3a] rounded-2xl p-6 mb-6">
-      <div class="text-6xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-2"><span id="result-score">85</span>%
+      <div class="text-6xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-2">
+       <span id="result-score">85</span>%
       </div>
       <p class="text-gray-400"><span id="correct-count">8.5</span> من <span id="total-count">10</span> أسئلة</p>
      </div>
@@ -368,7 +395,8 @@
        </div>
       </div>
      </div>
-     <div class="space-y-3"><button onclick="backToExamsList()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold hover:opacity-90 transition-all"> 🔄 العودة لقائمة الامتحانات </button> <button onclick="backToDashboard()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all"> 📚 اختيار مادة أخرى </button>
+     <div class="space-y-3">
+      <button onclick="backToExamsList()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold hover:opacity-90 transition-all"> 🔄 العودة لقائمة الامتحانات </button> <button onclick="backToDashboard()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all"> 📚 اختيار مادة أخرى </button>
      </div>
     </div>
    </div>
@@ -382,33 +410,11 @@
 
         let config = { ...defaultConfig };
         let allResults = [];
-// ده بيشيك لو المتصفح فاكر الاسم قبل كدة ولا لأ
-// أولاً: بنسجل بياناتك "بصمة الجهاز" لو مش موجودة
-// أولاً: تعديل الاسم للاسم المفضل (إيهاب الدرديري)
-if (!localStorage.getItem('user_data') || JSON.parse(localStorage.getItem('user_data')).name.includes("أحمد")) {
-        const myData = { name: "إيهاب الدرديري", code: "LEGAL2026" }; // هنا الدلع كله
-        localStorage.setItem('user_data', JSON.stringify(myData));
-        
-        // تحديث المتغير الحالي فوراً
-        currentUser = myData;
-    }
-// ثالثاً: أمر إخفاء شاشة اللوجن فوراً أول ما الصفحة تفتح
-window.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('login-screen')) {
-        document.getElementById('login-screen').style.display = 'none'; // إخفاء إجباري
-    }
-    if (document.getElementById('dashboard-screen')) {
-        document.getElementById('dashboard-screen').classList.remove('hidden'); // إظهار الداشبورد
-    }
-    updateHeaderName(); // تحديث الاسم فوق
-});
-        // دالة تحديث الاسم اللي بيظهر فوق في الموقع
-        function updateHeaderName() {
-    const displayNameElem = document.getElementById('display-name');
-    if (displayNameElem && currentUser) {
-        displayNameElem.textContent = `أهلاً، سيادة المستشار ${currentUser.name}`;
-    }
-}
+        let currentUser = null; // نخليه فاضي تماماً في البداية        let currentExamNumber = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let examStartTime = null;
+        let timerInterval = null;
 
         // ========== بيانات المواد والامتحانات ==========
         const subjects = {
@@ -513,6 +519,87 @@ window.addEventListener('DOMContentLoaded', () => {
             if (welcomeText) welcomeText.textContent = welcome;
         }
 
+        // ========== Firebase Config ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYPdWHqQmEVYrYXqGUJWaQbTPmF9WfQPs",
+            authDomain: "legal-exam-e92c7.firebaseapp.com",
+            databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+                        projectId: "legal-exam-e92c7",
+            storageBucket: "legal-exam-e92c7.firebasestorage.app",
+            messagingSenderId: "462282885826",
+            appId: "1:462282885826:web:f56b9a86c19e40eb8bdc80"
+        };
+
+        const codesDbConfig = {
+            apiKey: "AIzaSyBUhAH-93TU2uScU5V-O6MdJjIhBmQ9_sU",
+            authDomain: "hoba-tech-f9cff.firebaseapp.com",
+            databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+            projectId: "hoba-tech-f9cff",
+            storageBucket: "hoba-tech-f9cff.firebasestorage.app",
+            messagingSenderId: "833491648596",
+            appId: "1:833491648596:web:8f8a5e5f9c8e7a1b2c3d"
+        };
+
+        // Initialize Firebase
+        let firebaseReady = false;
+        let firebase_db = null;
+        let codesDb = null;
+        let firebaseRetries = 0;
+        const MAX_RETRIES = 5;
+
+        function initFirebase() {
+            try {
+                if (typeof firebase === 'undefined') {
+                    console.error('❌ Firebase library not loaded yet');
+                    return false;
+                }
+
+                if (firebase.apps.length === 0) {
+                    firebase.initializeApp(firebaseConfig);
+                    firebase_db = firebase.database();
+                    
+                    // إضافة تطبيق ثاني للأكواد
+                    const codesApp = firebase.initializeApp(codesDbConfig, 'codesApp');
+                    codesDb = codesApp.database();
+                    
+                    // فحص الاتصال
+                    firebase_db.ref('.info/connected').on('value', (snap) => {
+                        if (snap.val() === true) {
+                            firebaseReady = true;
+                            firebaseRetries = 0;
+                            console.log('✅ Firebase متصل بنجاح');
+                        } else {
+                            firebaseReady = false;
+                            console.log('❌ Firebase انقطع الاتصال');
+                        }
+                    });
+                } else {
+                    firebase_db = firebase.database();
+                    if (!codesDb) {
+                        const codes = firebase.apps.find(app => app.name === 'codes');
+                        codesDb = codes?.database();
+                    }
+                    firebaseReady = true;
+                    console.log('✅ Firebase متصل (موجود)');
+                }
+                return true;
+            } catch (e) {
+                console.error('❌ Firebase init error:', e);
+                firebaseReady = false;
+                
+                // إعادة محاولة
+                if (firebaseRetries < MAX_RETRIES) {
+                    firebaseRetries++;
+                    console.log(`🔄 محاولة ${firebaseRetries}/${MAX_RETRIES}...`);
+                    setTimeout(initFirebase, 2000);
+                }
+            }
+            return false;
+        }
+
+        // محاولة الاتصال فوراً
+        setTimeout(initFirebase, 100);
+
         // ========== وظائف التنقل ==========
         function showScreen(screenId) {
             ['login-screen', 'dashboard-screen', 'exams-center', 'exam-screen', 'result-screen'].forEach(id => {
@@ -521,28 +608,80 @@ window.addEventListener('DOMContentLoaded', () => {
             document.getElementById(screenId).classList.remove('hidden');
         }
 
-        function handleLogin() {
-            const name = document.getElementById('student-name').value.trim();
-            const code = document.getElementById('access-code').value.trim();
-            
-            if (!name) {
-                showToast('من فضلك أدخل اسمك', 'error');
-                return;
-            }
-            
-            if (code !== 'LEGAL2025') {
-                showToast('كود الدخول غير صحيح', 'error');
-                return;
-            }
-            
-            currentUser = { name, code };
-            document.getElementById('display-name').textContent = `أهلاً، ${name}`;
-            document.getElementById('display-code').textContent = code;
-            document.getElementById('exam-display-name').textContent = name;
-            
-            showScreen('dashboard-screen');
-            updateProgressIndicators();
+        async function handleLogin() {
+    // 1. جلب الكود من الخانة (Input)
+    const accessCodeInput = document.getElementById('access-code'); // تأكد من الـ ID ده في الـ HTML
+    const code = accessCodeInput.value.trim().toUpperCase();
+    const statusEl = document.getElementById('login-status');
+    
+    // 2. تحقق مبدئي
+    if (!code) {
+        statusEl.textContent = '❌ من فضلك أدخل الكود الخاص بك';
+        statusEl.style.color = '#ef4444';
+        return;
+    }
+
+    // 3. حالة التحميل (عشان الطالب ميفضلش يدوس كتير)
+    statusEl.textContent = '⏳ جاري التحقق من قاعدة البيانات...';
+    statusEl.style.color = '#60a5fa';
+
+    try {
+        // 4. الربط مع Firebase (تأكد إن firebase متصلة عندك)
+        if (typeof firebase === 'undefined') {
+            throw new Error("الفيربيس غير متصل");
         }
+
+        const database = firebase.database();
+        // البحث في مسار codes/كود-الطالب
+        const codeRef = database.ref('codes/' + code);
+        const snapshot = await codeRef.once('value');
+
+        // 5. هل الكود موجود؟
+        if (!snapshot.exists()) {
+            statusEl.textContent = '❌ عذراً، الكود غير صحيح أو غير مسجل';
+            statusEl.style.color = '#ef4444';
+            return;
+        }
+
+        // 6. سحب البيانات بنجاح
+        const codeData = snapshot.val();
+        // سحب الاسم (لو مفيش اسم بيكتب طالب مستجد)
+        const studentName = codeData.name || "طالب مستجد";
+
+        // 7. الحفظ الأبدي (LocalStorage) عشان الجهاز يفتكره دايماً
+        currentUser = { 
+            name: studentName, 
+            code: code 
+        };
+        localStorage.setItem('user_data', JSON.stringify(currentUser));
+
+        // 8. تحديث الواجهة فوراً قبل الانتقال
+        const displayNameElement = document.getElementById('display-name');
+        if (displayNameElement) {
+            displayNameElement.textContent = `أهلاً، المستشار ${studentName}`;
+        }
+
+        // 9. نجاح تسجيل الدخول
+        statusEl.textContent = `✅ مرحباً بك يا ${studentName}`;
+        statusEl.style.color = '#10b981';
+
+        // 10. الانتقال للداشبورد بعد ثانية واحدة من الفرحة
+        setTimeout(() => {
+            statusEl.textContent = '';
+            accessCodeInput.value = '';
+            showScreen('dashboard-screen'); // تأكد إن الفانكشن دي موجودة عندك
+            
+            // تحديث لوحة الشرف والتقدم لو موجودين
+            if(typeof updateProgressIndicators === 'function') updateProgressIndicators();
+            if(typeof updateLeaderboard === 'function') updateLeaderboard();
+        }, 1200);
+
+    } catch (error) {
+        console.error('Login Error:', error);
+        statusEl.textContent = '❌ فشل الاتصال.. تأكد من الإنترنت';
+        statusEl.style.color = '#ef4444';
+    }
+}
 
         function handleLogout() {
             currentUser = null;
@@ -622,72 +761,107 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // ========== لوحة الشرف ==========
+        // ========== لوحة الشرف من Firebase ==========
         function updateLeaderboard() {
             if (!currentSubject) return;
             
             const container = document.getElementById('leaderboard');
-            const subjectResults = allResults.filter(r => r.subject_id === currentSubject.id);
             
-            if (subjectResults.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-gray-500 py-8">
-                        <div class="text-4xl mb-2">🏅</div>
-                        <p>لا توجد نتائج بعد</p>
-                        <p class="text-sm">كن أول المتفوقين!</p>
-                    </div>
-                `;
+            // تأكد من الاتصال
+            if (!firebaseReady) {
+                container.innerHTML = `<div class="text-center text-gray-500 py-8"><p>⏳ جاري الاتصال...</p></div>`;
+                initFirebase();
+                return;
+            }
+            
+            if (!firebaseReady || !firebase_db) {
+                container.innerHTML = `<div class="text-center text-gray-500 py-8"><p>❌ لا يوجد اتصال بالإنترنت</p></div>`;
                 return;
             }
 
-            // تجميع أعلى نتيجة لكل طالب
-            const bestScores = {};
-            subjectResults.forEach(r => {
-                const key = r.student_code;
-                if (!bestScores[key] || r.score > bestScores[key].score) {
-                    bestScores[key] = r;
-                }
-            });
-
-            // ترتيب حسب الدرجة
-            const sorted = Object.values(bestScores).sort((a, b) => b.score - a.score);
-
-            container.innerHTML = '';
-            let currentRank = 0;
-            let lastScore = -1;
-
-            sorted.forEach((result, index) => {
-                if (result.score !== lastScore) {
-                    currentRank = index + 1;
-                    lastScore = result.score;
-                }
-
-                const row = document.createElement('div');
-                row.className = 'leaderboard-row flex items-center gap-3 p-3 rounded-lg bg-[#1a1a3a]/50';
+            try {
+                const resultsRef = firebase_db.ref('results');
                 
-                let rankDisplay = '';
-                if (currentRank === 1) rankDisplay = '<span class="crown-gold text-xl">👑</span>';
-                else if (currentRank === 2) rankDisplay = '<span class="crown-silver text-xl">🥈</span>';
-                else if (currentRank === 3) rankDisplay = '<span class="crown-bronze text-xl">🥉</span>';
-                else rankDisplay = `<span class="text-gray-400 font-bold w-6 text-center">${currentRank}</span>`;
+                resultsRef.orderByChild('subject_id').equalTo(currentSubject.id).limitToLast(100).once('value', (snapshot) => {
+                    const results = [];
+                    snapshot.forEach((childSnapshot) => {
+                        results.push(childSnapshot.val());
+                    });
 
-                row.innerHTML = `
-                    ${rankDisplay}
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-sm truncate ${result.student_code === currentUser?.code ? 'text-cyan-400' : 'text-white'}">
-                            ${result.student_name}
-                            ${result.student_code === currentUser?.code ? '(أنت)' : ''}
-                        </p>
-                        <p class="text-xs text-gray-500">امتحان ${result.exam_number}</p>
-                    </div>
-                    <div class="text-left">
-                        <span class="font-bold ${result.score >= 80 ? 'text-green-400' : result.score >= 50 ? 'text-yellow-400' : 'text-red-400'}">
-                            ${result.score}%
-                        </span>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
+                    if (results.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center text-gray-500 py-8">
+                                <div class="text-4xl mb-2">🏅</div>
+                                <p>لا توجد نتائج بعد</p>
+                                <p class="text-sm">كن أول المتفوقين!</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    // تجميع أعلى نتيجة لكل طالب
+                    const bestScores = {};
+                    results.forEach(r => {
+                        const key = r.student_code;
+                        if (!bestScores[key] || r.score > bestScores[key].score) {
+                            bestScores[key] = r;
+                        }
+                    });
+
+                    // ترتيب حسب الدرجة
+                    const sorted = Object.values(bestScores).sort((a, b) => b.score - a.score);
+
+                    container.innerHTML = '';
+                    let currentRank = 0;
+                    let lastScore = -1;
+
+                    sorted.forEach((result, index) => {
+                        if (result.score !== lastScore) {
+                            currentRank = index + 1;
+                            lastScore = result.score;
+                        }
+
+                        const row = document.createElement('div');
+                        row.className = 'leaderboard-row flex items-center gap-3 p-3 rounded-lg bg-[#1a1a3a]/50';
+                        
+                        let rankDisplay = '';
+                        if (currentRank === 1) rankDisplay = '<span class="crown-gold text-xl">👑</span>';
+                        else if (currentRank === 2) rankDisplay = '<span class="crown-silver text-xl">🥈</span>';
+                        else if (currentRank === 3) rankDisplay = '<span class="crown-bronze text-xl">🥉</span>';
+                        else rankDisplay = `<span class="text-gray-400 font-bold w-6 text-center">${currentRank}</span>`;
+
+                        row.innerHTML = `
+                            ${rankDisplay}
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-sm truncate ${result.student_code === currentUser?.code ? 'text-cyan-400' : 'text-white'}">
+                                    ${result.student_name}
+                                    ${result.student_code === currentUser?.code ? '(أنت)' : ''}
+                                </p>
+                                <p class="text-xs text-gray-500">امتحان ${result.exam_number}</p>
+                            </div>
+                            <div class="text-left">
+                                <span class="font-bold ${result.score >= 80 ? 'text-green-400' : result.score >= 50 ? 'text-yellow-400' : 'text-red-400'}">
+                                    ${result.score}%
+                                </span>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    });
+                }, (error) => {
+                    console.error('Leaderboard Firebase error:', error);
+                    
+                    if (error.code === 'PERMISSION_DENIED') {
+                        container.innerHTML = `<div class="text-center text-gray-500 py-8"><p>❌ خطأ في الصلاحيات</p></div>`;
+                    } else if (!navigator.onLine) {
+                        container.innerHTML = `<div class="text-center text-gray-500 py-8"><p>❌ لا يوجد اتصال</p></div>`;
+                    } else {
+                        container.innerHTML = `<div class="text-center text-gray-500 py-8"><p>❌ خطأ في تحميل البيانات</p></div>`;
+                    }
+                });
+            } catch (error) {
+                console.error('Leaderboard error:', error);
+                container.innerHTML = `<div class="text-center text-gray-500 py-8"><p>❌ خطأ</p></div>`;
+            }
         }
 
         // ========== الامتحان ==========
@@ -776,20 +950,56 @@ window.addEventListener('DOMContentLoaded', () => {
             
             const score = Math.round((correctCount / 10) * 100);
             
-            // حفظ النتيجة
-            if (window.dataSdk && allResults.length < 999) {
-                const resultData = {
-                    id: `${currentUser.code}-${currentSubject.id}-${currentExamNumber}-${Date.now()}`,
-                    student_name: currentUser.name,
-                    student_code: currentUser.code,
-                    subject_id: currentSubject.id,
-                    exam_number: currentExamNumber,
-                    score: score,
-                    total_questions: 10,
-                    completed_at: new Date().toISOString()
-                };
-                
-                await window.dataSdk.create(resultData);
+            // تأكد من اتصال Firebase
+            if (!firebaseReady) {
+                console.log('⏳ Firebase not ready, retrying...');
+                initFirebase();
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+            
+            // حفظ النتيجة في Firebase
+            if (firebaseReady && firebase_db && currentUser) {
+                try {
+                    const resultId = `${currentUser.code}-${currentSubject.id}-${currentExamNumber}-${Date.now()}`;
+                    
+                    const resultData = {
+                        id: resultId,
+                        student_name: currentUser.name,
+                        student_code: currentUser.code,
+                        subject_id: currentSubject.id,
+                        exam_number: currentExamNumber,
+                        score: score,
+                        total_questions: 10,
+                        correct_answers: correctCount,
+                        completed_at: new Date().toISOString()
+                    };
+                    
+                    // محاولة الحفظ مع timeout
+                    const savePromise = firebase_db.ref(`results/${resultId}`).set(resultData);
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('timeout')), 5000)
+                    );
+                    
+                    await Promise.race([savePromise, timeoutPromise]);
+                    console.log('✅ تم حفظ النتيجة بنجاح');
+                    
+                    // تحديث النتيجة المحلية
+                    allResults.push(resultData);
+                    
+                } catch (error) {
+                    console.error('Firebase save error:', error);
+                    
+                    if (error.message === 'timeout') {
+                        showToast('⚠️ البيانات محفوظة محلياً (انقطع الاتصال)', 'error');
+                    } else if (!navigator.onLine) {
+                        showToast('⚠️ تم الحفظ بدون إنترنت', 'error');
+                    } else {
+                        showToast('❌ خطأ في حفظ النتيجة', 'error');
+                    }
+                }
+            } else {
+                console.warn('Firebase not available for saving');
+                showToast('⚠️ البيانات محفوظة محلياً فقط', 'error');
             }
             
             // عرض النتيجة
@@ -859,37 +1069,39 @@ window.addEventListener('DOMContentLoaded', () => {
 
         // ========== التهيئة ==========
         async function initializeApp() {
-        try {
-            // 2. ربط الـ SDK وجلب الداتا من فيربيس
-            if (window.dataSdk) {
-                const result = await window.dataSdk.init(dataHandler);
-                
-                // 3. لو السيستم لقى "نتائج قديمة" للجهاز ده، يسحب الاسم منها تلقائي
-                if (allResults.length > 0 && !currentUser) {
-                    const lastResult = allResults[allResults.length - 1];
-                    currentUser = { 
-                        name: lastResult.student_name, 
-                        code: lastResult.student_code 
-                    };
-                    localStorage.setItem('user_data', JSON.stringify(currentUser));
-                }
-            }
+    console.log("🚀 جاري تشغيل منصة المستشار إيهاب...");
 
-            // 4. الدخول التلقائي: لو فيه اسم (سواء من المتصفح أو الفيربيس) ادخل فوراً
-            if (currentUser) {
-                showScreen('dashboard-screen'); // اخفي اللوجن وافتح المنصة
-                updateHeaderName();
-                updateProgressIndicators();
-                updateLeaderboard();
-            } else {
-                // لو الجهاز جديد خالص ومحدش سجل عليه قبل كدة، اظهر اللوجن مرة واحدة بس
-                showScreen('login-screen');
-            }
-
-        } catch (error) {
-            console.error('حدث خطأ أثناء التحميل التلقائي:', error);
+    try {
+        // 1. التأكد من اتصال الفيربيس (لو لسه مكملش استناه ثانية)
+        if (typeof firebase !== 'undefined') {
+            console.log("✅ Firebase جاهز للعمل");
+        } else {
+            console.error("❌ Firebase لم يتم تحميله بعد!");
         }
+
+        // 2. التحقق من المستخدم (الدخول التلقائي)
+        if (currentUser) {
+            console.log("👤 مرحباً بسيادة المستشار: " + currentUser.name);
+            // إخفاء اللوجن وإظهار الداشبورد فوراً
+            showScreen('dashboard-screen');
+            updateHeaderName();
+        } else {
+            // لو مفيش مستخدم، اظهر شاشة اللوجن
+            showScreen('login-screen');
+        }
+
+        // 3. تحديث لوحة الشرف (Leaderboard) من الداتابيز
+        // لو عندك فانكشن بتجيب الداتا، ناديها هنا
+        if (typeof updateLeaderboard === 'function') {
+            updateLeaderboard();
+        }
+
+    } catch (error) {
+        console.error("⚠️ خطأ أثناء بدء التطبيق:", error);
     }
-           </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d5544f7b700ee94',t:'MTc3MjMzNzc4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+}
+
+// تشغيل الفانكشن فوراً عند تحميل الصفحة
+window.onload = initializeApp;    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
