@@ -468,12 +468,23 @@
 
         // ========== SDK Initialization ==========
         const dataHandler = {
-            onDataChanged(data) {
-                allResults = data;
-                updateProgressIndicators();
-                updateLeaderboard();
-            }
-        };
+    onDataChanged(data) {
+        console.log("📊 تحديث البيانات من الفيربيس...");
+        allResults = data;
+
+        // 1. التأكد من بقاء اسم المستشار إيهاب في الشاشة
+        if (currentUser && currentUser.name) {
+            const nameEl = document.getElementById('display-name');
+            if (nameEl) nameEl.textContent = "المستشار " + currentUser.name;
+        }
+
+        // 2. تحديث الإحصائيات ولوحة الشرف
+        if (typeof updateProgressIndicators === 'function') updateProgressIndicators();
+        if (typeof updateLeaderboard === 'function') updateLeaderboard();
+        
+        console.log("✅ تم تحديث الواجهة بنجاح");
+    }
+};
 
         async function initializeApp() {
             try {
@@ -691,12 +702,19 @@
         }
 
         function openSubject(subjectId) {
-            currentSubject = subjects[subjectId];
-            document.getElementById('subject-title').textContent = currentSubject.name;
-            renderExamsList();
-            updateLeaderboard();
-            showScreen('exams-center');
-        }
+    currentSubject = subjects[subjectId];
+    document.getElementById('subject-title').textContent = currentSubject.name;
+    
+    // التعديل السحري: تأكيد الاسم في الهيدر عند دخول أي مادة
+    if (currentUser) {
+        const nameEl = document.getElementById('display-name');
+        if (nameEl) nameEl.textContent = "المستشار " + currentUser.name;
+    }
+
+    renderExamsList();
+    updateLeaderboard();
+    showScreen('exams-center');
+}
 
         function backToDashboard() {
             currentSubject = null;
@@ -712,55 +730,125 @@
         }
 
         // ========== عرض قائمة الامتحانات ==========
-        function renderExamsList() {
-            const container = document.getElementById('exams-list');
-            container.innerHTML = '';
+      // 1. الدالة المعدلة لرسم القائمة (بتجيب البيانات الأول)
+async function renderExamsList() {
+    const container = document.getElementById('exams-list');
+    if (!container) return;
+    
+    // رسالة مؤقتة لحد ما البيانات تيجي من الفيربيس
+    container.innerHTML = '<div class="col-span-full text-center py-10 text-cyan-400 animate-pulse">⏳ جاري جلب سجلاتك من السحابة...</div>';
+    
+    // 🔥 أهم خطوة: التأكد إن allResults محدثة بكود الطالب من الفيربيس
+    if (firebase_db && currentUser) {
+        try {
+            const snapshot = await firebase_db.ref('results')
+                .orderByChild('student_code')
+                .equalTo(currentUser.code)
+                .once('value');
             
-            for (let i = 1; i <= 10; i++) {
-                const isCompleted = checkExamCompleted(currentSubject.id, i);
-                const card = document.createElement('div');
-                card.className = `relative gradient-border card-hover cursor-pointer ${isCompleted ? 'exam-card-completed' : ''}`;
-                card.onclick = () => startExam(i);
-                
-                card.innerHTML = `
-                    ${isCompleted ? '<div class="check-badge"><span class="text-white text-lg">✓</span></div>' : ''}
-                    <div class="gradient-border-inner p-4 text-center">
-                        <div class="text-3xl mb-2">${isCompleted ? '✅' : '📝'}</div>
-                        <h3 class="font-bold text-cyan-400">امتحان ${i}</h3>
-                        <p class="text-xs text-gray-400 mt-1">10 أسئلة</p>
-                        ${isCompleted ? '<span class="text-xs text-green-400 mt-2 block">✓ مكتمل</span>' : ''}
-                    </div>
-                `;
-                container.appendChild(card);
-            }
+            allResults = []; // نصفر القديم
+            snapshot.forEach(child => {
+                allResults.push(child.val());
+            });
+        } catch (error) {
+            console.error("خطأ في تحديث البيانات:", error);
         }
+    }
 
-        function checkExamCompleted(subjectId, examNumber) {
-            return allResults.some(r => 
-                r.student_code === currentUser?.code && 
-                r.subject_id === subjectId && 
-                r.exam_number === examNumber
-            );
-        }
+    container.innerHTML = ''; // نمسح رسالة التحميل ونبدأ نرسم
+    
+    for (let i = 1; i <= 10; i++) {
+        // الفحص دلوقتي شغال على بيانات لسه جاية حالاً
+        const isCompleted = checkExamCompleted(currentSubject.id, i);
+        const card = document.createElement('div');
+        
+        // ستايل الكارت لو مكتمل
+        card.className = `relative gradient-border card-hover cursor-pointer ${isCompleted ? 'border-green-500/50 bg-green-500/5' : ''}`;
+        card.onclick = () => startExam(i);
+        
+        card.innerHTML = `
+            ${isCompleted ? `
+                <div class="check-badge" style="position:absolute; top:-8px; right:-8px; background:#10b981; color:white; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #1a1a3a; z-index:20; box-shadow: 0 0 10px rgba(16,185,129,0.4);">
+                    <span style="font-weight:bold; font-size:14px;">✓</span>
+                </div>
+            ` : ''}
+            <div class="gradient-border-inner p-4 text-center">
+                <div class="text-3xl mb-2">${isCompleted ? '✅' : '📝'}</div>
+                <h3 class="font-bold ${isCompleted ? 'text-green-400' : 'text-cyan-400'}">امتحان ${i}</h3>
+                <p class="text-xs text-gray-400 mt-1">10 أسئلة</p>
+                ${isCompleted ? '<span class="text-[10px] text-green-400 mt-2 block font-bold">✓ تم بنجاح</span>' : ''}
+            </div>
+        `;
+        container.appendChild(card);
+    }
+}
+
+// 2. دالة الفحص (زي ما هي بس تأكد إنها بتقرأ من المصفوفة)
+function checkExamCompleted(subjectId, examNumber) {
+    if (!allResults || !currentUser) return false;
+    
+    return allResults.some(r => 
+        r.student_code === currentUser.code && 
+        r.subject_id === subjectId && 
+        r.exam_number === examNumber
+    );
+}
 
         // ========== تحديث مؤشرات التقدم ==========
-        function updateProgressIndicators() {
-            if (!currentUser) return;
-            
-            ['administrative', 'constitutional'].forEach(subjectId => {
-                const completed = allResults.filter(r => 
-                    r.student_code === currentUser.code && 
-                    r.subject_id === subjectId
-                ).length;
-                
-                const progressText = document.getElementById(`progress-${subjectId}`);
-                const progressBar = document.getElementById(`progress-bar-${subjectId}`);
-                
-                if (progressText) progressText.textContent = `${completed}/10 مكتمل`;
-                if (progressBar) progressBar.style.width = `${(completed / 10) * 100}%`;
-            });
-        }
+        async function updateProgressIndicators() {
+    // 1. التأكد إن فيه طالب مسجل دخول أصلاً
+    if (!currentUser || !currentUser.code) {
+        console.warn("⚠️ لا يوجد مستخدم حالي لجلب تقدمه");
+        return;
+    }
 
+    // 2. التأكد إن الفيربيس جاهز
+    if (!firebase_db) {
+        console.error("❌ قاعدة البيانات غير متصلة");
+        return;
+    }
+
+    try {
+        // 3. جلب كل نتائج الطالب ده فقط من مسار results
+        const snapshot = await firebase_db.ref('results')
+            .orderByChild('student_code')
+            .equalTo(currentUser.code)
+            .once('value');
+
+        const userResults = [];
+        snapshot.forEach(child => {
+            userResults.push(child.val());
+        });
+
+        // 4. تحديث العدادات لكل مادة بناءً على النتائج اللي جت
+        ['administrative', 'constitutional'].forEach(subjectId => {
+            // فلترة النتائج حسب المادة (بشرط تكون الدرجة ناجحة مثلاً أو مجرد إنه خلص الامتحان)
+            const completedExams = userResults.filter(r => r.subject_id === subjectId);
+            
+            // استخراج أرقام الامتحانات الفريدة (عشان لو امتحن نفس الامتحان مرتين ميتحسبش مرتين)
+            const uniqueExamsCount = new Set(completedExams.map(r => r.exam_number)).size;
+
+            // 5. تحديث النصوص والأشرطة في الـ HTML
+            const progressText = document.getElementById(`progress-${subjectId}`);
+            const progressBar = document.getElementById(`progress-bar-${subjectId}`);
+            
+            if (progressText) {
+                progressText.textContent = `${uniqueExamsCount}/10 مكتمل`;
+            }
+            if (progressBar) {
+                const percentage = (uniqueExamsCount / 10) * 100;
+                progressBar.style.width = `${percentage}%`;
+                // إضافة لون أخضر لو خلص المادة كلها (فخامة)
+                progressBar.style.backgroundColor = percentage === 100 ? '#10b981' : '#22d3ee';
+            }
+        });
+
+        console.log(`✅ تم تحديث تقدم المستشار ${currentUser.name} من السحابة`);
+
+    } catch (error) {
+        console.error("❌ فشل تحديث المؤشرات:", error);
+    }
+}
         // ========== لوحة الشرف من Firebase ==========
         function updateLeaderboard() {
             if (!currentSubject) return;
@@ -1068,40 +1156,56 @@
         }
 
         // ========== التهيئة ==========
-        async function initializeApp() {
-    console.log("🚀 جاري تشغيل منصة المستشار إيهاب...");
+// ========== دالة التشغيل الموحدة (إصلاح مشكلة الحفظ) ==========
+async function initializeApp() {
+    console.log("🚀 جاري بدء تشغيل المنصة...");
 
+    // 1. تشغيل الـ SDKs (Firebase & Element)
     try {
-        // 1. التأكد من اتصال الفيربيس (لو لسه مكملش استناه ثانية)
-        if (typeof firebase !== 'undefined') {
-            console.log("✅ Firebase جاهز للعمل");
-        } else {
-            console.error("❌ Firebase لم يتم تحميله بعد!");
+        if (window.dataSdk) {
+            await window.dataSdk.init(dataHandler);
         }
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange: async (newConfig) => {
+                    config = { ...defaultConfig, ...newConfig };
+                    applyConfig();
+                }
+            });
+        }
+    } catch (e) {
+        console.error('SDK Error:', e);
+    }
 
-        // 2. التحقق من المستخدم (الدخول التلقائي)
-        if (currentUser) {
-            console.log("👤 مرحباً بسيادة المستشار: " + currentUser.name);
-            // إخفاء اللوجن وإظهار الداشبورد فوراً
+    // 2. فحص جلسة تسجيل الدخول (LocalStorage)
+    try {
+        const savedUserData = localStorage.getItem('user_data');
+
+        if (savedUserData) {
+            currentUser = JSON.parse(savedUserData);
+            console.log("✅ تم استعادة الجلسة للمستشار: " + currentUser.name);
+
+            // تحديث الاسم في الهيدر
+            const displayName = document.getElementById('display-name');
+            if (displayName) displayName.textContent = "المستشار " + currentUser.name;
+
+            // دخول مباشر للداشبورد
             showScreen('dashboard-screen');
-            updateHeaderName();
+            
+            // تحديث البيانات
+            if (typeof updateProgressIndicators === 'function') updateProgressIndicators();
         } else {
-            // لو مفيش مستخدم، اظهر شاشة اللوجن
+            console.log("👤 لا توجد بيانات محفوظة، توجه لشاشة الدخول");
             showScreen('login-screen');
         }
-
-        // 3. تحديث لوحة الشرف (Leaderboard) من الداتابيز
-        // لو عندك فانكشن بتجيب الداتا، ناديها هنا
-        if (typeof updateLeaderboard === 'function') {
-            updateLeaderboard();
-        }
-
     } catch (error) {
-        console.error("⚠️ خطأ أثناء بدء التطبيق:", error);
+        console.error("⚠️ خطأ في استعادة البيانات:", error);
+        showScreen('login-screen');
     }
 }
 
-// تشغيل الفانكشن فوراً عند تحميل الصفحة
-window.onload = initializeApp;    </script>
+// تشغيل عند تحميل الصفحة
+window.addEventListener('load', initializeApp);   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
