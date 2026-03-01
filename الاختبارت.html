@@ -1183,31 +1183,26 @@ async function initializeApp() {
 
     // 2. فحص جلسة تسجيل الدخول (LocalStorage)
     try {
-        const savedUserData = localStorage.getItem('user_data');
+        // 1. نمسح أي بيانات قديمة فوراً عشان نضمن إن الجهاز "نضيف"
+        localStorage.removeItem('user_data'); 
+        currentUser = null;
+        allResults = [];
 
-        if (savedUserData) {
-            currentUser = JSON.parse(savedUserData);
-            console.log("✅ تم استعادة الجلسة للمستشار: " + currentUser.name);
+        // 2. نطبع في الكونسول إننا قفلنا الثغرة
+        console.log("🔒 تم تصفير الجلسة بنجاح، يرجى إدخال الكود.");
 
-            // تحديث الاسم في الهيدر
-            const displayName = document.getElementById('display-name');
-            if (displayName) displayName.textContent = "المستشار " + currentUser.name;
+        // 3. نوديه لشاشة اللوجن "إجباري"
+        showScreen('login-screen');
 
-            // دخول مباشر للداشبورد
-            showScreen('dashboard-screen');
-            
-            // تحديث البيانات
-            if (typeof updateProgressIndicators === 'function') updateProgressIndicators();
-        } else {
-            console.log("👤 لا توجد بيانات محفوظة، توجه لشاشة الدخول");
-            showScreen('login-screen');
-        }
+        // (اختياري) لو عايز تمسح الاسم من الهيدر عشان ميبقاش باين اسم القديم
+        const displayName = document.getElementById('display-name');
+        if (displayName) displayName.textContent = "يرجى تسجيل الدخول";
+
     } catch (error) {
-        console.error("⚠️ خطأ في استعادة البيانات:", error);
+        console.error("⚠️ خطأ في تصفير البيانات:", error);
         showScreen('login-screen');
     }
 }
-
 // تشغيل عند تحميل الصفحة
 window.addEventListener('load', initializeApp);   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
