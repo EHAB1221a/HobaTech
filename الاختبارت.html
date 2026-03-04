@@ -473,6 +473,30 @@
             return exams;
         }
 
+        function showWelcomeMessage(userName) {
+    const welcomeEl = document.getElementById('welcome-msg');
+    if (!welcomeEl) return;
+
+    // نص الترحيب
+    welcomeEl.textContent = `🎉 أهلاً وسهلاً بك يا ${userName}! نتمنى لك يوم مليء بالنجاح 🚀`;
+
+    // تأثير لطيف للظهور
+    welcomeEl.style.opacity = '0';
+    welcomeEl.style.transition = 'opacity 1s ease';
+    welcomeEl.style.display = 'block';
+
+    setTimeout(() => {
+        welcomeEl.style.opacity = '1';
+    }, 100);
+
+    // يخفي الرسالة بعد 5 ثواني
+    setTimeout(() => {
+        welcomeEl.style.opacity = '0';
+        setTimeout(() => {
+            welcomeEl.style.display = 'none';
+        }, 1000);
+    }, 5000);
+}
         function generateQuestions(subjectId, examNumber) {
             const questions = [];
             const topics = subjectId === 'administrative' 
@@ -727,12 +751,36 @@
     }
 }
 
-        function handleLogout() {
-            currentUser = null;
-            document.getElementById('student-name').value = '';
-            document.getElementById('access-code').value = '';
-            showScreen('login-screen');
-        }
+function handleLogout() {
+    // 1️⃣ مسح بيانات المستخدم من LocalStorage
+    localStorage.removeItem('user_data');
+
+    // 2️⃣ إعادة المتغيرات المهمة للصفر
+    currentUser = null;
+    allResults = [];
+
+    // 3️⃣ مسح قيم الإدخالات في اللوجن
+    const nameInput = document.getElementById('student-name');
+    const codeInput = document.getElementById('access-code');
+    if (nameInput) nameInput.value = '';
+    if (codeInput) codeInput.value = '';
+
+    // 4️⃣ الرجوع لصفحة تسجيل الدخول
+    showScreen('login-screen');
+
+    // 5️⃣ رسالة صغيرة للمستخدم
+    const statusEl = document.getElementById('login-status');
+    if (statusEl) {
+        statusEl.textContent = '👋 تم تسجيل الخروج بنجاح!';
+        statusEl.style.color = '#f97316';
+    }
+
+    console.log("✅ المستخدم خرج من الحساب");
+}
+
+// ربط الزر بالدالة
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
         function openSubject(subjectId) {
     currentSubject = subjects[subjectId];
@@ -748,6 +796,7 @@
     updateLeaderboard();
     showScreen('exams-center');
 }
+
 
         function backToDashboard() {
             currentSubject = null;
@@ -1248,6 +1297,7 @@ async function initializeApp() {
 window.addEventListener('load', initializeApp);   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
