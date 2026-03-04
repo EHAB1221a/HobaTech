@@ -317,8 +317,19 @@
        <p class="text-xs text-gray-400">اختر امتحانك</p>
       </div>
       <div class="flex items-center gap-2">
-       <span class="text-gray-400" id="exam-display-name">HobaTech</span> <button onclick="handleLogout()" class="p-2 bg-red-500/20 hover:bg-red-500/40 rounded-lg transition-all"> 🚪 </button>
-      </div>
+       <span class="text-gray-400" id="exam-display-name">HobaTech</span> 
+<button onclick="handleLogout()" 
+        class="flex items-center gap-2 p-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-2xl transition-all duration-300 group shadow-lg shadow-red-950/20 active:scale-95" 
+        title="HobaTech">
+    
+    <img src="1769979851931.png" 
+         alt="Logout" 
+         class="w-6 h-6 object-contain filter drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] group-hover:scale-110 transition-transform duration-300">
+    
+    <span class="text-xs text-red-400 font-bold hidden group-hover:block transition-all duration-300">
+        خروج
+    </span
+</button>      </div>
      </div>
     </div>
    </header>
@@ -1226,6 +1237,7 @@ async function initializeApp() {
 window.addEventListener('load', initializeApp);   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
