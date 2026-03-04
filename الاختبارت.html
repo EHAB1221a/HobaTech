@@ -1191,13 +1191,11 @@ function checkExamCompleted(subjectId, examNumber) {
         // ========== التهيئة ==========
 // ========== دالة التشغيل الموحدة (إصلاح مشكلة الحفظ) ==========
 async function initializeApp() {
-    console.log("🚀 جاري بدء تشغيل المنصة...");
+    console.log("🚀 جاري فحص الهوية والاتصال بالسحابة...");
 
     // 1. تشغيل الـ SDKs (Firebase & Element)
     try {
-        if (window.dataSdk) {
-            await window.dataSdk.init(dataHandler);
-        }
+        if (window.dataSdk) await window.dataSdk.init(dataHandler);
         if (window.elementSdk) {
             window.elementSdk.init({
                 defaultConfig,
@@ -1211,32 +1209,46 @@ async function initializeApp() {
         console.error('SDK Error:', e);
     }
 
-    // 2. فحص جلسة تسجيل الدخول (LocalStorage)
+    // 2. 🛡️ الدخول التلقائي
     try {
-        // 1. نمسح أي بيانات قديمة فوراً عشان نضمن إن الجهاز "نضيف"
-        localStorage.removeItem('user_data'); 
-        currentUser = null;
-        allResults = [];
+        const savedUserData = localStorage.getItem('user_data');
 
-        // 2. نطبع في الكونسول إننا قفلنا الثغرة
-        console.log("🔒 تم تصفير الجلسة بنجاح، يرجى إدخال الكود.");
+        if (savedUserData) {
+            // ✅ لو لقى بيانات، يدخلك فوراً بدون تسجيل
+            currentUser = JSON.parse(savedUserData);
+            console.log("♻️ أهلاً بك مجدداً يا مستشار: " + currentUser.name);
 
-        // 3. نوديه لشاشة اللوجن "إجباري"
-        showScreen('login-screen');
+            // تحديث الاسم والكود في الهيدر
+            const displayName = document.getElementById('display-name');
+            if (displayName) displayName.textContent = "المستشار " + currentUser.name;
+            
+            const displayCode = document.getElementById('display-code');
+            if (displayCode) displayCode.textContent = currentUser.code;
 
-        // (اختياري) لو عايز تمسح الاسم من الهيدر عشان ميبقاش باين اسم القديم
-        const displayName = document.getElementById('display-name');
-        if (displayName) displayName.textContent = "يرجى تسجيل الدخول";
+            // الانتقال المباشر للداشبورد
+            showScreen('dashboard-screen');
+            
+            // تحديث درجاتك وعلامات الصح
+            if (typeof refreshUserProgress === 'function') {
+                await refreshUserProgress(currentUser.code);
+            }
 
+        } else {
+            // ❌ لو أول مرة، يروح لصفحة اللوجن
+            console.log("👤 جهاز جديد.. يرجى تسجيل الدخول");
+            showScreen('login-screen');
+        }
     } catch (error) {
-        console.error("⚠️ خطأ في تصفير البيانات:", error);
+        console.error("⚠️ خطأ في الاستعادة:", error);
         showScreen('login-screen');
     }
 }
-// تشغيل عند تحميل الصفحة
+
+// الاستدعاء عند تحميل الصفحة
 window.addEventListener('load', initializeApp);   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
