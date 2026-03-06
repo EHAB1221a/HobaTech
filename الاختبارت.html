@@ -137,6 +137,79 @@
             justify-content: center;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);
         }
+/* الفكرة: كل شاشة تكون hidden أو visible مع fade */
+.screen {
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  z-index: 0;
+}
+
+/* الشاشة النشطة تظهر */
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+  z-index: 10;
+}
+
+/* تحسين الفونت والموبايل */
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: linear-gradient(to bottom, #0a0a1a, #1a1a3a, #0f0f2f);
+  color: white;
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* الأزرار الرئيسية */
+button {
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  outline: none;
+}
+
+/* fade animation عند الضغط على زر */
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+/* تحسين scrollbar للموبايل */
+.screen::-webkit-scrollbar {
+  width: 6px;
+}
+
+.screen::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+.screen::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+  border-radius: 10px;
+}
     </style>
   <style>body { box-sizing: border-box; }</style>
  </head>
@@ -212,15 +285,9 @@
         🏛️
        </div>
        <h3 class="text-xl font-bold text-center text-cyan-400 mb-2">المنظمات الدولية</h3>
-       <p class="text-gray-400 text-center text-sm mb-4">10 امتحانات شاملة</p>
+       <p class="text-gray-400 text-center text-sm mb-4"> ابدأ الان</p>
        <div class="flex items-center justify-center gap-2 text-green-400 text-sm">
         <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> متاح الآن
-       </div>
-       <div class="mt-4 text-center">
-        <span id="progress-administrative" class="text-xs text-purple-400">0/10 مكتمل</span>
-        <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
-         <div id="progress-bar-administrative" class="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all" style="width: 0%"></div>
-        </div>
        </div>
       </div>
      </div><!-- القانون الدستوري -->
@@ -230,32 +297,22 @@
         📜
        </div>
        <h3 class="text-xl font-bold text-center text-cyan-400 mb-2">مصطلحات قانونية باللغة الفرنسية</h3>
-       <p class="text-gray-400 text-center text-sm mb-4">10 امتحانات شاملة</p>
+       <p class="text-gray-400 text-center text-sm mb-4"> ابدأ الان</p>
        <div class="flex items-center justify-center gap-2 text-green-400 text-sm">
         <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> متاح الآن
        </div>
-       <div class="mt-4 text-center">
-        <span id="progress-constitutional" class="text-xs text-purple-400">0/10 مكتمل</span>
-        <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
-         <div id="progress-bar-constitutional" class="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all" style="width: 0%"></div>
-        </div>
-       </div>
+    
       </div>
      </div><!-- قانون البيئة - قريباً -->
-     <div class="gradient-border card-hover cursor-not-allowed relative overflow-hidden opacity-70">
-      <div class="coming-soon-ribbon">
-       قريباً
-      </div>
-      <div class="gradient-border-inner p-6">
-       <div class="text-5xl mb-4 text-center grayscale">
-        🌿
-       </div>
-       <h3 class="text-xl font-bold text-center text-gray-400 mb-2">تشريعات حمايةالبيئة</h3>
-       <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
-        <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
-       </div>
-      </div>
+     <div onclick="openSubject('environment')" class="gradient-border card-hover cursor-pointer relative overflow-hidden">
+        <div class="gradient-border-inner p-6">
+          <div class="text-5xl mb-4 text-center">🌿</div>
+          <h3 class="text-xl font-bold text-center text-cyan-400 mb-2">تشريعات حماية البيئة</h3>
+          <p class="text-gray-400 text-center text-sm mb-4"> ابدأ الان</p>
+          <div class="flex items-center justify-center gap-2 text-green-400 text-sm">
+              <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> متاح الآن
+          </div>
+        </div>
      </div><!-- القانون الجنائي - قريباً -->
      <div class="gradient-border card-hover cursor-not-allowed relative overflow-hidden opacity-70">
       <div class="coming-soon-ribbon">
@@ -288,21 +345,21 @@
       </div>
      </div><!-- القانون التجاري - قريباً -->
      <div class="gradient-border card-hover cursor-not-allowed relative overflow-hidden opacity-70">
-      <div class="coming-soon-ribbon">
-       قريباً
-      </div>
-      <div class="gradient-border-inner p-6">
-       <div class="text-5xl mb-4 text-center grayscale">
-        💼
+        <div class="coming-soon-ribbon">
+         قريباً
+        </div>
+        <div class="gradient-border-inner p-6">
+         <div class="text-5xl mb-4 text-center grayscale">
+          💼
+         </div>
+         <h3 class="text-xl font-bold text-center text-gray-400 mb-2">تاريخ النظم القانونية</h3>
+         <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
+         <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
+          <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
+         </div>
+        </div>
        </div>
-       <h3 class="text-xl font-bold text-center text-gray-400 mb-2">تاريخ النظم القانونية</h3>
-       <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
-        <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
-       </div>
       </div>
-     </div>
-    </div>
    </main>
   </div><!-- مركز الاختبارات -->
   <div id="exams-center" class="hidden min-h-full">
@@ -360,77 +417,149 @@
      </div>
     </div>
    </main>
-  </div><!-- شاشة الامتحان -->
-  <div id="exam-screen" class="hidden min-h-full">
-   <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
-    <div class="max-w-4xl mx-auto px-4 py-4">
-     <div class="flex items-center justify-between">
-      <button onclick="backToExamsList()" class="text-cyan-400 hover:text-cyan-300 transition-all"> ← رجوع </button>
-      <div class="text-center">
-       <h1 id="exam-title" class="text-lg font-bold text-cyan-400">الامتحان رقم 1</h1>
-       <p id="exam-progress" class="text-xs text-gray-400">السؤال 1 من 10</p>
-      </div>
-      <div id="timer" class="bg-purple-500/20 px-4 py-2 rounded-lg">
-       <span class="text-purple-400 font-mono">00:00</span>
-      </div>
-     </div>
-    </div>
-   </header>
-   <main class="max-w-4xl mx-auto px-4 py-8">
-    <div class="gradient-border">
-     <div class="gradient-border-inner p-8">
-      <div id="question-container">
-       <h2 id="question-text" class="text-xl font-bold mb-6 leading-relaxed">نص السؤال هنا...</h2>
-       <div id="options-container" class="space-y-3">
-        <!-- الخيارات -->
-       </div>
-      </div>
-      <div class="flex justify-between mt-8">
-       <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all disabled:opacity-50"> ← السابق </button> <button id="next-btn" onclick="nextQuestion()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 rounded-xl transition-all"> التالي → </button> <button id="submit-btn" onclick="submitExam()" class="hidden px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 rounded-xl transition-all"> ✓ إنهاء الامتحان </button>
-      </div>
-     </div>
-    </div>
-   </main>
-  </div><!-- شاشة النتيجة -->
-  <div id="result-screen" class="hidden min-h-full flex items-center justify-center p-4">
-   <div class="gradient-border max-w-lg w-full">
-    <div class="gradient-border-inner p-8 text-center">
-     <div id="result-emoji" class="text-8xl mb-4">
-      🎉
-     </div>
-     <h1 id="result-title" class="text-3xl font-black mb-2">ممتاز!</h1>
-     <p id="result-message" class="text-gray-400 mb-6">أداء رائع، واصل التفوق!</p>
-     <div class="bg-[#1a1a3a] rounded-2xl p-6 mb-6">
-      <div class="text-6xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-2">
-       <span id="result-score">85</span>%
-      </div>
-      <p class="text-gray-400"><span id="correct-count">8.5</span> من <span id="total-count">10</span> أسئلة</p>
-     </div>
-     <div class="grid grid-cols-2 gap-4 mb-6">
-      <div class="bg-green-500/20 rounded-xl p-4">
-       <div class="text-2xl font-bold text-green-400" id="correct-answers">
-        8
-       </div>
-       <div class="text-xs text-gray-400">
-        إجابات صحيحة
-       </div>
-      </div>
-      <div class="bg-red-500/20 rounded-xl p-4">
-       <div class="text-2xl font-bold text-red-400" id="wrong-answers">
-        2
-       </div>
-       <div class="text-xs text-gray-400">
-        إجابات خاطئة
-       </div>
-      </div>
-     </div>
-     <div class="space-y-3">
-      <button onclick="backToExamsList()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold hover:opacity-90 transition-all"> 🔄 العودة لقائمة الامتحانات </button> <button onclick="backToDashboard()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all"> 📚 اختيار مادة أخرى </button>
-     </div>
-    </div>
-   </div>
   </div>
-  <script>
+  
+  <!-- شاشة الامتحان -->
+  <div id="exam-screen" class="hidden min-h-full">
+    <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
+     <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+       <button onclick="backToExamsList()" class="text-cyan-400 hover:text-cyan-300 transition-all"> ← رجوع </button>
+       <div class="text-center">
+        <h1 id="exam-title" class="text-lg font-bold text-cyan-400">الامتحان رقم 1</h1>
+        <p id="exam-progress" class="text-xs text-gray-400">السؤال 1 من 10</p>
+       </div>
+       <div id="timer" class="bg-purple-500/20 px-4 py-2 rounded-lg">
+        <span class="text-purple-400 font-mono">00:00</span>
+       </div>
+      </div>
+     </div>
+    </header>
+    <main class="max-w-4xl mx-auto px-4 py-8">
+     <div class="gradient-border">
+      <div class="gradient-border-inner p-8">
+       <div id="question-container">
+        <h2 id="question-text" class="text-xl font-bold mb-6 leading-relaxed">نص السؤال هنا...</h2>
+        <div id="options-container" class="space-y-3">
+         <!-- الخيارات -->
+        </div>
+       </div>
+       <div class="flex justify-between mt-8">
+        <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all disabled:opacity-50"> ← السابق </button> <button id="next-btn" onclick="nextQuestion()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 rounded-xl transition-all"> التالي → </button> <button id="submit-btn" onclick="submitExam()" class="hidden px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 rounded-xl transition-all"> ✓ إنهاء الامتحان </button>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div>
+   <!-- شاشة النتيجة -->
+   <div id="result-screen" class="hidden min-h-full flex items-center justify-center p-4">
+    <div class="gradient-border max-w-lg w-full">
+     <div class="gradient-border-inner p-8 text-center">
+      <div id="result-emoji" class="text-8xl mb-4">
+       🎉
+      </div>
+      <h1 id="result-title" class="text-3xl font-black mb-2">ممتاز!</h1>
+      <p id="result-message" class="text-gray-400 mb-6">أداء رائع، واصل التفوق!</p>
+      <div class="bg-[#1a1a3a] rounded-2xl p-6 mb-6">
+       <div class="text-6xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-2">
+        <span id="result-score">85</span>%
+       </div>
+       <p class="text-gray-400"><span id="correct-count">8.5</span> من <span id="total-count">10</span> أسئلة</p>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+       <div class="bg-green-500/20 rounded-xl p-4">
+        <div class="text-2xl font-bold text-green-400" id="correct-answers">
+         8
+        </div>
+        <div class="text-xs text-gray-400">
+         إجابات صحيحة
+        </div>
+       </div>
+       <div class="bg-red-500/20 rounded-xl p-4">
+        <div class="text-2xl font-bold text-red-400" id="wrong-answers">
+         2
+        </div>
+        <div class="text-xs text-gray-400">
+         إجابات خاطئة
+        </div>
+       </div>
+      </div>
+      <div class="space-y-3">
+       <button onclick="showReviewScreen()" class="w-full py-4 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl font-bold hover:opacity-90 transition-all"> 📖 مراجعة الإجابات </button> <button onclick="backToExamsList()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold hover:opacity-90 transition-all"> 🔄 العودة لقائمة الامتحانات </button> <button onclick="backToDashboard()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all"> 📚 اختيار مادة أخرى </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- شاشة النتيجة الأولى - بطاقة النتيجة فقط -->
+   <div id="result-summary-screen" class="hidden min-h-full">
+    <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
+     <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+       <div></div>
+       <div class="text-center">
+        <h1 id="result-header-title" class="text-xl font-bold text-cyan-400">نتائج الامتحان</h1>
+        <p class="text-xs text-gray-400">درجتك النهائية</p>
+       </div><button onclick="backToDashboard()" class="p-2 bg-red-500/20 hover:bg-red-500/40 rounded-lg transition-all"> ✕ </button>
+      </div>
+     </div>
+    </header>
+    <main class="max-w-4xl mx-auto px-4 py-8">
+     <div class="gradient-border mb-8">
+      <div class="gradient-border-inner p-8 text-center">
+       <div id="result-emoji" class="text-8xl mb-4">
+        🎉
+       </div>
+       <h1 id="result-title" class="text-3xl font-black mb-2">ممتاز!</h1>
+       <p id="result-message" class="text-gray-400 mb-6">أداء رائع، واصل التفوق!</p>
+       <div class="bg-[#1a1a3a] rounded-2xl p-6 mb-6">
+        <div class="text-6xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-2">
+         <span id="result-score">85</span>%
+        </div>
+        <p class="text-gray-400"><span id="correct-count">8</span> من <span id="total-count">10</span> أسئلة صحيحة</p>
+       </div>
+       <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-green-500/20 rounded-xl p-4">
+         <div class="text-2xl font-bold text-green-400" id="correct-answers">
+          8
+         </div>
+         <div class="text-xs text-gray-400">
+          إجابات صحيحة
+         </div>
+        </div>
+        <div class="bg-red-500/20 rounded-xl p-4">
+         <div class="text-2xl font-bold text-red-400" id="wrong-answers">
+          2
+         </div>
+         <div class="text-xs text-gray-400">
+          إجابات خاطئة
+         </div>
+        </div>
+       </div>
+      </div>
+      <!-- أزرار الإجراء -->
+      <div class="space-y-3 sticky bottom-4"><button onclick="showReviewScreen()" class="w-full py-4 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl font-bold hover:opacity-90 transition-all"> 📖 مراجعة الإجابات </button> <button onclick="backToExamsList()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold hover:opacity-90 transition-all"> 🔄 العودة لقائمة الامتحانات </button> <button onclick="backToDashboard()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all"> 📚 اختيار مادة أخرى </button>
+      </div>
+     </div>
+    </main>
+   </div><!-- شاشة مراجعة الإجابات المفصلة -->
+   <div id="review-screen" class="hidden min-h-full">
+    <header class="bg-[#0f0f23]/90 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-50">
+     <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between"><button onclick="backToResult()" class="text-cyan-400 hover:text-cyan-300 transition-all"> ← رجوع </button>
+       <div class="text-center">
+        <h1 class="text-xl font-bold text-cyan-400">مراجعة الإجابات</h1>
+        <p class="text-xs text-gray-400">تفاصيل كل سؤال</p>
+       </div><button onclick="backToDashboard()" class="p-2 bg-red-500/20 hover:bg-red-500/40 rounded-lg transition-all"> ✕ </button>
+      </div>
+     </div>
+    </header>
+    <main class="max-w-4xl mx-auto px-4 py-8">
+     <div id="review-list" class="space-y-4 mb-8"><!-- سيتم ملؤها بـ JavaScript -->
+     </div><!-- أزرار الإجراء -->
+     <div class="space-y-3 sticky bottom-4"><button onclick="backToExamsList()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl font-bold hover:opacity-90 transition-all"> 🔄 العودة لقائمة الامتحانات </button> <button onclick="backToDashboard()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-all"> 📚 اختيار مادة أخرى </button>
+     </div>
+    </main>
+   </div>
+<script>
         // ========== إعدادات التطبيق ==========
         const defaultConfig = {
             platform_title: 'منصة الامتحانات القانونية',
@@ -448,24 +577,48 @@
         // ========== بيانات المواد والامتحانات ==========
        // 1. تعريف المواد (تأكد أن الـ ID يطابق الموجود في الفايربيس)
 const subjects = {
-    administrative: {
-        id: 'administrative',
-        name: 'المنظمات الدولية',
-        icon: '🏛️',
-        exams: generateExams('administrative')
+    administrative: { 
+        id: 'administrative', 
+        name: 'المنظمات الدولية', 
+        icon: '🏛️', 
+        exams: generateExams('administrative') 
     },
-    constitutional: {
-        id: 'constitutional',
-        name: 'المصطلحات القانونية بالفرنسية',
-        icon: '🇫🇷',
-        exams: generateExams('constitutional')
+    constitutional: { 
+        id: 'constitutional', 
+        name: 'مصطلحات قانونية باللغة الفرنسية', 
+        icon: '📜', 
+        exams: generateExams('constitutional') 
+    },
+    environment: { 
+        id: 'environment', 
+        name: 'تشريعات حماية البيئة', 
+        icon: '🌿', 
+        exams: generateExams('environment') 
+    },
+    const_law: { 
+        id: 'const_law', 
+        name: 'القانون الدستوري', 
+        icon: '⚔️', 
+        exams: generateExams('const_law') 
+    },
+    societal: { 
+        id: 'societal', 
+        name: 'القضايا المجتمعية', 
+        icon: '📋', 
+        exams: generateExams('societal') 
+    },
+    history: { 
+        id: 'history', 
+        name: 'تاريخ النظم القانونية', 
+        icon: '💼', 
+        exams: generateExams('history') 
     }
 };
 
 // 2. توليد هيكل الامتحانات (بدون أسئلة في البداية)
 function generateExams(subjectId) {
     const exams = [];
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 50; i++) {
         exams.push({
             number: i,
             questions: generateQuestions(subjectId, i)
@@ -483,6 +636,7 @@ function generateQuestions(subjectId, examNumber) {
         correctAnswer: 0
     }));
 }
+
 
 // 4. الدالة الأهم: تحميل الأسئلة الحقيقية من Firebase
 async function loadQuestionsFromFirebase(subjectId, examNumber) {
@@ -522,7 +676,11 @@ async function loadQuestionsFromFirebase(subjectId, examNumber) {
         return null;
     }
 }
-        // ========== SDK Initialization ==========
+
+
+
+
+// ========== SDK Initialization ==========
         const dataHandler = {
     onDataChanged(data) {
         console.log("📊 تحديث البيانات من الفيربيس...");
@@ -669,11 +827,17 @@ async function loadQuestionsFromFirebase(subjectId, examNumber) {
 
         // ========== وظائف التنقل ==========
         function showScreen(screenId) {
-            ['login-screen', 'dashboard-screen', 'exams-center', 'exam-screen', 'result-screen'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById(screenId).classList.remove('hidden');
-        }
+    ['login-screen', 'dashboard-screen', 'exams-center', 'exam-screen', 'result-screen', 'result-summary-screen', 'review-screen'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+    });
+    document.getElementById(screenId).classList.remove('hidden');
+}
+
+// أمثلة على الأزرار
+function showReviewScreen() { showScreen('review-screen'); }
+function backToResult() { showScreen('result-summary-screen'); }
+function backToExamsList() { showScreen('exams-center'); }
+function backToDashboard() { showScreen('dashboard-screen'); }
 
         async function handleLogin() {
     const accessCodeInput = document.getElementById('access-code');
@@ -752,7 +916,18 @@ async function loadQuestionsFromFirebase(subjectId, examNumber) {
         statusEl.style.color = '#ef4444';
     }
 }
-
+// كود الطوارئ لضمان حفظ المستخدم
+const originalShowScreen = typeof showScreen === 'function' ? showScreen : null;
+if (originalShowScreen) {
+    showScreen = function(screenId) {
+        // لو المستخدم لسه داخل وشاشة الداشبورد فتحت، نحفظه فوراً
+        if (screenId === 'dashboard-screen' && currentUser) {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            console.log("💾 تم حفظ بيانات المستشار في الذاكرة بنجاح");
+        }
+        originalShowScreen(screenId);
+    };
+}
 function handleLogout() {
     // 1️⃣ مسح بيانات المستخدم من LocalStorage
     localStorage.removeItem('user_data');
@@ -783,6 +958,7 @@ function handleLogout() {
 // ربط الزر بالدالة
 const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+
 
         function openSubject(subjectId) {
     currentSubject = subjects[subjectId];
@@ -877,61 +1053,129 @@ function checkExamCompleted(subjectId, examNumber) {
         r.exam_number === examNumber
     );
 }
+function showReviewScreen() {
+
+showScreen("review-screen");
+
+const exam = subjects[currentSubject].exams[currentExamNumber - 1];
+const questions = exam.questions;
+
+const reviewList = document.getElementById("review-list");
+reviewList.innerHTML = "";
+
+questions.forEach((q, index) => {
+
+    const userAnswer = userAnswers[index];
+    const correct = q.correctAnswer;
+
+    let optionsHTML = "";
+
+    q.options.forEach((opt, i) => {
+
+        let style = "bg-gray-700";
+
+        if (i === correct) {
+            style = "bg-green-500/30 border border-green-500";
+        }
+
+        if (i === userAnswer && i !== correct) {
+            style = "bg-red-500/30 border border-red-500";
+        }
+
+        optionsHTML += `
+        <div class="${style} rounded-lg p-3 mb-2">
+            ${opt}
+        </div>
+        `;
+    });
+
+    reviewList.innerHTML += `
+    <div class="gradient-border">
+        <div class="gradient-border-inner p-5">
+
+            <h3 class="font-bold mb-4 text-lg">
+            ${index + 1}. ${q.text}
+            </h3>
+
+            ${optionsHTML}
+
+        </div>
+    </div>
+    `;
+});
+}
+
 
         // ========== تحديث مؤشرات التقدم ==========
-        async function updateProgressIndicators() {
-    // 1. التأكد إن فيه طالب مسجل دخول أصلاً
-    if (!currentUser || !currentUser.code) {
-        console.warn("⚠️ لا يوجد مستخدم حالي لجلب تقدمه");
-        return;
-    }
+       // 1️⃣ دالة تحديث عدادات المواد في الصفحة الرئيسية
+       function updateProgressIndicators() {
+    if (!currentUser || !allResults) return;
 
-    // 2. التأكد إن الفيربيس جاهز
-    if (!firebase_db) {
-        console.error("❌ قاعدة البيانات غير متصلة");
-        return;
-    }
+    // قائمة المواد اللي عندك في السيستم
+    const subjectsList = ['administrative', 'constitutional', 'environment', 'const_law', 'societal', 'history'];
+    subjectsList.forEach(subId => {
+        // 1. فلترة النتايج للمادة دي بالذات
+        const userCompletedExams = allResults
+            .filter(r => r.student_code === currentUser.code && r.subject_id === subId)
+            .map(r => parseInt(r.exam_number));
 
-    try {
-        // 3. جلب كل نتائج الطالب ده فقط من مسار results
-        const snapshot = await firebase_db.ref('results')
-            .orderByChild('student_code')
-            .equalTo(currentUser.code)
-            .once('value');
+        const uniqueCompleted = [...new Set(userCompletedExams)];
+        
+        // 2. تحديد إجمالي الامتحانات (لو المنظمات 13 والفرنسية 10 مثلاً)
+        // هنا خليتها 13 للمنظمات و 10 للفرنسية كمثال، تقدر توحدها
+        const totalExams = (subId === 'administrative') ? 13 : 10; 
+        
+        const count = uniqueCompleted.length;
+        const percentage = (count / totalExams) * 100;
 
-        const userResults = [];
-        snapshot.forEach(child => {
-            userResults.push(child.val());
-        });
+        // 3. تحديث الـ UI للمادة المحددة
+        const bar = document.getElementById(`progress-bar-${subId}`);
+        const text = document.getElementById(`progress-${subId}`);
 
-        // 4. تحديث العدادات لكل مادة بناءً على النتائج اللي جت
-        ['administrative', 'constitutional'].forEach(subjectId => {
-            // فلترة النتائج حسب المادة (بشرط تكون الدرجة ناجحة مثلاً أو مجرد إنه خلص الامتحان)
-            const completedExams = userResults.filter(r => r.subject_id === subjectId);
-            
-            // استخراج أرقام الامتحانات الفريدة (عشان لو امتحن نفس الامتحان مرتين ميتحسبش مرتين)
-            const uniqueExamsCount = new Set(completedExams.map(r => r.exam_number)).size;
+        if (bar) bar.style.width = percentage + '%';
+        if (text) text.textContent = `${count}/${totalExams} مكتمل`;
 
-            // 5. تحديث النصوص والأشرطة في الـ HTML
-            const progressText = document.getElementById(`progress-${subjectId}`);
-            const progressBar = document.getElementById(`progress-bar-${subjectId}`);
-            
-            if (progressText) {
-                progressText.textContent = `${uniqueExamsCount}/10 مكتمل`;
-            }
-            if (progressBar) {
-                const percentage = (uniqueExamsCount / 10) * 100;
-                progressBar.style.width = `${percentage}%`;
-                // إضافة لون أخضر لو خلص المادة كلها (فخامة)
-                progressBar.style.backgroundColor = percentage === 100 ? '#10b981' : '#22d3ee';
-            }
-        });
+        // 4. إظهار علامات الصح (فقط لو احنا جوه صفحة الامتحانات بتاعة المادة دي)
+        if (currentSubjectId === subId) {
+            uniqueCompleted.forEach(num => {
+                const examBtn = document.querySelector(`[onclick*="startExam(${num})"]`) || 
+                                document.querySelector(`[onclick*="exam${num}"]`);
+                
+                if (examBtn && !examBtn.innerHTML.includes('✓')) {
+                    examBtn.classList.add('exam-card-completed');
+                    examBtn.style.border = "2px solid #10b981";
+                    examBtn.style.position = "relative";
+                    examBtn.innerHTML += '<span class="absolute top-0 right-0 bg-green-500 text-white text-[10px] px-2 py-1 rounded-bl-lg shadow-lg">✓</span>';
+                }
+            });
+        }
+    });
 
-        console.log(`✅ تم تحديث تقدم المستشار ${currentUser.name} من السحابة`);
+}
 
-    } catch (error) {
-        console.error("❌ فشل تحديث المؤشرات:", error);
-    }
+// 2️⃣ دالة حفظ النتيجة (تعديل المسميات عشان تطابق العداد)
+function saveResultToFirebase(score, total, percentage) {
+    if (!currentUser) return;
+    const database = (typeof firebase_db !== 'undefined') ? firebase_db : firebase.database();
+
+    const resultData = {
+        student_code: currentUser.code,
+        student_name: currentUser.name,
+        subject: currentSubject, // 'administrative'
+        examId: currentExamId,   // 'exam1'
+        score: score,
+        total_questions: total,
+        percentage: percentage,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    database.ref('results').push(resultData)
+        .then(() => {
+            console.log("📊 تم حفظ النتيجة بنجاح");
+            // 🔥 أهم خطوة: بنادي التحديث فوراً عشان العداد يتحرك وأنت واقف
+            updateProgressIndicators();
+        })
+        .catch(err => console.error("❌ فشل الحفظ:", err));
 }
         // ========== لوحة الشرف من Firebase ==========
         function updateLeaderboard() {
@@ -1038,45 +1282,46 @@ function checkExamCompleted(subjectId, examNumber) {
 
         // ========== الامتحان ==========
         async function startExam(examNumber) {
+
+try {
+
+    // 1️⃣ جلب الأسئلة الأول
+    const firebaseQuestions = await loadQuestionsFromFirebase(currentSubject.id, examNumber);
+
+    // 2️⃣ لو مفيش أسئلة
+    if (!firebaseQuestions || firebaseQuestions.length === 0) {
+        alert("لم يتم اضافة هذا الامتحان حتي الان");
+        return;
+    }
+
+    // 3️⃣ لو فيه أسئلة يبدأ الامتحان
     currentExamNumber = examNumber;
     currentQuestionIndex = 0;
-    
-    // 1. تصفير الإجابات القديمة
-    userAnswers = []; 
+    userAnswers = [];
 
-    // 2. إظهار الشاشة فوراً وعنوان الامتحان
     showScreen('exam-screen');
-    document.getElementById('exam-title').textContent = `${currentSubject.name} - امتحان ${examNumber}`;
-    
-    // 3. مسح أي اختيارات قديمة (تنضيف الشاشة)
-    const optionsContainer = document.getElementById('options-container');
-    optionsContainer.innerHTML = '<div class="text-center p-5 text-cyan-400">🔄 جاري جلب الأسئلة من السحاب...</div>';
-    document.getElementById('question-text').textContent = "انتظر لحظة...";
 
-    try {
-        // 4. السحب الفعلي من الفايربيس
-        const firebaseQuestions = await loadQuestionsFromFirebase(currentSubject.id, examNumber);
-        
-        if (firebaseQuestions && firebaseQuestions.length > 0) {
-            // ✅ 5. أهم خطوة: تحديث الأسئلة في الذاكرة
-            currentSubject.exams[examNumber - 1].questions = firebaseQuestions;
-            
-            // 6. تجهيز مصفوفة الإجابات على قد عدد الأسئلة اللي جت
-            userAnswers = new Array(firebaseQuestions.length).fill(null);
-            
-            // 7. تشغيل التايمر وعرض أول سؤال "حقيقي"
-            startTimer();
-            renderQuestion(); // دي اللي هتمسح "جاري التحميل" وتحط السؤال الصح
-            
-            console.log("✅ الامتحان بدأ بنجاح بـ " + firebaseQuestions.length + " سؤال");
-        } else {
-            throw new Error("لم يتم العثور على أسئلة");
-        }
-    } catch (error) {
-        console.error("❌ فشل بدء الامتحان:", error);
-        alert("يا مستشار، مفيش أسئلة واصلة للامتحان ده في الفايربيس. اتأكد من المسار أو النت.");
-        showScreen('dashboard');
-    }
+    document.getElementById('exam-title').textContent =
+        `${currentSubject.name} - امتحان ${examNumber}`;
+
+    // تحديث الأسئلة
+    currentSubject.exams[examNumber - 1].questions = firebaseQuestions;
+
+    // تجهيز الإجابات
+    userAnswers = new Array(firebaseQuestions.length).fill(null);
+
+    // تشغيل الامتحان
+    startTimer();
+    renderQuestion();
+
+    console.log("✅ الامتحان بدأ بـ " + firebaseQuestions.length + " سؤال");
+
+} catch (error) {
+
+    console.error("❌ فشل بدء الامتحان:", error);
+    alert("⚠️ حصل خطأ أثناء جلب الأسئلة");
+
+}
 }
         function renderQuestion() {
             const exam = currentSubject.exams[currentExamNumber - 1];
@@ -1149,7 +1394,7 @@ function checkExamCompleted(subjectId, examNumber) {
                 if (userAnswers[i] === q.correctAnswer) correctCount++;
             });
             
-            const score = Math.round((correctCount / 10) * 100);
+            const score = Math.round((correctCount / 25) * 100);
             
             // تأكد من اتصال Firebase
             if (!firebaseReady) {
@@ -1228,10 +1473,160 @@ function checkExamCompleted(subjectId, examNumber) {
             document.getElementById('total-count').textContent = '25';
             document.getElementById('correct-answers').textContent = correctCount;
             document.getElementById('wrong-answers').textContent = 25 - correctCount;
+          
+           // عرض مراجعة الأسئلة
+           displayReviewList();
             
             showScreen('result-screen');
         }
 
+
+        function displayReviewList() {
+            const exam = currentSubject.exams[currentExamNumber - 1];
+            const reviewContainer = document.getElementById('review-list');
+            reviewContainer.innerHTML = '';
+            
+            exam.questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const correctAnswer = question.correctAnswer;
+                const isCorrect = userAnswer === correctAnswer;
+                
+                const reviewCard = document.createElement('div');
+                reviewCard.className = `gradient-border ${isCorrect ? 'border-green-500/50' : 'border-red-500/50'}`;
+                
+                const optionLetters = ['أ', 'ب', 'ج', 'د'];
+                
+                let reviewHTML = `
+                    <div class="gradient-border-inner p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg mb-2 leading-relaxed">${index + 1}. ${question.text}</h3>
+                            </div>
+                            <div class="ml-4">
+                                ${isCorrect ? '<span class="text-3xl">✅</span>' : '<span class="text-3xl">❌</span>'}
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2 mb-4">
+                `;
+                
+                question.options.forEach((option, optIndex) => {
+                    const isUserAnswer = optIndex === userAnswer;
+                    const isCorrectOption = optIndex === correctAnswer;
+                    
+                    let badge = '';
+                    let bgColor = 'bg-[#1a1a3a]';
+                    let borderColor = 'border-purple-500/30';
+                    let badgeColor = 'bg-gray-500/30 text-gray-400';
+                    
+                    if (isCorrectOption) {
+                        bgColor = 'bg-green-500/20';
+                        borderColor = 'border-green-500/70';
+                        badgeColor = 'bg-green-500/30 text-green-400';
+                        badge = '✓ صحيح';
+                    }
+                    
+                    if (isUserAnswer && !isCorrect) {
+                        bgColor = 'bg-red-500/20';
+                        borderColor = 'border-red-500/70';
+                        badgeColor = 'bg-red-500/30 text-red-400';
+                        badge = '✗ إجابتك';
+                    }
+                    
+                    if (isUserAnswer && isCorrect) {
+                        badgeColor = 'bg-green-500/30 text-green-400';
+                        badge = '✓ إجابتك الصحيحة';
+                    }
+                    
+                    reviewHTML += `
+                        <div class="p-4 rounded-lg border-2 ${borderColor} ${bgColor}">
+                            <div class="flex items-start gap-3">
+                                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-500/40 flex-shrink-0 font-bold text-white border border-purple-500/60">
+                                    ${optionLetters[optIndex]}
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-white font-medium mb-2">${option}</p>
+                                    ${badge ? `<span class="inline-block px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${badge}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                reviewHTML += `
+                        </div>
+                        
+                        <div class="p-4 rounded-lg ${isCorrect ? 'bg-green-500/15 border-2 border-green-500/50' : 'bg-red-500/15 border-2 border-red-500/50'}">
+                            <p class="text-sm font-bold ${isCorrect ? 'text-green-300' : 'text-red-300'}">
+                                ${isCorrect 
+                                    ? '🎯 إجابة صحيحة - أحسنت!' 
+                                    : '📖 الإجابة الصحيحة: ' + optionLetters[correctAnswer]
+                                }
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                reviewCard.innerHTML = reviewHTML;
+                reviewContainer.appendChild(reviewCard);
+            });
+        }
+        function reviewAnswers() {
+
+const exam = subjects[currentSubject]
+    .exams[currentExamNumber - 1];
+
+const questions = exam.questions;
+
+let html = "";
+
+questions.forEach((q, index) => {
+
+    const userAnswer = userAnswers[index];
+    const correct = q.correctAnswer;
+
+    html += `
+    <div class="bg-gray-800 p-5 rounded-lg mb-4">
+
+        <h3 class="text-lg mb-3">
+        ${index + 1}. ${q.text}
+        </h3>
+    `;
+
+    q.options.forEach((opt, i) => {
+
+        let style = "";
+
+        if (i === correct) {
+            style = "background:#16a34a;color:white"; // صح
+        }
+
+        if (i === userAnswer && i !== correct) {
+            style = "background:#dc2626;color:white"; // غلط
+        }
+
+        html += `
+        <div style="${style};padding:8px;margin:4px;border-radius:6px">
+            ${opt}
+        </div>
+        `;
+    });
+
+    html += "</div>";
+});
+
+document.getElementById("result-screen").innerHTML = `
+    <h2 class="text-2xl mb-6 text-center">📋 مراجعة الإجابات</h2>
+    ${html}
+
+    <div class="text-center mt-6">
+    <button onclick="showScreen('dashboard-screen')" 
+    class="bg-blue-600 px-6 py-3 rounded-lg text-white">
+    الرجوع للوحة التحكم
+    </button>
+    </div>
+`;
+}
         // ========== التايمر ==========
         function startTimer() {
             examStartTime = Date.now();
@@ -1325,7 +1720,59 @@ async function initializeApp() {
 }
 
 // الاستدعاء عند تحميل الصفحة
-window.addEventListener('load', initializeApp);  </script>
+window.addEventListener('load', initializeApp); 
+// جلب البيانات من الفايربيس (administrative)
+db.ref('questionBank/administrative').once('value').then((snapshot) => {
+    const examsData = snapshot.val();
+    
+    if (examsData) {
+        // بدل ما نكتب 10، بنعرف عدد الامتحانات الموجودة فعلاً
+        const totalExamsInDB = Object.keys(examsData).length; 
+        console.log("📊 عدد الامتحانات المكتشفة:", totalExamsInDB);
+
+        // مسح الحاوية القديمة قبل العرض
+        const container = document.getElementById('exams-container');
+        container.innerHTML = '';
+
+        // إنشاء الكروت بناءً على العدد الفعلي (1, 2, 3... 13)
+        for (let i = 1; i <= totalExamsInDB; i++) {
+            const examId = `exam${i}`;
+            // هنا الكود بتاع إنشاء الكارت (createCard)
+            createExamCard(examId, i); 
+        }
+        
+        // تحديث العداد بناءً على الإجمالي الجديد
+        updateProgressBar(completedCount, totalExamsInDB);
+    }
+});
+
+function showReview() {
+    let reviewHtml = `
+        <div class="p-4 bg-slate-900 text-white rounded-lg max-h-[70vh] overflow-y-auto text-right" dir="rtl">
+            <h2 class="text-2xl font-bold mb-4 text-center text-cyan-400">تقرير الامتحان</h2>
+    `;
+
+    examReport.forEach((item, i) => {
+        const statusColor = item.isCorrect ? 'text-green-400' : 'text-red-400';
+        const statusIcon = item.isCorrect ? '✅' : '❌';
+
+        reviewHtml += `
+            <div class="mb-6 border-b border-slate-700 pb-4">
+                <p class="font-bold mb-2">${i + 1}- ${item.question}</p>
+                <div class="text-sm space-y-1">
+                    <p>إجابتك: <span class="${statusColor}">${item.studentAnswer !== null ? item.options[item.studentAnswer] : 'لم تجب'} ${statusIcon}</span></p>
+                    ${!item.isCorrect ? `<p class="text-green-400">الإجابة الصحيحة: ${item.options[item.correctAnswer]}</p>` : ''}
+                </div>
+            </div>
+        `;
+    });
+
+    reviewHtml += `<button onclick="closeReview()" class="w-full bg-cyan-600 py-2 rounded-lg">إغلاق التقرير</button></div>`;
+    
+    // هنا هتحط الـ reviewHtml جوه الـ Modal بتاعك وتظهره
+    document.getElementById('reviewContainer').innerHTML = reviewHtml;
+    document.getElementById('reviewModal').classList.remove('hidden');
+}
+</script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
