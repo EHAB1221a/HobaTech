@@ -841,7 +841,7 @@ async function renderExamsList() {
 
     container.innerHTML = ''; // نمسح رسالة التحميل ونبدأ نرسم
     
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 20; i++) {
         // الفحص دلوقتي شغال على بيانات لسه جاية حالاً
         const isCompleted = checkExamCompleted(currentSubject.id, i);
         const card = document.createElement('div');
@@ -1328,3 +1328,4 @@ async function initializeApp() {
 window.addEventListener('load', initializeApp);  </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d55a19ac1ebee94',t:'MTc3MjM0MTU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
