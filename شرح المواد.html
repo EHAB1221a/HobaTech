@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة شرح المواد القانونية</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    
+    .subject-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .subject-card:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+    
+    .lecture-item {
+      transition: all 0.3s ease;
+    }
+    .lecture-item:hover {
+      transform: translateX(-5px);
+    }
+    .lecture-item.active {
+      border-right: 4px solid currentColor;
+    }
+    
+    .btn-action {
+      transition: all 0.3s ease;
+    }
+    .btn-action:hover {
+      transform: scale(1.05);
+    }
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+    
+    .video-container {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    .loading-spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+
+    .toast {
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @keyframes checkmarkPulse {
+      0% { transform: scale(0.5) rotate(-180deg); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .checkmark-badge {
+      animation: checkmarkPulse 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .gradient-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .gradient-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .gradient-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .gradient-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-auto">
+  <div id="app" class="h-full w-full">
+   <!-- Toast Container -->
+   <div id="toast-container" class="fixed top-4 left-4 z-50 flex flex-col gap-2"></div><!-- Home Page -->
+   <div id="home-page" class="min-h-full">
+    <!-- Header -->
+    <header class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
+     <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-lg">
+         ⚖️
+        </div>
+        <div>
+         <h1 id="platform-title" class="text-xl font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">منصة شرح المواد القانونية</h1>
+         <p class="text-xs text-gray-400">تعلم بطريقة احترافية</p>
+        </div>
+       </div>
+       <div class="flex items-center gap-3">
+        <button onclick="toggleAdminPanel()" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition flex items-center gap-2"> <span>${isAdminLoggedIn ? '✅' : '🔒'}</span> <span class="hidden sm:inline">${isAdminLoggedIn ? 'تسجيل خروج' : 'تسجيل دخول'}</span> </button>
+       </div>
+      </div>
+     </div>
+    </header><!-- Hero Section -->
+    <section class="py-12 px-4">
+     <div class="max-w-4xl mx-auto text-center">
+      <h2 id="welcome-message" class="text-3xl md:text-4xl font-bold mb-4 leading-relaxed">🎓 مرحباً بك في منصتك التعليمية</h2>
+      <p class="text-gray-300 text-lg mb-8">اختر المادة التي تريد دراستها وابدأ رحلتك التعليمية</p>
+      <div class="flex flex-wrap justify-center gap-4 text-sm">
+       <div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+        <span class="text-green-400">✓</span> <span>6 مواد متنوعة</span>
+       </div>
+       <div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+        <span class="text-green-400">✓</span> <span>24 محاضرة</span>
+       </div>
+       <div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+        <span class="text-green-400">✓</span> <span>فيديو + صوت + PDF</span>
+       </div>
+      </div>
+     </div>
+    </section><!-- Subjects Grid -->
+    <section class="px-4 pb-12">
+     <div class="max-w-7xl mx-auto">
+      <div id="subjects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+       <!-- Cards will be generated by JS -->
+      </div>
+     </div>
+    </section>
+   </div><!-- Subject Page -->
+   <div id="subject-page" class="min-h-full hidden">
+    <!-- Subject Header -->
+    <header id="subject-header" class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
+     <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center gap-4">
+       <button onclick="goHome()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition"> → </button>
+       <div class="flex items-center gap-3">
+        <div id="subject-icon-header" class="w-10 h-10 rounded-xl flex items-center justify-center text-xl"></div>
+        <h1 id="subject-title-header" class="text-xl font-bold"></h1>
+       </div>
+      </div>
+     </div>
+    </header>
+    <div class="flex flex-col lg:flex-row h-full">
+     <!-- Sidebar -->
+     <aside class="lg:w-80 bg-black/20 border-b lg:border-b-0 lg:border-l border-white/10 p-4 lg:min-h-screen">
+      <div class="sticky top-24">
+       <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><span>📋</span> <span>المحاضرات</span></h3>
+       <div id="lectures-list" class="space-y-2">
+        <!-- Lectures will be generated by JS -->
+       </div><!-- Progress -->
+       <div class="mt-6 bg-white/5 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+         <span class="text-sm text-gray-400">التقدم</span> <span id="progress-text" class="text-sm font-bold">0/4</span>
+        </div>
+        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+         <div id="progress-bar" class="h-full bg-gradient-to-r from-green-400 to-emerald-500 progress-bar" style="width: 0%"></div>
+        </div>
+       </div>
+      </div>
+     </aside><!-- Main Content -->
+     <main class="flex-1 p-4 lg:p-8">
+      <div id="lecture-content" class="max-w-4xl mx-auto">
+       <!-- Lecture content will be generated by JS -->
+      </div>
+     </main>
+    </div>
+   </div><!-- Admin Login Modal -->
+   <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 class="text-xl font-bold">🔐 تسجيل دخول الإدارة</h3>
+     </div>
+     <div class="p-6 space-y-4">
+      <p class="text-gray-300 text-sm">أدخل كلمة المرور الخاصة بالإدارة للوصول إلى أدوات الإضافة والتعديل</p>
+      <div>
+       <label class="block text-sm text-gray-400 mb-2">كلمة المرور</label> <input type="password" id="admin-password-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" placeholder="أدخل كلمة المرور" onkeypress="if(event.key==='Enter') loginAdmin()">
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="loginAdmin()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-3 rounded-xl font-bold transition"> دخول </button> <button onclick="hideAdminModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Admin Login Modal -->
+   <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 class="text-xl font-bold">🔐 تسجيل دخول الإدارة</h3>
+     </div>
+     <div class="p-6 space-y-4">
+      <p class="text-gray-300 text-sm">أدخل كلمة المرور الخاصة بالإدارة للوصول إلى أدوات الإضافة والتعديل</p>
+      <div>
+       <label class="block text-sm text-gray-400 mb-2">كلمة المرور</label> <input type="password" id="admin-password-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" placeholder="أدخل كلمة المرور" onkeypress="if(event.key==='Enter') loginAdmin()">
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="loginAdmin()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-3 rounded-xl font-bold transition"> دخول </button> <button onclick="hideAdminModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Link Modal -->
+   <div id="link-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 id="link-modal-title" class="text-xl font-bold"></h3>
+     </div>
+     <div class="p-6 space-y-4">
+      <div>
+       <label class="block text-sm text-gray-400 mb-2">رابط من Google Drive</label> <input type="text" id="link-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 text-sm" placeholder="https://drive.google.com/file/d/FILE_ID/view">
+       <p class="text-xs text-gray-500 mt-2">الرابط يجب أن يكون مشاركاً للجميع</p>
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="saveLinkAndClose()" class="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 px-6 py-3 rounded-xl font-bold transition"> حفظ </button> <button onclick="hideLinkModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Description Modal -->
+   <div id="description-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-2xl w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 class="text-xl font-bold">📝 تعديل شرح المحاضرة</h3>
+      // جوه دالة openSubject أو في الـ HTML الثابت، ضيف الزرار ده جنب اسم المادة:
+${isAdminLoggedIn ? `
+    <button id="sync-btn" onclick="syncWithFirebase()" 
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full font-bold shadow-xl animate-pulse">
+        💾 حفظ التغييرات النهائي
+    </button>
+` : ''}
+     </div>
+     
+     <div class="p-6 space-y-4">
+      <textarea id="description-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 text-sm h-48 resize-none" placeholder="أدخل شرح المحاضرة بالتفصيل..."></textarea>
+      <div class="flex gap-3">
+       <button onclick="saveDescriptionAndClose()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-3 rounded-xl font-bold transition"> حفظ </button> <button onclick="hideDescriptionModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+   </div>
+   <script> 
+// ============================================
+// 1. Firebase Configuration
+// ============================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+  authDomain: "hoba-tech.firebaseapp.com",
+  databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+  projectId: "hoba-tech",
+  storageBucket: "hoba-tech.firebasestorage.app",
+  messagingSenderId: "465948708700",
+  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
+  measurementId: "G-EBHF8FEDB2"
+};
+
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const db = firebase.firestore();
+
+// ============================================
+// 2. State & Variables
+// ============================================
+let subjects = [
+  { id: 'international-orgs', title: 'المنظمات الدولية', icon: '🌍', gradient: 'gradient-1', color: '#667eea', description: 'دراسة المنظمات الدولية وأدوارها', lectures: [] },
+  { id: 'constitutional-law', title: 'القانون الدستوري', icon: '📜', gradient: 'gradient-2', color: '#f5576c', description: 'أساسيات القانون الدستوري', lectures: [] },
+  { id: 'french-terms', title: 'المصطلحات الفرنسية', icon: '🇫🇷', gradient: 'gradient-3', color: '#00f2fe', description: 'المصطلحات القانونية بالفرنسية', lectures: [] },
+  { id: 'legal-history', title: 'تاريخ النظم', icon: '📚', gradient: 'gradient-4', color: '#38f9d7', description: 'تطور النظم القانونية', lectures: [] },
+  { id: 'social-issues', title: 'قضايا مجتمعية', icon: '🏛️', gradient: 'gradient-5', color: '#fee140', description: 'قضايا من منظور قانوني', lectures: [] },
+  { id: 'environmental-law', title: 'حماية البيئة', icon: '🌱', gradient: 'gradient-6', color: '#a8edea', description: 'تشريعات البيئة', lectures: [] }
+];
+
+let currentSubject = null;
+let currentLecture = null;
+let isAdminLoggedIn = false;
+let adminPassword = 'admin123';
+let currentEditingLink = null;
+let completedLectures = JSON.parse(localStorage.getItem('completedLectures') || '{}');
+
+// ============================================
+// 3. Admin & Auth
+// ============================================
+function toggleAdminPanel() { isAdminLoggedIn ? logoutAdmin() : showAdminModal(); }
+function showAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
+function hideAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+function loginAdmin() {
+  const password = document.getElementById('admin-password-input').value;
+  if (password === adminPassword) {
+    isAdminLoggedIn = true;
+    localStorage.setItem('adminLoggedIn', 'true');
+    hideAdminModal();
+    updateAdminButtonUI();
+    renderSubjectsGrid();
+    if (currentSubject) openSubject(currentSubject.id);
+    alert('✅ تم تفعيل وضع التحكم الكامل');
+  } else { alert('❌ الباسورد غلط يا ريس'); }
+}
+
+function logoutAdmin() {
+  isAdminLoggedIn = false;
+  localStorage.removeItem('adminLoggedIn');
+  location.reload();
+}
+
+function updateAdminButtonUI() {
+  const btn = document.querySelector('button[onclick="toggleAdminPanel()"]');
+  if (btn) btn.innerHTML = isAdminLoggedIn ? '<span>🔓</span> خروج' : '<span>🔒</span> دخول';
+}
+
+// ============================================
+// 4. الـ CRUD (إضافة، حذف، تعديل)
+// ============================================
+
+// --- إضافة محاضرة جديدة ---
+async function showAddLectureModal() {
+    const title = prompt("اسم المحاضرة الجديدة:");
+    const duration = prompt("مدة المحاضرة (مثلاً: 30 دقيقة):", "45 دقيقة");
+    if (!title) return;
+
+    const newId = currentSubject.lectures.length + 1;
+    const newLecture = { id: newId, title, duration, videoUrl: "", audioUrl: "", pdfUrl: "", description: "" };
+
+    try {
+        currentSubject.lectures.push(newLecture);
+        await db.collection('subjects').doc(currentSubject.id).set({ lectures: currentSubject.lectures }, { merge: true });
+        alert('✅ تم إضافة المحاضرة');
+        renderLecturesList(currentSubject);
+        selectLecture(newId);
+    } catch (e) { alert('❌ فشل في السيرفر'); }
+}
+
+// --- حذف محاضرة ---
+async function deleteLecture(lectureId) {
+    if (!confirm('سيتم حذف المحاضرة وكل محتواها.. متأكد؟')) return;
+    try {
+        currentSubject.lectures = currentSubject.lectures.filter(l => l.id !== lectureId);
+        // إعادة الترقيم
+        currentSubject.lectures.forEach((l, i) => l.id = i + 1);
+        await db.collection('subjects').doc(currentSubject.id).update({ lectures: currentSubject.lectures });
+        alert('🗑️ تم الحذف');
+        currentLecture = currentSubject.lectures[0] || null;
+        renderLecturesList(currentSubject);
+        if (currentLecture) renderLectureContent(currentSubject, currentLecture);
+        else location.reload();
+    } catch (e) { alert('❌ فشل الحذف'); }
+}
+
+// --- تعديل الروابط والشرح ---
+async function saveLinkAndClose() {
+    const value = document.getElementById('link-input').value.trim();
+    const type = currentEditingLink.type;
+    const fieldName = `${type}Url`;
+    try {
+        const idx = currentSubject.lectures.findIndex(l => l.id === currentLecture.id);
+        currentSubject.lectures[idx][fieldName] = value;
+        await db.collection('subjects').doc(currentSubject.id).update({ lectures: currentSubject.lectures });
+        alert('✅ تم تحديث الرابط');
+        hideLinkModal();
+        renderLectureContent(currentSubject, currentLecture);
+    } catch (e) { alert('❌ خطأ في الحفظ'); }
+}
+
+async function saveDescriptionAndClose() {
+    const value = document.getElementById('description-input').value.trim();
+    try {
+        const idx = currentSubject.lectures.findIndex(l => l.id === currentLecture.id);
+        currentSubject.lectures[idx].description = value;
+        await db.collection('subjects').doc(currentSubject.id).update({ lectures: currentSubject.lectures });
+        alert('✅ تم حفظ الشرح');
+        hideDescriptionModal();
+        renderLectureContent(currentSubject, currentLecture);
+    } catch (e) { alert('❌ خطأ'); }
+}
+
+// ============================================
+// 5. Rendering & UI
+// ============================================
+function renderSubjectsGrid() {
+  const grid = document.getElementById('subjects-grid');
+  grid.innerHTML = subjects.map(s => `
+    <div class="subject-card ${s.gradient} rounded-2xl p-6 cursor-pointer relative" onclick="openSubject('${s.id}')">
+      <div class="text-5xl mb-4">${s.icon}</div>
+      <h3 class="text-xl font-bold text-white">${s.title}</h3>
+      <p class="text-white/80 text-sm mb-4">${s.description}</p>
+      ${isAdminLoggedIn ? '<span class="absolute top-2 right-2 bg-black/20 text-[10px] p-1 rounded">ADMIN MODE</span>' : ''}
+    </div>
+  `).join('');
+}
+
+async function openSubject(subjectId) {
+  currentSubject = subjects.find(s => s.id === subjectId);
+  try {
+    const doc = await db.collection('subjects').doc(subjectId).get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data.lectures) currentSubject.lectures = data.lectures;
+    }
+  } catch (e) { console.log("Offline"); }
+
+  currentLecture = currentSubject.lectures[0] || null;
+  document.getElementById('home-page').classList.add('hidden');
+  document.getElementById('subject-page').classList.remove('hidden');
+  document.getElementById('subject-title-header').textContent = currentSubject.title;
+  renderLecturesList(currentSubject);
+  if (currentLecture) renderLectureContent(currentSubject, currentLecture);
+  else document.getElementById('lecture-content').innerHTML = `
+     <div class="text-center py-20">
+        <p class="text-gray-500 mb-4">لا يوجد محاضرات مضافة بعد</p>
+        ${isAdminLoggedIn ? `<button onclick="showAddLectureModal()" class="bg-green-600 px-4 py-2 rounded-lg font-bold">➕ أضف أول محاضرة</button>` : ''}
+     </div>`;
+}
+
+function renderLecturesList(subject) {
+  const list = document.getElementById('lectures-list');
+  const total = subject.lectures.length;
+  const done = Object.keys(completedLectures).filter(k => k.startsWith(subject.id) && completedLectures[k]).length;
+  
+  // تحديث العداد
+  document.getElementById('progress-text').textContent = `${done}/${total}`;
+  document.getElementById('progress-bar').style.width = total > 0 ? `${(done/total)*100}%` : '0%';
+
+  list.innerHTML = subject.lectures.map(l => `
+    <div class="group relative p-4 mb-2 ${currentLecture?.id === l.id ? 'bg-amber-500/20 border border-amber-500/50' : 'bg-white/5'} rounded-xl cursor-pointer hover:bg-white/10" onclick="selectLecture(${l.id})">
+      <div class="flex justify-between items-center">
+        <div>
+           <h4 class="text-sm font-bold text-white">${l.title}</h4>
+           <p class="text-[10px] text-gray-400">${l.duration}</p>
+        </div>
+        ${isAdminLoggedIn ? `<button onclick="event.stopPropagation(); deleteLecture(${l.id})" class="hidden group-hover:block text-red-500 text-xs">🗑️</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderLectureContent(subject, lecture) {
+  const content = document.getElementById('lecture-content');
+  
+  // الروابط بنسحبها من بيانات المحاضرة اللي جاية من السيرفر
+  const video = convertGoogleDriveLink(lecture.videoUrl);
+  const audio = convertGoogleDriveLink(lecture.audioUrl);
+  const pdf = convertGoogleDriveLink(lecture.pdfUrl);
+
+  content.innerHTML = `
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-amber-400">${lecture.title}</h2>
+      ${isAdminLoggedIn ? `<button onclick="showAddLectureModal()" class="bg-white/10 px-3 py-1 rounded-lg text-xs border border-white/20">+ إضافة محاضرة</button>` : ''}
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>🎥 فيديو الشرح</span>
+        ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'video')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الرابط</button>` : ''}
+      </div>
+      ${video ? `<iframe src="https://drive.google.com/file/d/${video.fileId}/preview" width="100%" height="400" class="rounded-xl border-0" allow="autoplay"></iframe>` : '<p class="text-center py-10 text-gray-500 text-xs italic">قريباً: فيديو المحاضرة</p>'}
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>🎙️ التسجيل الصوتي</span>
+        ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'audio')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الرابط</button>` : ''}
+      </div>
+      ${audio ? `<iframe src="https://drive.google.com/file/d/${audio.fileId}/preview" width="100%" height="100" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-4 text-gray-500 text-xs">لا يوجد تسجيل صوتي حالياً</p>'}
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>📄 مذكرة PDF</span>
+        <div class="flex gap-2">
+           ${pdf ? `<a href="https://drive.google.com/uc?export=download&id=${pdf.fileId}" target="_blank" class="bg-green-600 px-2 py-1 rounded text-[10px] text-white">⬇️ تحميل</a>` : ''}
+           ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'pdf')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الملف</button>` : ''}
+        </div>
+      </div>
+      ${pdf ? `<iframe src="https://drive.google.com/file/d/${pdf.fileId}/preview" width="100%" height="500" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-10 text-gray-500 text-xs italic">الملخص غير متوفر حالياً</p>'}
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-2xl mb-10 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>📝 شرح إضافي</span>
+        ${isAdminLoggedIn ? `<button onclick="showDescriptionModal()" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل النص</button>` : ''}
+      </div>
+      <div class="text-gray-300 text-sm leading-relaxed">${(lecture.description || 'سيتم إضافة الشرح المكتوب قريباً').replace(/\n/g, '<br>')}</div>
+    </div>
+  `;
+}
+// ============================================
+// 6. Helpers
+// ============================================
+function selectLecture(id) {
+  currentLecture = currentSubject.lectures.find(l => l.id === id);
+  renderLecturesList(currentSubject);
+  renderLectureContent(currentSubject, currentLecture);
+}
+
+function convertGoogleDriveLink(url) {
+  if (!url) return null;
+  let fileId = null;
+  if (url.includes('/file/d/')) fileId = url.split('/file/d/')[1]?.split('/')[0];
+  else if (url.includes('id=')) fileId = url.split('id=')[1]?.split('&')[0];
+  return fileId ? { fileId } : null;
+}
+
+function showLinkModal(sId, lId, type) { currentEditingLink = { sId, lId, type }; document.getElementById('link-modal').classList.remove('hidden'); }
+function hideLinkModal() { document.getElementById('link-modal').classList.add('hidden'); }
+function showDescriptionModal() { document.getElementById('description-modal').classList.remove('hidden'); }
+function hideDescriptionModal() { document.getElementById('description-modal').classList.add('hidden'); }
+function goHome() { location.reload(); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('adminLoggedIn') === 'true') {
+    isAdminLoggedIn = true;
+    updateAdminButtonUI();
+  }
+  renderSubjectsGrid();
+});
+// دالة لتجهيز الرابط في الذاكرة المؤقتة (بدون رفع للسيرفر)
+function prepareLink() {
+    const value = document.getElementById('link-input').value.trim();
+    const type = currentEditingLink.type;
+    const fieldName = `${type}Url`;
+    
+    // تحديث البيانات في المصفوفة المحلية فقط
+    const idx = currentSubject.lectures.findIndex(l => l.id === currentLecture.id);
+    currentSubject.lectures[idx][fieldName] = value;
+    
+    alert('⚠️ تم التعديل محلياً.. لا تنسى الضغط على "حفظ التغييرات النهائي"');
+    hideLinkModal();
+    renderLectureContent(currentSubject, currentLecture);
+}
+
+// دالة الرفع النهائي للسيرفر (الزرار اللي هتدوس عليه بنفسك)
+async function syncWithFirebase() {
+    if (!isAdminLoggedIn) return;
+    
+    const btn = document.getElementById('sync-btn');
+    btn.innerHTML = "⏳ جاري الرفع...";
+    btn.disabled = true;
+
+    try {
+        await db.collection('subjects').doc(currentSubject.id).update({
+            lectures: currentSubject.lectures
+        });
+        alert('✅ تم الحفظ في السيرفر بنجاح! كل الطلاب هيشوفوا التعديل دلوقتي.');
+    } catch (e) {
+        console.error(e);
+        alert('❌ فشل الرفع.. اتأكد من النت');
+    } finally {
+        btn.innerHTML = "💾 حفظ التغييرات النهائي";
+        btn.disabled = false;
+    }
+}
+  </script>
+  </div>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
