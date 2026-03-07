@@ -483,7 +483,7 @@ function renderLectureContent(subject, lecture) {
 
     <div class="bg-white/5 p-5 rounded-2xl mb-10 border border-white/5">
       <div class="flex justify-between mb-3 text-sm font-bold">
-        <span>📝 شرح إضافي</span>
+        <span>📝شرح المحاضرة</span>
         ${isAdminLoggedIn ? `<button onclick="showDescriptionModal()" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل النص</button>` : ''}
       </div>
       <div class="text-gray-300 text-sm leading-relaxed">${(lecture.description || 'سيتم إضافة الشرح المكتوب قريباً').replace(/\n/g, '<br>')}</div>
@@ -491,7 +491,7 @@ function renderLectureContent(subject, lecture) {
     
     <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
       <div class="flex justify-between mb-3 text-sm font-bold">
-        <span>🎙️ التسجيل الصوتي</span>
+        <span>🎙️ الشرح الصوتي</span>
         ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'audio')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الرابط</button>` : ''}
       </div>
       ${audio ? `<iframe src="https://drive.google.com/file/d/${audio.fileId}/preview" width="100%" height="100" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-4 text-gray-500 text-xs">لا يوجد تسجيل صوتي حالياً</p>'}
@@ -633,3 +633,4 @@ updateAdminHeader();
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
