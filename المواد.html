@@ -227,6 +227,7 @@
       </div>
      </div>
     </div>
+  
    </div><!-- Link Modal -->
    <div id="link-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
@@ -412,7 +413,22 @@ async function deleteLecture(lectureId) {
         else location.reload();
     } catch (e) { alert('❌ فشل الحذف'); }
 }
+function markLectureComplete() {
+    if (!currentSubject || !currentLecture) return;
 
+    const key = `${currentSubject.id}_${currentLecture.id}`;
+
+    completedLectures[key] = true;
+
+    localStorage.setItem(
+        "completedLectures",
+        JSON.stringify(completedLectures)
+    );
+
+    renderLecturesList(currentSubject);
+
+    alert("✅ تم تسجيل المحاضرة كمكتملة");
+}
 // --- تعديل الروابط والشرح ---
 async function saveLinkAndClose() {
     const value = document.getElementById('link-input').value.trim();
@@ -549,6 +565,12 @@ function renderLectureContent(subject, lecture) {
       </div>
       ${pdf ? `<iframe src="https://drive.google.com/file/d/${pdf.fileId}/preview" width="100%" height="500" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-10 text-gray-500 text-xs italic">الملخص غير متوفر حالياً</p>'}
     </div>
+    <div class="text-center mt-6">
+<button onclick="markLectureComplete()" 
+class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl font-bold">
+✅ تم مشاهدة المحاضرة
+</button>
+</div>
   `;
 }
 // ============================================
