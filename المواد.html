@@ -211,11 +211,6 @@
       </div>
      </div>
     </div>
-    <div style="text-align: center; margin-top: 20px;">
-        <button id="finish-btn" onclick="finishLecture()" style="background: #10b981; color: white; padding: 12px 25px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
-            ✅ انتهيت من هذه المحاضرة
-        </button>
-    </div>
    </div><!-- Admin Login Modal -->
    <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
@@ -307,7 +302,6 @@ let adminPassword = 'admin123hoba';
 let currentEditingLink = null;
 let completedLectures = JSON.parse(localStorage.getItem('completedLectures') || '{}');
 
-
 // ============================================
 // 3. Admin & Auth
 // ============================================
@@ -381,8 +375,6 @@ function updateAdminButtonUI() {
         console.error("يا ريس الـ div اللي اسمه admin-controls-area مش موجود في الـ HTML!");
     }
 }
-
-
 // ============================================
 // 4. الـ CRUD (إضافة، حذف، تعديل)
 // ============================================
@@ -488,83 +480,77 @@ async function openSubject(subjectId) {
 
 function renderLecturesList(subject) {
   const list = document.getElementById('lectures-list');
-  if (!list || !subject || !subject.lectures) return;
-
   const total = subject.lectures.length;
+  const done = Object.keys(completedLectures).filter(k => k.startsWith(subject.id) && completedLectures[k]).length;
   
-  // بنجيب الرقم ونحوله لرقم صحيح وبنضمن إنه ما يعديش الـ total
-  let done = parseInt(localStorage.getItem(`done_${subject.id}`)) || 0;
-  if (done > total) done = total; 
+  // تحديث العداد
+  document.getElementById('progress-text').textContent = `${done}/${total}`;
+  document.getElementById('progress-bar').style.width = total > 0 ? `${(done/total)*100}%` : '0%';
 
-  // تحديث العداد في الصفحة
-  const progressText = document.getElementById('progress-text');
-  const progressBar = document.getElementById('progress-bar');
-  
-  if (progressText) progressText.textContent = `${done}/${total}`;
-  if (progressBar) progressBar.style.width = total > 0 ? `${(done / total) * 100}%` : '0%';
-
-  // أهم حتة: عرض المحاضرات "دائماً" مهما كان العداد
   list.innerHTML = subject.lectures.map(l => `
-    <div class="group relative p-4 mb-2 ${currentLecture?.id === l.id ? 'bg-amber-500/20 border border-amber-500/50' : 'bg-white/5'} rounded-xl cursor-pointer hover:bg-white/10" 
-         onclick="selectLecture(${l.id})">
+    <div class="group relative p-4 mb-2 ${currentLecture?.id === l.id ? 'bg-amber-500/20 border border-amber-500/50' : 'bg-white/5'} rounded-xl cursor-pointer hover:bg-white/10" onclick="selectLecture(${l.id})">
       <div class="flex justify-between items-center">
         <div>
            <h4 class="text-sm font-bold text-white">${l.title}</h4>
-           <p class="text-[10px] text-gray-400">${l.duration || ''}</p>
+           <p class="text-[10px] text-gray-400">${l.duration}</p>
         </div>
         ${isAdminLoggedIn ? `<button onclick="event.stopPropagation(); deleteLecture(${l.id})" class="hidden group-hover:block text-red-500 text-xs">🗑️</button>` : ''}
       </div>
     </div>
   `).join('');
 }
+
 function renderLectureContent(subject, lecture) {
   const content = document.getElementById('lecture-content');
-  if (!content || !lecture) return;
-
-  // 1. حساب التقدم بأمان
-  const lectureKey = subject ? `${subject.id}-${lecture.id}` : `lecture-${lecture.id}`;
-  const isDone = typeof window.completedLectures !== 'undefined' && window.completedLectures[lectureKey];
-
-  // 2. تجهيز الروابط
-  const video = typeof convertGoogleDriveLink === 'function' ? convertGoogleDriveLink(lecture.videoUrl) : null;
-  const audio = typeof convertGoogleDriveLink === 'function' ? convertGoogleDriveLink(lecture.audioUrl) : null;
-  const pdf = typeof convertGoogleDriveLink === 'function' ? convertGoogleDriveLink(lecture.pdfUrl) : null;
+  
+  // الروابط بنسحبها من بيانات المحاضرة اللي جاية من السيرفر
+  const video = convertGoogleDriveLink(lecture.videoUrl);
+  const description = lecture.description || 'سيتم إضافة الشرح المكتوب قريباً';
+  const audio = convertGoogleDriveLink(lecture.audioUrl);
+  const pdf = convertGoogleDriveLink(lecture.pdfUrl);
 
   content.innerHTML = `
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-amber-400">${lecture.title || 'محاضرة بدون عنوان'}</h2>
+      <h2 class="text-2xl font-bold text-amber-400">${lecture.title}</h2>
+      ${isAdminLoggedIn ? `<button onclick="showAddLectureModal()" class="bg-white/10 px-3 py-1 rounded-lg text-xs border border-white/20">+ إضافة محاضرة</button>` : ''}
     </div>
 
     <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
-      <p class="mb-3 text-sm font-bold">🎥 فيديو الشرح</p>
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>🎥 فيديو الشرح</span>
+        ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'video')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الرابط</button>` : ''}
+      </div>
       ${video ? `<iframe src="https://drive.google.com/file/d/${video.fileId}/preview" width="100%" height="400" class="rounded-xl border-0" allow="autoplay"></iframe>` : '<p class="text-center py-10 text-gray-500 text-xs italic">قريباً: فيديو المحاضرة</p>'}
     </div>
 
     <div class="bg-white/5 p-5 rounded-2xl mb-10 border border-white/5">
-      <p class="mb-3 text-sm font-bold">📝 شرح المحاضرة</p>
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>📝شرح المحاضرة</span>
+        ${isAdminLoggedIn ? `<button onclick="showDescriptionModal()" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل النص</button>` : ''}
+      </div>
       <div class="text-gray-300 text-sm leading-relaxed">${(lecture.description || 'سيتم إضافة الشرح المكتوب قريباً').replace(/\n/g, '<br>')}</div>
     </div>
     
-   
-
     <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
-      <p class="mb-3 text-sm font-bold">🎙️ الشرح الصوتي</p>
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>🎙️ الشرح الصوتي</span>
+        ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'audio')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الرابط</button>` : ''}
+      </div>
       ${audio ? `<iframe src="https://drive.google.com/file/d/${audio.fileId}/preview" width="100%" height="100" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-4 text-gray-500 text-xs">لا يوجد تسجيل صوتي حالياً</p>'}
     </div>
 
     <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
-      <p class="mb-3 text-sm font-bold">📄 مذكرة PDF</p>
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>📄 مذكرة PDF</span>
+        <div class="flex gap-2">
+           ${pdf ? `<a href="https://drive.google.com/uc?export=download&id=${pdf.fileId}" target="_blank" class="bg-green-600 px-2 py-1 rounded text-[10px] text-white">⬇️ تحميل</a>` : ''}
+           ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'pdf')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الملف</button>` : ''}
+        </div>
+      </div>
       ${pdf ? `<iframe src="https://drive.google.com/file/d/${pdf.fileId}/preview" width="100%" height="500" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-10 text-gray-500 text-xs italic">الملخص غير متوفر حالياً</p>'}
-    </div>
-     <div class="flex justify-center mb-10">
-      <button onclick="finishLecture()" id="finish-btn" 
-        class="w-full py-4 rounded-xl font-bold transition-all ${isDone ? 'bg-blue-600 opacity-70 cursor-default' : 'bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-900/20'}">
-        ${isDone ? '✅ الحمدلله انتهيت من هذه المحاضرة' : '🎯 اضغط هنا عند الانتهاء من المحاضرة'}
-      </button>
     </div>
   `;
 }
-
 // ============================================
 // 6. Helpers
 // ============================================
@@ -685,46 +671,8 @@ updateAdminHeader();
 
 // وكمان ضيف السطر ده جوه دالة الـ loginAdmin بعد ما الباسورد يطلع صح:
 // updateAdminHeader();
-// 1. التأكد من تعريف الشنطة مرة واحدة فقط وبطريقة آمنة
-if (window.completedLectures === undefined) {
-    window.completedLectures = JSON.parse(localStorage.getItem('completedLectures')) || {};
-}
-
-// 2. تعريف دالة الإنهاء وربطها بالنافذة (Window) عشان الـ HTML يشوفها
-window.finishLecture = function(event) {
-    // 1. منع أي ريفرش تلقائي
-    if (event) event.preventDefault();
-    
-    if (typeof currentSubject === 'undefined' || !currentSubject) {
-        alert("اختار المادة الأول!");
-        return;
-    }
-
-    // 2. زيادة العداد للمادة الحالية
-    let key = 'done_' + currentSubject.id;
-    let done = parseInt(localStorage.getItem(key)) || 0;
-    let total = currentSubject.lectures.length;
-
-    if (done < total) {
-        done++;
-        localStorage.setItem(key, done);
-        console.log("التقدم الجديد: " + done);
-    }
-
-    // 3. تحديث الزرار عشان الطالب يحس بالفرق
-    const btn = document.getElementById('finish-btn');
-    if (btn) {
-        btn.innerText = "✅ تم تحديث العداد (" + done + "/" + total + ")";
-        btn.style.background = "#2563eb"; // لونه يقلب أزرق
-    }
-
-    // 4. تحديث القائمة والعداد اللي فوق فوراً بدون ريفرش صفحة
-    renderLecturesList(currentSubject);
-};
   </script>
   </div>
-
-  
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
