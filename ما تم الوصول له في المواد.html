@@ -1,97 +1,467 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoba Tech | جدول المواد </title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --neon-blue: #00d2ff;
-            --neon-purple: #9d50bb;
-            --glass-bg: rgba(15, 23, 42, 0.8);
-            --card-inner: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.12);
+
+        <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جدول تقدم المواد</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+   <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             font-family: 'Cairo', sans-serif;
-            background: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            min-height: 100vh;
+            background: #000000;
+            color: #333;
+            min-height: 100%;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .overlay {
-            background: rgba(0, 0, 0, 0.7);
-            min-height: 100vh;
+        body::before {
+            content: '';
+            position: fixed;
             width: 100%;
-            padding: 40px 0;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, rgba(255,255,255,0.2)),
+                radial-gradient(2px 2px at 60% 70%, white, rgba(255,255,255,0.2)),
+                radial-gradient(1px 1px at 50% 50%, white, rgba(255,255,255,0.2)),
+                radial-gradient(1px 1px at 80% 10%, white, rgba(255,255,255,0.2)),
+                radial-gradient(2px 2px at 10% 90%, white, rgba(255,255,255,0.2)),
+                radial-gradient(1px 1px at 90% 60%, white, rgba(255,255,255,0.2)),
+                radial-gradient(1px 1px at 30% 80%, white, rgba(255,255,255,0.2)),
+                radial-gradient(2px 2px at 70% 40%, white, rgba(255,255,255,0.2));
+            background-repeat: repeat;
+            background-size: 200% 200%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            animation: twinkling 4s ease-in-out infinite;
+        }
+
+        @keyframes twinkling {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-wrapper::before {
+            display: none;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
         }
 
-        .header-main {
+        /* Header */
+        .header {
             text-align: center;
-            margin-bottom: 60px;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
         }
 
-        .header-main h1 {
-            font-size: 2.8rem;
-            background: linear-gradient(to right, #00d2ff, #9d50bb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .days-container {
-            width: 90%;
-            max-width: 1200px;
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 300;
         }
 
-        .day-section-title {
-            font-size: 2rem;
-            color: #fff;
-            margin: 40px 0 20px;
+        /* Admin Toggle Button */
+        .admin-toggle {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 100;
+            display: none;
+        }
+
+        .admin-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 15px;
-            border-right: 5px solid var(--neon-blue);
-            padding-right: 15px;
+            justify-content: center;
         }
 
-        .day-section-title span {
+        .admin-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Hidden Triple-Click Zone */
+        .login-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 200px;
+            z-index: 150;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        .header h1 {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .login-modal.active {
+            display: flex;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 50px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Cairo', sans-serif;
             font-size: 1rem;
-            color: var(--neon-blue);
-            opacity: 0.8;
+            transition: 0.3s;
         }
 
+        .login-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .login-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .login-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .login-btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn-cancel {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .login-btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .login-error {
+            color: #ff6b6b;
+            font-size: 0.95rem;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .admin-panel.active {
+            display: flex;
+        }
+
+        .admin-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .admin-modal h2 {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .subjects-list {
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .subject-item {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .subject-item-info {
+            flex: 1;
+        }
+
+        .subject-item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .subject-item-details {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .subject-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-small:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-delete {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        /* Cards Grid */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 25px;
             margin-bottom: 50px;
         }
 
         .subject-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
             padding: 25px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            animation: cardSlide 0.6s ease-out both;
+        }
+
+        @keyframes cardSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .subject-card:hover {
-            transform: scale(1.03);
-            border-color: var(--neon-blue);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(31, 38, 135, 0.4);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .card-header {
@@ -102,343 +472,491 @@
         }
 
         .subject-name {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            color: #fff;
+            color: white;
+            flex: 1;
         }
 
-        .today-info {
-            background: var(--card-inner);
+        .edit-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .edit-btn:hover {
+            color: #764ba2;
+            transform: scale(1.1);
+        }
+
+        .card-info {
+            background: rgba(255, 255, 255, 0.1);
             padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
             font-size: 0.95rem;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .info-row:last-child { margin-bottom: 0; }
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
 
-        .label { color: #aaa; }
-        .value { color: var(--neon-blue); font-weight: 600; }
+        .info-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
 
-        .total-status {
+        .info-value {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            margin-top: 20px;
+        }
+
+        .progress-label {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid var(--border);
-        }
-
-        .progress-wheel {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background: conic-gradient(var(--neon-blue) 0%, #1e293b 0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .progress-wheel::after {
-            content: attr(data-p) "%";
-            position: absolute;
-            width: 53px;
-            height: 53px;
-            background: #0f172a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .total-label {
+            margin-bottom: 8px;
             font-size: 0.9rem;
-            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
         }
 
-        .total-label b { color: var(--neon-purple); font-size: 1.1rem; }
+        .progress-text {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 700;
+        }
 
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(3px);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+            font-size: 1.2rem;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .header-main h1 { font-size: 2rem; }
-            .day-section-title { font-size: 1.6rem; }
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-modal {
+                width: 95%;
+                padding: 25px;
+            }
+
+            .admin-toggle {
+                bottom: 20px;
+                left: 20px;
+            }
         }
-        /* تصميم الحاوية للعنوان */
-.hoba-brand {
-    text-align: center;
-    margin-bottom: 30px;
-    cursor: default;
-}
 
-/* تأثير النيون للجملة الأساسية */
-.neon-text {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0;
-    text-transform: uppercase;
-    /* الأنيميشن اللي بيخليها تنور وتطفي بشكل فخم */
-    animation: neon-glow 2s ease-in-out infinite alternate;
-}
+        /* Scrollbar Styling */
+        .subjects-list::-webkit-scrollbar {
+            width: 6px;
+        }
 
-/* الجملة الثانوية بأنيميشن تدفق الألوان */
-.sub-text {
-    font-size: 1.2rem;
-    font-weight: 600;
-    background: linear-gradient(90deg, #00d2ff, #9d50bb, #00d2ff);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: text-flow 3s linear infinite;
-    margin-top: 5px;
-}
+        .subjects-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
 
-/* أنيميشن إضاءة النيون */
-@keyframes neon-glow {
-    from {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00d2ff, 0 0 40px #00d2ff;
-    }
-    to {
-        text-shadow: 0 0 5px #fff, 0 0 10px #00d2ff, 0 0 15px #00d2ff, 0 0 20px #00d2ff;
-        transform: scale(1.02); /* حركة نبض خفيفة */
-    }
-}
+        .subjects-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
 
-/* أنيميشن تدفق الألوان */
-@keyframes text-flow {
-    to { background-position: 200% center; }
-}
-.download-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: rgba(0, 210, 255, 0.1);
-    border: 1px dashed var(--neon-blue);
-    color: var(--neon-blue);
-    padding: 10px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 0.9rem;
-    margin: 15px 0;
-    transition: all 0.3s ease;
-}
+        .admin-modal::-webkit-scrollbar {
+            width: 6px;
+        }
 
-.download-btn:hover {
-    background: var(--neon-blue);
-    color: #000;
-    box-shadow: 0 0 15px var(--neon-blue);
-    transform: translateY(-2px);
-}
+        .admin-modal::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
 
-.download-btn .icon {
-    font-style: normal;
-    font-size: 1.1rem;
-}
+        .admin-modal::-webkit-scrollbar-thumb {
+            background: #667eea;
+        }
     </style>
+  <style>body { box-sizing: border-box; }</style>
 </head>
 <body>
+    <div class="app-wrapper">
+     <div class="login-zone" id="loginZone"></div>
+     <div class="header">
+      <h1>📚 جدول تقدم المواد</h1>
+      <p>تابع تقدمك في كل مادة</p>
+     </div>
+     <div class="cards-grid" id="cardsGrid"></div>
+     <div class="empty-state" id="emptyState">
+      <div class="empty-state-icon">
+       📭
+      </div>
+      <div>
+       لا توجد مواد حالياً
+      </div>
+     </div>
+    </div><!-- Admin Toggle Button -->
+    <div class="admin-toggle"><button class="admin-btn" id="adminToggleBtn" title="لوحة التحكم">⚙️</button>
+    </div><!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+     <div class="login-box">
+      <h2>🔐 تسجيل دخول</h2><input type="password" id="passwordInput" placeholder="أدخل كلمة المرور">
+      <div class="login-buttons"><button class="login-btn login-btn-submit" id="loginSubmitBtn">دخول</button> <button class="login-btn login-btn-cancel" id="loginCancelBtn">إغلاق</button>
+      </div>
+      <div class="login-error" id="loginError">
+       كلمة مرور خاطئة!
+      </div>
+     </div>
+    </div><!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+     <div class="admin-modal">
+      <h2>⚙️ لوحة التحكم</h2><!-- Add Subject Form -->
+      <div style="margin-bottom: 30px; padding-bottom: 30px; border-bottom: 2px solid #e0e0e0;">
+       <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.2rem;">إضافة مادة جديدة</h3>
+       <div class="form-group"><label>اسم المادة</label> <input type="text" id="subjectName" placeholder="مثال: القانون الدستوري">
+       </div>
+       <div class="form-group"><label>اليوم</label> <select id="subjectDay"> <option value="">اختر اليوم</option> <option value="الأحد">الأحد</option> <option value="الإثنين">الإثنين</option> <option value="الثلاثاء">الثلاثاء</option> <option value="الأربعاء">الأربعاء</option> <option value="الخميس">الخميس</option> <option value="الجمعة">الجمعة</option> <option value="السبت">السبت</option> </select>
+       </div>
+       <div class="form-group"><label>اسم الدكتور/الدكتورة</label> <input type="text" id="professorName" placeholder="مثال: د. أحمد محمد">
+       </div>
+       <div class="form-group"><label>إجمالي الصفحات</label> <input type="number" id="totalPages" placeholder="مثال: 100">
+       </div>
+       <div class="form-group"><label>الصفحات المكتملة</label> <input type="number" id="completedPages" placeholder="مثال: 25">
+       </div>
+       <div class="form-group"><label>رابط الكتاب (اختياري)</label> <input type="url" id="bookUrl" placeholder="مثال: https://example.com/book.pdf">
+       </div>
+       <div class="form-buttons"><button class="btn btn-primary" id="addBtn">إضافة ✨</button> <button class="btn btn-secondary" id="closeBtn">إغلاق</button>
+       </div>
+      </div>
+      <div>
+        <button class="btn btn-secondary" id="logoutBtn">تسجيل الخروج</button><!-- Subjects List -->
 
-<div class="overlay">
-    <div class="header-main">
-        <h1>ما تم الوصول اليه في المواد</h1>
-        <div class="hoba-brand">
-            <p class="neon-text">Hoba Tech | هوبا تيك</p>
-            <p class="sub-text">تابع كل ما هو جديد</p>
-        </div>
+       <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.2rem;">المواد المضافة</h3>
+       <div class="subjects-list" id="subjectsList"></div>
+      </div>
+     </div>
     </div>
 
-    <div class="days-container">
-        
-        <div class="day-section-title">يوم الأحد <span></span></div>
-        <div class="cards-grid">
-            
-            <div class="subject-card">
-                <div class="card-header">
-                    <div class="subject-name">المنظمات الدولية</div>
-                </div>
-                <div class="today-info">
-                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/09</span></div>
-                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">49 📄</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/زين العابدين محمد فؤاد</span></div>
-                    <div class="info-row"><span class="label">الكتاب من اعداد</span><span class="value">أ.د/زين العابدين محمد الهمامي</span></div>
-                </div>
-                <a href="https://drive.google.com/file/d/12FFXkVN43w3ZZh1ELfs1-yUiy-eT9Nxw/view?usp=sharing" class="download-btn">
-                    <span>تحميل الكتاب</span>
-                    <i class="icon"></i>
-                </a>
-                <div class="total-status">
-                    <div class="total-label">الإجمالي المنجز:<br><b>100 ص</b> من اصل 320</div>
-                    <div class="progress-wheel" style="--p:0"></div>
-                </div>
-            </div>
-
-            <div class="subject-card">
-                <div class="card-header">
-                    <div class="subject-name">القانون الدستوري</div>
-                </div>
-                <div class="today-info">
-                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/09</span></div>
-                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">14 📄</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/صبري جلبي</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/اسلام مهران</span></div>
-                </div>
-                <a href="القانون الدستوري202_10_45_24.pdf" class="download-btn">
-                    <span>تحميل الكتاب</span>
-                    <i class="icon"></i>
-                </a>
-                <div class="total-status">
-                    <div class="total-label">الإجمالي المنجز:<br><b>14 ص</b> من اصل 358</div>
-                    <div class="progress-wheel" style="--p:0"></div>
-                </div>
-            </div>
-
-            <div class="subject-card">
-                <div class="card-header">
-                    <div class="subject-name">تشريعات حماية البيئة</div>
-                </div>
-                <div class="today-info">
-                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
-                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/اسلام مهران</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/زين العابدين محمد فؤاد</span></div>
-                </div>
-                <a href="حمايةالبيئةترمثان.pdf" class="download-btn">
-                    <span>تحميل الكتاب</span>
-                    <i class="icon"></i>
-                </a>
-                <div class="total-status">
-                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 216</div>
-                    <div class="progress-wheel" style="--p:0"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="day-section-title" style="border-color: var(--neon-purple);">يوم الثلاثاء <span></span></div>
-        <div class="cards-grid">
-            
-            <div class="subject-card">
-                <div class="card-header">
-                    <div class="subject-name">مصطلحات قانونية باللغة الفرنسية</div>
-                </div>
-                <div class="today-info">
-                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
-                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/حمادة مصطفي عزب</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/ماهر محمد حامد</span></div>
-                </div>
-                <a href="فرنسي_اولى_سوهاج_الف.pdf" class="download-btn">
-                    <span>تحميل الكتاب</span>
-                    <i class="icon"></i>
-                </a>
-                <div class="total-status">
-                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 119</div>
-                    <div class="progress-wheel" style="--p:0; border:1px solid var(--neon-purple)"></div>
-                </div>
-            </div>
-
-            <div class="subject-card">
-                <div class="card-header">
-                    <div class="subject-name">القضايا المجتمعية</div>
-                </div>
-                <div class="today-info">
-                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
-                    <div class="info-row"><span class="label">وصلت لصفحة:</span><span class="value">0 📄</span></div>  
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/عادل محمود علي</span></div>
-                </div>
-
-                <a href="مقررالقضاياالمجتمع_10_44_15.pdf" class="download-btn">
-                    <span>تحميل الكتاب</span>
-                    <i class="icon"></i>
-                </a>
-                <div class="total-status">
-                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 119</div>
-                    <div class="progress-wheel" style="--p:0; border:1px solid var(--neon-purple)"></div>
-                </div>
-            </div>
-
-            <div class="subject-card">
-                <div class="card-header">
-                    <div class="subject-name">تاريخ النظم القانونية والاجتماعية</div>
-                </div>
-                <div class="today-info">
-                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
-                    <div class="info-row"><span class="label">وصلنا لصفحة:</span><span class="value">0 📄</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/عبدالكريم نصير</span></div>
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/رفاعي محمد رفاعي</span></div>
-                </div>
-                <a href="https://drive.google.com/file/d/1b9wneogY4xYS-jNyYRTC3B1Tc4j13gTP/view?usp=sharing" class="download-btn">
-                    <span>تحميل الكتاب</span>
-                    <i class="icon"></i>
-                </a>
-                <div class="total-status">
-                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 318</div>
-                    <div class="progress-wheel" style="--p:0; border:1px solid var(--neon-purple)"></div>
-                </div>
-            </div>
-            <div class="subject-card">
-                <div class="card-header">
-                    <div class="subject-name">مذكرة اللياقة البدنية</div>
-                </div>
-                <div class="today-info">
-                    <div class="info-row"><span class="label">تاريخ اليوم:</span><span class="value">2026/02/08</span></div>
-                    <div class="info-row"><span class="label">وصلت لصفحة:</span><span class="value">0 📄</span></div>  
-                    <div class="info-row"><span class="label">دكتور:</span><span class="value">أ.د/ غيرمعروف حاليا</span></div>
-                </div>
-
-                <a href="مذكرةاللياقةالبدني (1).pdf" class="download-btn">
-                    <span>تحميل الكتاب</span>
-                    <i class="icon"></i>
-                </a>
-                <div class="total-status">
-                    <div class="total-label">الإجمالي المنجز:<br><b>0 ص</b> من اصل 164</div>
-                    <div class="progress-wheel" style="--p:0; border:1px solid var(--neon-purple)"></div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const wheels = document.querySelectorAll('.progress-wheel');
+const firebaseConfig = {
+    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+    authDomain: "hoba-tech.firebaseapp.com",
+    databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+    projectId: "hoba-tech",
+    storageBucket: "hoba-tech.appspot.com",
+    messagingSenderId: "465948708700",
+    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
+};
 
-    wheels.forEach(wheel => {
-        const card = wheel.closest('.subject-card');
-        const doneText = card.querySelector('.total-label b').textContent; // مثال: "120 ص"
-        const totalText = card.querySelector('.total-label').textContent.match(/من اصل (\d+)/)[1];
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-        const done = parseInt(doneText.replace(/\D/g, ''));
-        const total = parseInt(totalText);
-        const target = Math.round((done / total) * 100);
+let allSubjects = [];
+let editingId = null;
+let isAuthenticated = false;
+const ADMIN_PASSWORD = "admin123hoba";
 
-        let current = 0;
-        const interval = setInterval(() => {
-            if (current >= target) {
-                clearInterval(interval);
-                return;
-            }
-            current++;
-            wheel.style.background = `conic-gradient(var(--neon-blue) ${current}%, #1e293b 0)`;
-            wheel.setAttribute('data-p', current);
-        }, 20);
+// عناصر HTML
+const adminPanel = document.getElementById('adminPanel');
+const loginModal = document.getElementById('loginModal');
+const passwordInput = document.getElementById('passwordInput');
+const loginError = document.getElementById('loginError');
+const addBtn = document.getElementById('addBtn');
+const closeBtn = document.getElementById('closeBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
+function fetchSubjects() {
+    db.ref('subjects').on('value', snapshot => {
+        const data = snapshot.val() || {};
+        allSubjects = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        renderCards();
+        renderSubjectsList();
     });
+}
+
+function saveSubject(subject) {
+    if(editingId) {
+        db.ref('subjects/' + editingId).set(subject);
+        editingId = null;
+    } else {
+        const newRef = db.ref('subjects').push();
+        newRef.set(subject);
+    }
+}
+
+function deleteSubjectFromDB(id) {
+    db.ref('subjects/' + id).remove();
+}
+
+function renderCards() {
+    const cardsGrid = document.getElementById('cardsGrid');
+    const emptyState = document.getElementById('emptyState');
+    if(allSubjects.length === 0) {
+        cardsGrid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+    emptyState.style.display = 'none';
+            cardsGrid.innerHTML = allSubjects.map((subject, index) => {
+                const progress = (parseInt(subject.completed_pages) / parseInt(subject.total_pages)) * 100;
+                return `
+                    <div class="subject-card" style="animation-delay: ${index * 0.1}s">
+                        <div class="card-header">
+                            <div class="subject-name">${subject.subject_name}</div>
+                            ${isAuthenticated ? `<button class="edit-btn" onclick="editSubject('${subject.id}')">✏️</button>` : ''}
+                        </div>
+                        <div class="card-info">
+                            <div class="info-row">
+                                <span class="info-label">📅 اليوم:</span>
+                                <span class="info-value">${subject.day}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">👨‍🏫 الدكتور:</span>
+                                <span class="info-value">${subject.professor_name}</span>
+                            </div>
+                        </div>
+                        <div class="progress-section">
+                            <div class="progress-label">
+                                <span>التقدم</span>
+                                <span class="progress-text">${Math.round(progress)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="progress-label" style="margin-top: 8px; font-size: 0.85rem;">
+                                <span>${subject.completed_pages} / ${subject.total_pages} صفحة</span>
+                            </div>
+                        </div>
+                        ${subject.book_url ? `<div style="margin-top: 15px;"><a href="${subject.book_url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display: inline-block; text-decoration: none; width: 100%; text-align: center;">📖 تحميل الكتاب</a></div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+function renderSubjectsList() {
+    const list = document.getElementById('subjectsList');
+    if(allSubjects.length === 0) {
+        list.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">لا توجد مواد بعد</div>';
+        return;
+    }
+    list.innerHTML = allSubjects.map(s => `
+    <div class="subject-item">
+        <div class="subject-item-info">
+            <div class="subject-item-name">${s.subject_name}</div>
+            <div class="subject-item-details">${s.day} • ${s.professor_name}</div>
+        </div>
+        <div class="subject-item-actions">
+            <button class="btn-small" onclick="editSubject('${s.id}')">تعديل</button>
+            <button class="btn-small btn-delete" onclick="deleteSubject('${s.id}')">حذف</button>
+        </div>
+    </div>`).join('');
+}
+
+// تسجيل الدخول Triple Click
+let clickCount = 0, clickTimer = null;
+const header = document.querySelector('.header h1');
+header.addEventListener('click', e => {
+    e.stopPropagation();
+    clickCount++;
+    if(clickTimer) clearTimeout(clickTimer);
+    if(clickCount === 3){
+        loginModal.classList.add('active');
+        passwordInput.focus();
+        clickCount = 0;
+    }
+    clickTimer = setTimeout(()=>{clickCount=0;},400);
 });
+
+function attemptLogin(){
+    if(passwordInput.value.trim() === ADMIN_PASSWORD){
+        isAuthenticated = true;
+        loginModal.classList.remove('active');
+        loginError.classList.remove('show');
+        passwordInput.value = '';
+        adminPanel.classList.add('active');
+        renderCards();
+        renderSubjectsList();
+    } else {
+        loginError.classList.add('show');
+        passwordInput.value = '';
+    }
+}
+
+document.getElementById('loginSubmitBtn').addEventListener('click', attemptLogin);
+document.getElementById('loginCancelBtn').addEventListener('click', ()=>{
+    loginModal.classList.remove('active');
+    loginError.classList.remove('show');
+    passwordInput.value = '';
+    clickCount=0;
+});
+passwordInput.addEventListener('keypress', e => { if(e.key==='Enter') attemptLogin(); });
+
+// إدارة لوحة Admin
+closeBtn.addEventListener('click', ()=>{ adminPanel.classList.remove('active'); clearForm(); });
+adminPanel.addEventListener('click', e => { if(e.target===adminPanel){ adminPanel.classList.remove('active'); clearForm(); } });
+logoutBtn.addEventListener('click', ()=>{
+    isAuthenticated = false;
+    adminPanel.classList.remove('active');
+    renderCards();
+    renderSubjectsList();
+});
+
+// إضافة/تعديل مادة
+addBtn.addEventListener('click', ()=>{
+    if(!isAuthenticated){ loginError.textContent='يجب تسجيل الدخول أولاً'; loginError.classList.add('show'); return; }
+    const name = document.getElementById('subjectName').value.trim();
+    const day = document.getElementById('subjectDay').value;
+    const professor = document.getElementById('professorName').value.trim();
+    const total = document.getElementById('totalPages').value;
+    const completed = document.getElementById('completedPages').value;
+    const bookUrl = document.getElementById('bookUrl').value.trim();
+    if(!name||!day||!professor||!total||!completed){
+        loginError.textContent='من فضلك ملء جميع الحقول المطلوبة';
+        loginError.classList.add('show');
+        return;
+    }
+    addBtn.innerHTML='<span class="spinner"></span>'; addBtn.disabled=true;
+    const subject = {subject_name:name, day:day, professor_name:professor, total_pages:total, completed_pages:completed, book_url:bookUrl};
+    saveSubject(subject);
+    addBtn.innerHTML='إضافة ✨'; addBtn.disabled=false;
+    clearForm();
+});
+
+// مسح النموذج
+function clearForm(){
+    ['subjectName','subjectDay','professorName','totalPages','completedPages','bookUrl'].forEach(id=>document.getElementById(id).value='');
+    editingId=null;
+    addBtn.innerHTML='إضافة ✨'; addBtn.disabled=false;
+}
+
+// تعديل مادة
+window.editSubject = id =>{
+    if(!isAuthenticated){ loginError.textContent='يجب تسجيل الدخول أولاً'; loginError.classList.add('show'); return; }
+    const s = allSubjects.find(x=>x.id===id);
+    if(s){
+        document.getElementById('subjectName').value=s.subject_name;
+        document.getElementById('subjectDay').value=s.day;
+        document.getElementById('professorName').value=s.professor_name;
+        document.getElementById('totalPages').value=s.total_pages;
+        document.getElementById('completedPages').value=s.completed_pages;
+        document.getElementById('bookUrl').value=s.book_url||'';
+        editingId = id;
+        addBtn.innerHTML='تحديث ✓';
+        adminPanel.classList.add('active');
+    }
+};
+
+// حذف مادة
+window.deleteSubject = id =>{
+    if(!isAuthenticated){ loginError.textContent='يجب تسجيل الدخول أولاً'; loginError.classList.add('show'); return; }
+    if(confirm('هل تريد حذف هذه المادة؟')) deleteSubjectFromDB(id);
+};
+
+fetchSubjects();
 </script>
-
 </body>
-
 </html>
-
-
-
-
