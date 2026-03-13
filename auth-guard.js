@@ -13,6 +13,7 @@ onAuthStateChanged(auth, (user) => {
     console.log("تم التحقق: دخول ملكي مصرح به.");
   } else {
     // لو مش مسجل، ابعته لصفحة التسجيل (تأكد من مسار الصفحة)
-    window.location.href = "login.html"; 
+    window.location.href = "التسجيل.html"; 
   }
+
 });
