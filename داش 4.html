@@ -17,7 +17,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-       
 
 <!-- OneSignal -->
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -1518,31 +1517,46 @@ document.getElementById('deleteAccountBtn').onclick = function () {
             activeRef.onDisconnect().transaction(c => (c || 0) <= 0 ? 0 : c - 1);
         }
     });
-        // كود ذكي لربط ون سيجنال ببياناتك في فايربيز
-OneSignal.push(function() {
-    // 1. استنى لما المستخدم يوافق على الإشعارات
-    OneSignal.on('subscriptionChange', function(isSubscribed) {
-        if (isSubscribed) {
-            // 2. أول ما يوافق، هات الـ ID بتاعه فوراً
-            OneSignal.getUserId(function(userId) {
-                if (userId) {
-                    // 3. حدد الكود اللي المستخدم داخل بيه حالياً
-                    let currentCode = userCode; // المتغير اللي شايل الكود بتاعه
-
-                    // 4. ابعت الـ ID لفايربيز في خانة جديدة
-                    firebase.database().ref('codes/' + currentCode).update({
-                        onesignal_id: userId
-                    }).then(() => {
-                        console.log("تمت العملية بنجاح.. المنصة الآن مؤمنة وبالتنبيهات!");
-                    });
-                }
-            });
-        }
+       window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "9b9b67f5-6f3d-4d2a-8fd5-80153d4fa6fd",
     });
-});
+  });
+        // دي وظيفة بتناديها أول ما المستخدم يدخل الكود بتاعه ويطلع صح
+function syncNotificationId(userCode) {
+    OneSignal.push(function() {
+        // بيظهر طلب الإذن للمستخدم
+        OneSignal.showNativePrompt();
+
+        // بنجيب الـ ID الخاص بجهاز المستخدم
+        OneSignal.getUserId(function(userId) {
+            if (userId) {
+                // بنحدث بيانات الكود في الفايربيز تحت مسار codes
+                firebase.database().ref('codes/' + userCode).update({
+                    onesignal_id: userId
+                }).then(() => {
+                    console.log("تم الربط بنجاح! الـ ID موجود الآن تحت كود: " + userCode);
+                }).catch((error) => {
+                    console.error("خطأ في تحديث الفايربيز: ", error);
+                });
+            }
+        });
+    });
+}
+
+// مثال: لو زرار الدخول عندك بينادي دالة اسمها login
+function login() {
+    let codeInput = document.getElementById('code-field').value;
+    
+    // بعد ما تتأكد إن الكود موجود في Firebase وتعمل Login
+    // نادي الوظيفة اللي فوق كدة:
+    syncNotificationId(codeInput);
+}
 </script>
 </body>
 </html>
+
 
 
 
