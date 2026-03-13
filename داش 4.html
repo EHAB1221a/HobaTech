@@ -1518,9 +1518,32 @@ document.getElementById('deleteAccountBtn').onclick = function () {
             activeRef.onDisconnect().transaction(c => (c || 0) <= 0 ? 0 : c - 1);
         }
     });
+        // كود ذكي لربط ون سيجنال ببياناتك في فايربيز
+OneSignal.push(function() {
+    // 1. استنى لما المستخدم يوافق على الإشعارات
+    OneSignal.on('subscriptionChange', function(isSubscribed) {
+        if (isSubscribed) {
+            // 2. أول ما يوافق، هات الـ ID بتاعه فوراً
+            OneSignal.getUserId(function(userId) {
+                if (userId) {
+                    // 3. حدد الكود اللي المستخدم داخل بيه حالياً
+                    let currentCode = userCode; // المتغير اللي شايل الكود بتاعه
+
+                    // 4. ابعت الـ ID لفايربيز في خانة جديدة
+                    firebase.database().ref('codes/' + currentCode).update({
+                        onesignal_id: userId
+                    }).then(() => {
+                        console.log("تمت العملية بنجاح.. المنصة الآن مؤمنة وبالتنبيهات!");
+                    });
+                }
+            });
+        }
+    });
+});
 </script>
 </body>
 </html>
+
 
 
 
