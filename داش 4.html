@@ -1516,12 +1516,41 @@ document.getElementById('deleteAccountBtn').onclick = function () {
             activeRef.onDisconnect().transaction(c => (c || 0) <= 0 ? 0 : c - 1);
         }
     });
-       window.OneSignal = window.OneSignal || [];
-  OneSignal.push(function() {
-    OneSignal.init({
-      appId: "9b9b67f5-6f3d-4d2a-8fd5-80153d4fa6fd",
-    });
+     window.OneSignal = window.OneSignal || [];
+OneSignal.push(function() {
+  OneSignal.init({
+    appId: "9b9b67f5-6f3d-4d2a-8fd5-80153d4fa6fd",
+    notifyButton: {
+      enable: true, // هنا بنفعل الجرس الصغير
+      size: 'medium', // حجمه (small, medium, large)
+      theme: 'default', // أو 'white' لو موقعك غامق
+      position: 'bottom-right', // مكانه (يمين تحت)
+      offset: {
+        bottom: '20px',
+        right: '20px'
+      },
+      colors: { // تقدر تغير ألوانه عشان تليق على ذوقك (ذهبي مثلاً)
+        'circle.background': '#ffcc00', 
+        'circle.foreground': '#000000',
+        'badge.background': '#000000',
+        'badge.foreground': '#ffffff'
+      },
+      text: {
+        'tip.state.unsubscribed': 'اشترك في التنبيهات',
+        'tip.state.subscribed': 'أنت مشترك بالفعل',
+        'tip.state.blocked': 'لقد حظرت التنبيهات',
+        'message.prenotify': 'اضغط هنا لتفعيل التنبيهات الفخمة',
+        'action.subscribe': 'اشترك الآن',
+        'action.unsubscribe': 'إلغاء الاشتراك'
+      }
+    },
+    // إظهار رسالة الترحيب التلقائية أول ما يدخل
+    welcomeNotification: {
+      "title": "HobaTech",
+      "message": "شكراً لثقتك يا بطل، التنبيهات مفعلة الآن!",
+    }
   });
+});
         // دي وظيفة بتناديها أول ما المستخدم يدخل الكود بتاعه ويطلع صح
 function syncNotificationId(userCode) {
     OneSignal.push(function() {
@@ -1555,6 +1584,7 @@ function login() {
 </script>
 </body>
 </html>
+
 
 
 
