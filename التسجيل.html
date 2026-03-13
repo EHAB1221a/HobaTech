@@ -312,7 +312,7 @@
                     <input type="text" id="l-code" placeholder="كود الاشتراك (السيريال)">
                 </div>
                 <div class="input-group">
-                    <input type="password" id="l-pass" placeholder="كلمة السر (std#)">
+                    <input type="password" id="l-pass" placeholder="كلمة السر ">
                 </div>
                 
                 <button class="action-btn" onclick="handleLogin()">تحقق من الاشتراك</button>
@@ -339,6 +339,11 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    // فحص تلقائي: لو المستخدم مسجل قبل كده، ويه على الداشبورد فوراً
+const savedUser = localStorage.getItem('isLoggedIn');
+if (savedUser === 'true') {
+    window.location.href = "داش 4.html";
+}
 
     // 3. وظيفة تسجيل الدخول والحماية
     window.handleLogin = async () => {
@@ -390,6 +395,10 @@
                         location.href = "داش 4.html";
                     }, 1500);
 
+                    // --- السطور الجديدة للحفظ التلقائي ---
+localStorage.setItem('isLoggedIn', 'true'); 
+localStorage.setItem('subscriberName', userData.name);
+localStorage.setItem('userSerial', code); // اختياري لو محتاج السيريال بعدين
                 } else {
                     m.style.color = "#ff4444";
                     m.innerText = "كلمة السر غير صحيحة!";
@@ -436,3 +445,4 @@
 
 </body>
 </html>
+
