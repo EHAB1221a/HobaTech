@@ -1367,27 +1367,33 @@ OneSignal.push(function() {
   });
 });
         // دي وظيفة بتناديها أول ما المستخدم يدخل الكود بتاعه ويطلع صح
+// دالة الربط الذكية
 function syncNotificationId(userCode) {
     OneSignal.push(function() {
-        // بيظهر طلب الإذن للمستخدم
-        OneSignal.showNativePrompt();
-
-        // بنجيب الـ ID الخاص بجهاز المستخدم
+        // بنطلب من ون سيجنال الـ ID
         OneSignal.getUserId(function(userId) {
             if (userId) {
-                // بنحدث بيانات الكود في الفايربيز تحت مسار codes
+                // لو الـ ID موجود فعلاً، نحدث فايربيز
                 firebase.database().ref('codes/' + userCode).update({
                     onesignal_id: userId
                 }).then(() => {
-                    console.log("تم الربط بنجاح! الـ ID موجود الآن تحت كود: " + userCode);
-                }).catch((error) => {
-                    console.error("خطأ في تحديث الفايربيز: ", error);
+                    console.log("✅ تم التسجيل بنجاح: " + userId);
+                });
+            } else {
+                // لو لسه مطلعش، نستنى لما يشترك ونلقطه فوراً
+                OneSignal.on('subscriptionChange', function(isSubscribed) {
+                    if (isSubscribed) {
+                        OneSignal.getUserId(function(newId) {
+                            firebase.database().ref('codes/' + userCode).update({
+                                onesignal_id: newId
+                            });
+                        });
+                    }
                 });
             }
         });
     });
 }
-
 // مثال: لو زرار الدخول عندك بينادي دالة اسمها login
 function login() {
     let codeInput = document.getElementById('code-field').value;
@@ -1584,6 +1590,7 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
+
 
 
 
