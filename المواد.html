@@ -717,20 +717,12 @@ updateAdminHeader();
 // updateAdminHeader();
 const rtdb = firebase.database();
 
-// دالة بصمة مبسطة جداً عشان متخرفش بين الصفحات
-function getSimpleFingerprint() {
-    // هنعتمد على حاجات مستحيل تتغير بين صفحتين على نفس الجهاز
-    const screenInfo = `${screen.width}x${screen.height}`;
-    const browserInfo = navigator.userAgent.split(') ')[0]; // بياخد نوع الجهاز ونظام التشغيل بس
-    return btoa(screenInfo + browserInfo);
-}
-
 async function checkActivationCode() {
     const userCode = document.getElementById('activation-code-input').value.trim();
     const userPass = document.getElementById('activation-pass-input').value.trim();
     const btn = document.querySelector('#login-overlay button');
     
-    if (!userCode || !userPass) { alert("اكمل البيانات يا مستشار 🧐"); return; }
+    if (!userCode || !userPass) { alert("بياناتك يا مستشار 🧐"); return; }
 
     btn.innerHTML = "⏳ جاري التحقق...";
     btn.disabled = true;
@@ -741,40 +733,45 @@ async function checkActivationCode() {
 
         if (studentData) {
             if (studentData.pass === userPass) {
-                const currentDevice = getSimpleFingerprint();
+                // بصمة الجهاز الحالية (ثابتة بقدر الإمكان)
+                const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
 
-                // --- التعديل الجوهري هنا ---
-                // لو الجهاز متسجل قبل كدة ومختلف عن الحالي
-                if (studentData.device && studentData.device !== "" && studentData.device !== currentDevice) {
-                    
-                    // فحص إضافي: لو الطالب داخل من نفس المتصفح (sessionStorage)
-                    // أو لو إنت عايز تسمح له يفتح من أي حتة طالما معاه الباسورد "لأول مرة في الجلسة"
-                    if (localStorage.getItem('hoba_verified_device') !== userCode) {
-                        alert("❌ عفواً.. هذا الكود مسجل على جهاز آخر.");
-                        btn.innerHTML = "دخول للمنصة";
-                        btn.disabled = false;
-                        return;
-                    }
+                // --- منطق الـ 2 Device ---
+                const d1 = studentData.device || "";
+                const d2 = studentData.device2 || ""; // هنضيف خانة ثانية برمجياً
+
+                // 1. لو الجهاز الحالي هو الأول أو الثاني.. عدي علطول
+                if (currentFP === d1 || currentFP === d2) {
+                    proceedLogin(studentData.name);
+                    return;
                 }
 
-                // تحديث أو تثبيت الجهاز
-                if (!studentData.device || studentData.device === "" || localStorage.getItem('hoba_verified_device') === userCode) {
-                    await rtdb.ref('codes/' + userCode).update({ 
-                        device: currentDevice,
-                        lastLogin: firebase.database.ServerValue.TIMESTAMP 
-                    });
+                // 2. لو لسه مفيش ولا جهاز متسجل (أول مرة خالص)
+                if (d1 === "") {
+                    await rtdb.ref('codes/' + userCode).update({ device: currentFP });
+                    proceedLogin(studentData.name);
+                } 
+                // 3. لو الجهاز الأول متسجل بس الثاني فاضي (يعني دي الصفحة التانية)
+                else if (d2 === "") {
+                    await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
+                    proceedLogin(studentData.name);
+                } 
+                // 4. لو الجهازين متسجلين والجهاز الحالي مش واحد منهم.. يبقى ده جهاز تالت غريب!
+                else {
+                    alert("❌ عفواً.. الكود مفعل على جهازين بالفعل. تواصل مع الدعم.");
+                    btn.innerHTML = "دخول للمنصة";
+                    btn.disabled = false;
                 }
 
-                // حفظ علامة "ثقة" في المتصفح ده بالذات
-                localStorage.setItem('hoba_verified_device', userCode);
-                localStorage.setItem('hoba_student_auth', 'true');
-                
-                showWelcomeAndEntry(studentData.name);
+            } else { alert("❌ الباسورد خطأ."); btn.disabled = false; btn.innerHTML = "دخول"; }
+        } else { alert("❌ هذا الكود غير مسجل لدينا تواصل مع الادارة."); btn.disabled = false; btn.innerHTML = "دخول"; }
+    } catch (error) { alert("خطأ في السيرفر."); btn.disabled = false; }
+}
 
-            } else { alert("❌ الباسورد غلط."); }
-        } else { alert("❌ الكود غير موجود."); }
-    } catch (error) { alert("خطأ في الاتصال."); }
-    finally { btn.innerHTML = "دخول للمنصة"; btn.disabled = false; }
+// دالة تكميلية للدخول عشان م نكررش الكود
+function proceedLogin(name) {
+    localStorage.setItem('hoba_student_auth', 'true');
+    showWelcomeAndEntry(name);
 }
 // دالة الترحيب الشيك والدخول
 function showWelcomeAndEntry(name) {
@@ -838,21 +835,36 @@ function showLoginOverlay() {
     document.body.appendChild(overlay);
 }
 
-// الفحص التلقائي عند فتح الصفحة
-// الفحص التلقائي (معدل للتجربة)
-document.addEventListener('DOMContentLoaded', () => {
-    // إحنا هنهمش (Comment) الجزء اللي بيدخله تلقائي عشان نجرب الواجهة
-    /*
-    const isAuth = localStorage.getItem('hoba_student_auth');
-    if (isAuth === 'true') {
-        document.getElementById('home-page').classList.remove('hidden');
-        return; 
-    }
-    */
+document.addEventListener('DOMContentLoaded', async () => {
+    // في البداية بنخفي كل حاجة عشان البلور يبان شيك
+    const homePage = document.getElementById('home-page');
+    homePage.classList.add('hidden');
 
-    // كدة هيفتح شاشة التسجيل دايماً حتى لو سجلت قبل كدة
-    document.getElementById('home-page').classList.remove('hidden'); 
-    showLoginOverlay();
+    const isAuth = localStorage.getItem('hoba_student_auth');
+    const savedCode = localStorage.getItem('hoba_user_id');
+
+    if (isAuth === 'true' && savedCode) {
+        try {
+            const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
+            const snapshot = await rtdb.ref('codes/' + savedCode).once('value');
+            const studentData = snapshot.val();
+
+            if (studentData) {
+                const d1 = studentData.device || "";
+                const d2 = studentData.device2 || "";
+
+                if (currentFP === d1 || currentFP === d2) {
+                    // لو تمام.. بنظهر المكتبة فوراً وبدون شاشة دخول
+                    homePage.classList.remove('hidden');
+                    return; 
+                }
+            }
+        } catch (e) { console.log("Auto-login skip"); }
+    }
+
+    // لو مفيش دخول تلقائي.. بنظهر المكتبة "ورا" البلور (عشان البلور يشتغل صح)
+    homePage.classList.remove('hidden'); 
+    showLoginOverlay(); 
 });
   </script>
   </div>
