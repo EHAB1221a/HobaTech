@@ -753,7 +753,10 @@ async function checkActivationCode() {
     const userPass = document.getElementById('activation-pass-input').value.trim();
     const btn = document.querySelector('#login-overlay button');
 
-    if (!userCode || !userPass) { alert("بياناتك يا مستشار 🧐"); return; }
+    if (!userCode || !userPass) { 
+        alert("بياناتك يا مستشار 🧐"); 
+        return; 
+    }
 
     btn.innerHTML = "⏳ جاري التحقق...";
     btn.disabled = true;
@@ -762,34 +765,58 @@ async function checkActivationCode() {
         const snapshot = await rtdb.ref('codes/' + userCode).once('value');
         const studentData = snapshot.val();
 
-        if (studentData && studentData.pass === userPass) {
-            const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
-            const d1 = studentData.device || "";
-            const d2 = studentData.device2 || "";
+        if (studentData) {
+            if (studentData.pass === userPass) {
+                // بصمة الجهاز الحالية
+                const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
+                const d1 = studentData.device || "";
+                const d2 = studentData.device2 || "";
 
-            if (currentFP === d1 || currentFP === d2 || d1 === "" || d2 === "") {
-                // تحديث الجهاز لو جديد
-                if (d1 === "" && currentFP !== d2) await rtdb.ref('codes/' + userCode).update({ device: currentFP });
-                else if (d2 === "" && currentFP !== d1) await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
-
-                // حفظ البيانات والدخول
-                localStorage.setItem('hoba_student_auth', 'true');
-                localStorage.setItem('hoba_user_name', studentData.name);
-                localStorage.setItem('hoba_user_id', userCode);
-                
-                showWelcomeAndEntry(studentData.name, userCode);
-             else {
+                // 1. لو الجهاز سليم (الأول أو الثاني)
+                if (currentFP === d1 || currentFP === d2) {
+                    proceedLogin(studentData.name, userCode);
+                } 
+                // 2. لو لسه مفيش ولا جهاز متسجل
+                else if (d1 === "") {
+                    await rtdb.ref('codes/' + userCode).update({ device: currentFP });
+                    proceedLogin(studentData.name, userCode);
+                } 
+                // 3. لو الجهاز الأول متسجل والتاني فاضي
+                else if (d2 === "") {
+                    await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
+                    proceedLogin(studentData.name, userCode);
+                } 
+                // 4. لو الكود مسجل على جهازين وأنت داخل بجهاز تالت
+                else {
                     alert("❌ تم تسجيل هذا الكود علي جهاز اخر من قبل!");
                     btn.innerHTML = "دخول للمكتبة";
                     btn.disabled = false;
                 }
-
-            } else { alert("❌كلمة  السر غير صححة."); btn.disabled = false; btn.innerHTML = "دخول"; }
-        } else { alert("❌ هذا الكود غير مسجل لدينا تواصل مع الدعم الفني."); btn.disabled = false; btn.innerHTML = "دخول"; }
-    } catch (error) { alert("خطأ في السيرفر."); btn.disabled = false; }
+            } else { 
+                alert("❌ كلمة السر غير صحيحة."); 
+                btn.disabled = false; 
+                btn.innerHTML = "دخول"; 
+            }
+        } else { 
+            alert("❌ هذا الكود غير مسجل لدينا تواصل مع الدعم الفني."); 
+            btn.disabled = false; 
+            btn.innerHTML = "دخول"; 
+        }
+    } catch (error) { 
+        console.error(error);
+        alert("خطأ في السيرفر."); 
+        btn.disabled = false; 
+        btn.innerHTML = "دخول";
+    }
 }
 
-
+// الدالة دي لازم تكون موجودة عشان تشغل الدخول
+function proceedLogin(name, code) {
+    localStorage.setItem('hoba_student_auth', 'true');
+    localStorage.setItem('hoba_user_name', name);
+    localStorage.setItem('hoba_user_id', code);
+    showWelcomeAndEntry(name, code);
+}
 // 3. دالة الترحيب والدخول
 // 2. دالة الترحيب (مظبوطة)
 function showWelcomeAndEntry(name) {
