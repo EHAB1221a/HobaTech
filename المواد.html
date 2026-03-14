@@ -756,10 +756,7 @@ async function checkActivationCode() {
     const userCode = document.getElementById('activation-code-input').value.trim();
     const userPass = document.getElementById('activation-pass-input').value.trim();
     const btn = document.querySelector('#login-overlay button');
-    // جوه دالة checkActivationCode بعد ما يتأكد إن الباسورد صح
-    localStorage.setItem('hoba_user_name', studentData.name);
-    localStorage.setItem('hoba_student_auth', 'true');
-localStorage.setItem('hoba_user_id', userCode); // تأكد إن userCode هو الرقم اللي الطالب دخله
+
     if (!userCode || !userPass) { alert("بياناتك يا مستشار 🧐"); return; }
 
     btn.innerHTML = "⏳ جاري التحقق...";
@@ -771,47 +768,50 @@ localStorage.setItem('hoba_user_id', userCode); // تأكد إن userCode هو �
 
         if (studentData) {
             if (studentData.pass === userPass) {
-                // بصمة الجهاز الحالية (ثابتة بقدر الإمكان)
                 const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
-
-                // --- منطق الـ 2 Device ---
                 const d1 = studentData.device || "";
-                const d2 = studentData.device2 || ""; // هنضيف خانة ثانية برمجياً
+                const d2 = studentData.device2 || "";
 
-                // 1. لو الجهاز الحالي هو الأول أو الثاني.. عدي علطول
+                // لو الجهاز سليم.. خزن البيانات وادخل
                 if (currentFP === d1 || currentFP === d2) {
-                    proceedLogin(studentData.name);
+                    proceedLogin(studentData.name, userCode); // بعتنا الاسم والكود هنا
                     return;
                 }
 
-                // 2. لو لسه مفيش ولا جهاز متسجل (أول مرة خالص)
                 if (d1 === "") {
                     await rtdb.ref('codes/' + userCode).update({ device: currentFP });
-                    proceedLogin(studentData.name);
+                    proceedLogin(studentData.name, userCode);
                 } 
-                // 3. لو الجهاز الأول متسجل بس الثاني فاضي (يعني دي الصفحة التانية)
                 else if (d2 === "") {
                     await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
-                    proceedLogin(studentData.name);
+                    proceedLogin(studentData.name, userCode);
                 } 
-                // 4. لو الجهازين متسجلين والجهاز الحالي مش واحد منهم.. يبقى ده جهاز تالت غريب!
                 else {
-                    alert("❌ هذا الكود مسجل بالفعل علي جهاز اخر تواصل مع الدعم");
-                    btn.innerHTML = "دخول للمنصة";
+                    alert("❌ الكود مسجل على جهازين بالفعل!");
+                    btn.innerHTML = "دخول للمكتبة";
                     btn.disabled = false;
                 }
 
             } else { alert("❌ الباسورد خطأ."); btn.disabled = false; btn.innerHTML = "دخول"; }
-        } else { alert("❌ هذا الكود غير مسجل لدينا تواصل مع الادارة."); btn.disabled = false; btn.innerHTML = "دخول"; }
+        } else { alert("❌ الكود غير موجود."); btn.disabled = false; btn.innerHTML = "دخول"; }
     } catch (error) { alert("خطأ في السيرفر."); btn.disabled = false; }
 }
 
-// دالة تكميلية للدخول عشان م نكررش الكود
-function proceedLogin(name) {
+// 1. الدالة دي هي اللي "بتصم" البيانات في ذاكرة المتصفح
+function proceedLogin(name, code) {
     localStorage.setItem('hoba_student_auth', 'true');
+    localStorage.setItem('hoba_user_name', name); // عشان الواتر مارك تظهر صح
+    localStorage.setItem('hoba_user_id', code);   // عشان الدخول التلقائي
+    
     showWelcomeAndEntry(name);
+    
+    // تشغيل الواتر مارك فوراً
+    if (typeof startWatermark === "function") {
+        startWatermark(name, code);
+    }
 }
-// دالة الترحيب الشيك والدخول
+
+// 2. دالة الترحيب (مظبوطة)
 function showWelcomeAndEntry(name) {
     const card = document.querySelector('.glass-panel');
     card.innerHTML = `
@@ -825,14 +825,16 @@ function showWelcomeAndEntry(name) {
     `;
     
     setTimeout(() => {
-        document.getElementById('login-overlay').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('login-overlay').remove();
-            document.getElementById('home-page').classList.remove('hidden');
-        }, 500);
+        const overlay = document.getElementById('login-overlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.remove();
+                document.getElementById('home-page').classList.remove('hidden');
+            }, 500);
+        }
     }, 2000);
 }
-
 // دالة إظهار الواجهة "الجزاز" (Glass Overlay)
 function showLoginOverlay() {
     if (document.getElementById('login-overlay')) return;
@@ -899,6 +901,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     homePage.classList.remove('hidden'); 
     showLoginOverlay(); 
 });
+				if (isAuth === 'true' && savedCode) {
+    homePage.classList.remove('hidden');
+    const n = localStorage.getItem('hoba_user_name') || "Student";
+    startWatermark(n, savedCode); // شغل البصمة فوراً للمشتركين
+    return;
+}
 
   </script>
   </div>
