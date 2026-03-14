@@ -903,60 +903,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 // دالة الواتر مارك المحسنة
 /* 1. حركة التعتيم والبلور القوي لو الطالب خرج من الصفحة (لو فتح برنامج تسجيل) */
+/* 1. تعديل حركة التعتيم (عشان متشتغلش غلط) */
 window.onblur = function() {
-    document.body.style.filter = "blur(40px) brightness(0.1)"; // تعتيم وبلور قاسي جداً
-    document.body.style.transition = "0.2s";
+    // هنخلي التعتيم يحصل بس لو فعلا الطالب ساب الصفحة
+    document.body.style.filter = "blur(40px) brightness(0.1)";
 };
-// جوه الـ DOMContentLoaded
-const savedName = localStorage.getItem('hoba_user_name');
 
-if (savedName) {
-    // لو الاسم متسجل.. شغله فوراً
-    startSilentWatermark(savedName, savedCode);
-} else {
-    // لو مش متسجل (حالة الـ Student).. روح هاته من الداتا بيس بسرعة
-    rtdb.ref('codes/' + savedCode).once('value').then(snapshot => {
-        const d = snapshot.val();
-        if (d && d.name) {
-            localStorage.setItem('hoba_user_name', d.name);
-            startSilentWatermark(d.name, savedCode);
-        }
-    });
-}
 window.onfocus = function() {
     document.body.style.filter = "none";
 };
 
-
-document.head.appendChild(style);
-
-/* 3. الواتر مارك "الشبح" (عشان العين متتعبش) */
+/* 2. تصحيح دالة الواتر مارك (الاسم اللي كان بيهرب) */
 function startSilentWatermark(name, phone) {
+    // لو فيه واتر مارك قديمة شيلها عشان ميتراكموش
+    const existing = document.getElementById('hoba-wm');
+    if (existing) existing.remove();
+
     const wm = document.createElement('div');
+    wm.id = 'hoba-wm';
     wm.innerHTML = `${name} <br> ${phone}`;
     wm.style.cssText = `
-        position: fixed; top: 10%; left: 10%;
-        z-index: 999999; 
-        color: rgba(255,255,255,0.07); /* شفافية شبحية مش هتتعب العين */
-        pointer-events: none; font-weight: bold; font-size: 15px;
-        user-select: none; transition: all 10s linear; /* حركة ناعمة جداً */
+        position: fixed; 
+        top: 20%; 
+        left: 20%;
+        z-index: 999999;  
+        color: rgba(255,255,255,0.1); 
+        pointer-events: none; 
+        font-weight: bold; 
+        font-size: 16px;
+        user-select: none; 
+        transition: all 5s ease-in-out; /* حركة أنعم */
     `;
     document.body.appendChild(wm);
     
-    // بيتحرك كل دقيقة مرة.. مش هيحسوا بيه
+    // الحركة العشوائية (تم تصحيح الأرقام لتبقى داخل الشاشة 0-90%)
     setInterval(() => {
-        wm.style.top = Math.random() * 1000 + '%';
-        wm.style.left = Math.random() * 1000 + '%';
-    }, 60000); 
+        const top = Math.floor(Math.random() * 85); 
+        const left = Math.floor(Math.random() * 85);
+        wm.style.top = top + '%';
+        wm.style.left = left + '%';
+    }, 30000); // يتحرك كل 30 ثانية
 }
 
-// تشغيل الواتر مارك الشبح
-setTimeout(() => {
-    const n = localStorage.getItem('hoba_user_name') || "Student";
-    const p = localStorage.getItem('hoba_user_id') || "0000";
-    startSilentWatermark(n, p);
-}, 3000);
+/* 3. تشغيل الواتر مارك بأمان */
+function initWatermark() {
+    const n = localStorage.getItem('hoba_user_name');
+    const p = localStorage.getItem('hoba_user_id');
+    
+    if (n && p) {
+        startSilentWatermark(n, p);
+    } else {
+        // لو الاسم لسه مجاش من الفيربيس، استنى ثانية وجرب تاني
+        setTimeout(initWatermark, 2000);
+    }
+}
 
+// ابدأ التشغيل
+initWatermark();
   </script>
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
