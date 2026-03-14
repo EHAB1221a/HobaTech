@@ -16,11 +16,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
   <style>
 
-    /* الحركة دي بتخلي الشاشة تسود أو تختفي في أغلب برامج التسجيل */
-#home-page {
-    isolation: isolate;
-}
-
 #home-page::after {
     content: "";
     position: fixed;
@@ -32,12 +27,6 @@
     opacity: 0; /* في العادي مش باينة */
 }
 
-/* لو الطالب حاول يطبع (Print) أو يسحب سكرين بطريقة معينة */
-@media screen and (min-width: 0px) {
-    .taking-screenshot #home-page::after {
-        opacity: 1;
-    }
-}
     * { font-family: 'Tajawal', sans-serif; }
     
     .subject-card {
