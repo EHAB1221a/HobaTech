@@ -957,7 +957,15 @@ function initWatermark() {
         setTimeout(initWatermark, 2000);
     }
 }
+if (isAuth === 'true') {
+        document.body.style.filter = "blur(60px) brightness(0.1)";
+        document.body.style.transition = "0.3s";
+    }
+};
 
+window.onfocus = function() {
+    document.body.style.filter = "none";
+};
 // ابدأ التشغيل
 initWatermark();
   </script>
