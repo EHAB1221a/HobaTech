@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
@@ -104,7 +105,24 @@
     .gradient-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
     .gradient-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
     .gradient-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+  
+   /* البلور اللي هيغطي الشاشة كلها */
+#login-overlay {
+    background: rgba(15, 23, 42, 0.6); /* لون غامق شفاف */
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* شكل الكارت نفسه جوه البلور */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
   </style>
+
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <style>body { box-sizing: border-box; }</style>
  </head>
@@ -697,6 +715,144 @@ updateAdminHeader();
 
 // وكمان ضيف السطر ده جوه دالة الـ loginAdmin بعد ما الباسورد يطلع صح:
 // updateAdminHeader();
+const rtdb = firebase.database();
+
+// دالة التحقق والدخول
+async function checkActivationCode() {
+    const userCode = document.getElementById('activation-code-input').value.trim();
+    const userPass = document.getElementById('activation-pass-input').value.trim();
+    const btn = document.querySelector('#login-overlay button');
+    
+    if (!userCode || !userPass) {
+        alert("يا مستشار كمل بياناتك! ");
+        return;
+    }
+
+    btn.innerHTML = "جاري التسجيل...⏳";
+    btn.disabled = true;
+
+    try {
+        const snapshot = await rtdb.ref('codes/' + userCode).once('value');
+        const studentData = snapshot.val();
+
+        if (studentData) {
+            // 1. التأكد من الباسورد
+            if (studentData.pass === userPass) {
+                
+                // 2. فحص حماية الجهاز (Device Lock)
+                const currentFingerprint = navigator.userAgent + navigator.language; // بصمة بسيطة للجهاز
+                
+                if (studentData.device && studentData.device !== "" && studentData.device !== currentFingerprint) {
+                    alert("❌ عفواً.. هذا الكود مسجل على جهاز آخر. تواصل مع الدعم.");
+                    btn.innerHTML = "دخول للمنصة";
+                    btn.disabled = false;
+                    return;
+                }
+
+                // 3. لو أول مرة يسجل، نربط الجهاز
+                if (!studentData.device || studentData.device === "") {
+                    await rtdb.ref('codes/' + userCode).update({ device: currentFingerprint });
+                }
+
+                // 4. الحفظ التلقائي (عشان ميسجلش تاني أبدًا)
+                localStorage.setItem('hoba_student_auth', 'true');
+                localStorage.setItem('hoba_user_id', userCode);
+                localStorage.setItem('hoba_user_name', studentData.name);
+                
+                showWelcomeAndEntry(studentData.name);
+
+            } else {
+                alert("❌ الباسورد غلط تواصل مع الادارة.");
+            }
+        } else {
+            alert("❌ خطأ في الكود اوكلمة السر تواصل مع الادارة.");
+        }
+    } catch (error) {
+        alert("فشل الاتصال: " + error.message);
+    } finally {
+        btn.innerHTML = "دخول للمنصة";
+        btn.disabled = false;
+    }
+}
+
+// دالة الترحيب الشيك والدخول
+function showWelcomeAndEntry(name) {
+    const card = document.querySelector('.glass-panel');
+    card.innerHTML = `
+        <div class="welcome-anim">
+            <div class="text-6xl mb-4">🎓</div>
+            <h2 class="text-3xl font-bold mb-2 text-amber-400">أهلاً بك</h2>
+            <p class="text-xl text-white mb-6">${name}</p>
+            <div class="loading-spinner mx-auto"></div>
+            <p class="text-sm text-gray-400 mt-4">جاري فتح مكتبتك الخاصة...</p>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        document.getElementById('login-overlay').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('login-overlay').remove();
+            document.getElementById('home-page').classList.remove('hidden');
+        }, 500);
+    }, 2000);
+}
+
+// دالة إظهار الواجهة "الجزاز" (Glass Overlay)
+function showLoginOverlay() {
+    if (document.getElementById('login-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = "login-overlay";
+    // هنا خليت الـ overlay هو اللي شايل البلور الأساسي للشاشة كلها
+    overlay.className = "fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-700";
+    
+    overlay.innerHTML = `
+        <div class="glass-panel max-w-sm w-full text-center welcome-anim">
+            <div class="relative inline-block mb-8">
+                <div class="absolute inset-0 bg-amber-500 blur-3xl opacity-30 animate-pulse"></div>
+                <img src="1769979851931.png" class="w-20 h-20 mx-auto relative z-10">
+            </div>
+            
+            <h2 class="text-3xl font-extrabold mb-2 text-white tracking-tight">منصة هوبا تيك</h2>
+            <p class="text-amber-200/70 text-sm mb-8 font-medium">معا نحو الافضل</p>
+            
+            <div class="space-y-4">
+                <input type="text" id="activation-code-input" 
+                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
+                       placeholder="رقم الكود ">
+                
+                <input type="password" id="activation-pass-input" 
+                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
+                       placeholder="كلمة السر">
+
+                <button onclick="checkActivationCode()" 
+                        class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 py-4 rounded-2xl font-bold text-lg text-slate-900 shadow-xl hover:shadow-amber-500/20 active:scale-95 transition-all mt-4">
+                    دخول للمكتبة
+                </button>
+            </div>
+            
+            <p class="text-[11px] text-gray-400 mt-8">جميع الحقوق محفوظة لمنصة هوبا تيك </p>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+
+// الفحص التلقائي عند فتح الصفحة
+// الفحص التلقائي (معدل للتجربة)
+document.addEventListener('DOMContentLoaded', () => {
+    // إحنا هنهمش (Comment) الجزء اللي بيدخله تلقائي عشان نجرب الواجهة
+    /*
+    const isAuth = localStorage.getItem('hoba_student_auth');
+    if (isAuth === 'true') {
+        document.getElementById('home-page').classList.remove('hidden');
+        return; 
+    }
+    */
+
+    // كدة هيفتح شاشة التسجيل دايماً حتى لو سجلت قبل كدة
+    document.getElementById('home-page').classList.remove('hidden'); 
+    showLoginOverlay();
+});
   </script>
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
