@@ -327,6 +327,7 @@
     // 1. استيراد مكتبات Firebase (المحرك الأساسي)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-messaging.js";
     // 2. إعدادات الربط بمشروعك (HOBA-TECH)
     const firebaseConfig = {
         apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
@@ -390,9 +391,15 @@ if (savedUser === 'true') {
                     m.innerText = "تم التحقق.. أهلاً يا " + userData.name;
                     localStorage.setItem('subscriberName', userData.name);
                     
-                  
+                    setTimeout(() => {
+                        location.href = "داش 4.html";
+                    }, 1500);
 
-               } else {
+                    // --- السطور الجديدة للحفظ التلقائي ---
+localStorage.setItem('isLoggedIn', 'true'); 
+localStorage.setItem('subscriberName', userData.name);
+localStorage.setItem('userSerial', code); // اختياري لو محتاج السيريال بعدين
+                } else {
                     m.style.color = "#ff4444";
                     m.innerText = "كلمة السر غير صحيحة!";
                 }
