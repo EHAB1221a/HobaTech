@@ -714,45 +714,36 @@ function updateAdminHeader() {
 
 // 3. ⚠️ أهم سطر: لازم تنادي على الدالة دي عشان تشتغل أول ما الصفحة تفتح
 updateAdminHeader();
-const rtdb = getDatabase();
-<script>
-let watermarkInterval;
+const rtdb = firebase.database();
 
+// 1. دالة الواتر مارك (البصمة المتحركة)
 function startWatermark(studentName, studentPhone) {
-    // لو موجودة قبل كدة امسحها عشان متكررش
     const oldWatermark = document.getElementById('hoba-watermark');
     if (oldWatermark) oldWatermark.remove();
-    if (watermarkInterval) clearInterval(watermarkInterval);
 
     const watermark = document.createElement('div');
     watermark.id = 'hoba-watermark';
     watermark.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        pointer-events: none;
-        z-index: 999999;
+        position: fixed; top: 20%; left: 20%;
+        pointer-events: none; z-index: 999999;
         color: rgba(255, 255, 255, 0.15);
-        font-size: 16px;
-        font-family: sans-serif;
-        font-weight: bold;
-        white-space: nowrap;
-        user-select: none;
+        font-size: 16px; font-family: sans-serif; font-weight: bold;
+        white-space: nowrap; user-select: none;
         transition: all 2s ease-in-out;
         text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
     `;
     watermark.innerHTML = `${studentName} - ${studentPhone}`;
     document.body.appendChild(watermark);
 
-    // حركة عشوائية كل 4 ثواني
-    watermarkInterval = setInterval(() => {
+    setInterval(() => {
         const x = Math.random() * (window.innerWidth - 150);
         const y = Math.random() * (window.innerHeight - 50);
-        watermark.style.left = `${x}px`;
-        watermark.style.top = `${y}px`;
+        watermark.style.left = x + 'px';
+        watermark.style.top = y + 'px';
     }, 4000);
 }
 
+// 2. دالة التحقق من الكود (الزرار)
 async function checkActivationCode() {
     const userCode = document.getElementById('activation-code-input').value.trim();
     const userPass = document.getElementById('activation-pass-input').value.trim();
@@ -767,45 +758,38 @@ async function checkActivationCode() {
         const snapshot = await rtdb.ref('codes/' + userCode).once('value');
         const studentData = snapshot.val();
 
-        if (studentData) {
-            if (studentData.pass === userPass) {
-                const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
-                const d1 = studentData.device || "";
-                const d2 = studentData.device2 || "";
+        if (studentData && studentData.pass === userPass) {
+            const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
+            const d1 = studentData.device || "";
+            const d2 = studentData.device2 || "";
 
-                if (currentFP === d1 || currentFP === d2) {
-                    proceedLogin(studentData.name, userCode);
-                    return;
-                }
+            if (currentFP === d1 || currentFP === d2 || d1 === "" || d2 === "") {
+                // تحديث الجهاز لو جديد
+                if (d1 === "" && currentFP !== d2) await rtdb.ref('codes/' + userCode).update({ device: currentFP });
+                else if (d2 === "" && currentFP !== d1) await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
 
-                if (d1 === "") {
-                    await rtdb.ref('codes/' + userCode).update({ device: currentFP });
-                    proceedLogin(studentData.name, userCode);
-                } else if (d2 === "") {
-                    await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
-                    proceedLogin(studentData.name, userCode);
-                } else {
-                    alert("❌ الكود مسجل على جهازين بالفعل!");
-                    btn.innerHTML = "دخول للمكتبة";
-                    btn.disabled = false;
-                }
-            } else { alert("❌ الباسورد خطأ."); btn.disabled = false; btn.innerHTML = "دخول"; }
-        } else { alert("❌ الكود غير موجود."); btn.disabled = false; btn.innerHTML = "دخول"; }
-    } catch (error) { alert("خطأ في السيرفر."); btn.disabled = false; }
+                // حفظ البيانات والدخول
+                localStorage.setItem('hoba_student_auth', 'true');
+                localStorage.setItem('hoba_user_name', studentData.name);
+                localStorage.setItem('hoba_user_id', userCode);
+                
+                showWelcomeAndEntry(studentData.name, userCode);
+            } else {
+                alert("❌ الكود مسجل على جهازين آخرين!");
+                btn.innerHTML = "دخول للمكتبة"; btn.disabled = false;
+            }
+        } else {
+            alert("❌ الكود أو الباسورد خطأ!");
+            btn.innerHTML = "دخول"; btn.disabled = false;
+        }
+    } catch (error) { 
+        alert("خطأ في الاتصال بالسيرفر"); 
+        btn.disabled = false; 
+    }
 }
 
-function proceedLogin(name, code) {
-    localStorage.setItem('hoba_student_auth', 'true');
-    localStorage.setItem('hoba_user_name', name);
-    localStorage.setItem('hoba_user_id', code);
-
-    showWelcomeAndEntry(name);
-
-    // تشغيل الواتر مارك فوراً
-    startWatermark(name, code);
-}
-
-function showWelcomeAndEntry(name) {
+// 3. دالة الترحيب والدخول
+function showWelcomeAndEntry(name, code) {
     const card = document.querySelector('.glass-panel');
     card.innerHTML = `
         <div class="welcome-anim">
@@ -813,7 +797,6 @@ function showWelcomeAndEntry(name) {
             <h2 class="text-3xl font-bold mb-2 text-amber-400">أهلاً بك</h2>
             <p class="text-xl text-white mb-6">${name}</p>
             <div class="loading-spinner mx-auto"></div>
-            <p class="text-sm text-gray-400 mt-4">جاري فتح مكتبتك الخاصة...</p>
         </div>
     `;
     
@@ -824,65 +807,43 @@ function showWelcomeAndEntry(name) {
             setTimeout(() => {
                 overlay.remove();
                 document.getElementById('home-page').classList.remove('hidden');
+                startWatermark(name, code); // تشغيل البصمة
             }, 500);
         }
     }, 2000);
 }
 
+// 4. إظهار الواجهة الجزاز
 function showLoginOverlay() {
     if (document.getElementById('login-overlay')) return;
-
     const overlay = document.createElement('div');
     overlay.id = "login-overlay";
-    overlay.className = "fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-700";
-    
+    overlay.className = "fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-700 bg-slate-950/80 backdrop-blur-xl";
     overlay.innerHTML = `
-        <div class="glass-panel max-w-sm w-full text-center welcome-anim">
-            <div class="relative inline-block mb-8">
-                <div class="absolute inset-0 bg-amber-500 blur-3xl opacity-30 animate-pulse"></div>
-                <img src="1769979851931.png" class="w-20 h-20 mx-auto relative z-10">
-            </div>
-            
-            <h2 class="text-3xl font-extrabold mb-2 text-white tracking-tight">منصة هوبا تيك</h2>
-            <p class="text-amber-200/70 text-sm mb-8 font-medium">معا نحو الافضل</p>
-            
+        <div class="glass-panel max-w-sm w-full text-center welcome-anim p-8 rounded-3xl border border-white/10 bg-white/5 shadow-2xl">
+            <img src="1769979851931.png" class="w-20 h-20 mx-auto mb-6">
+            <h2 class="text-2xl font-bold text-white mb-6">منصة هوبا تيك</h2>
             <div class="space-y-4">
-                <input type="text" id="activation-code-input" placeholder="رقم الكود " 
-                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
-                
-                <input type="password" id="activation-pass-input" placeholder="كلمة السر"
-                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
-
-                <button onclick="checkActivationCode()" 
-                        class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 py-4 rounded-2xl font-bold text-lg text-slate-900 shadow-xl hover:shadow-amber-500/20 active:scale-95 transition-all mt-4">
-                    دخول للمكتبة
-                </button>
+                <input type="text" id="activation-code-input" class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-center text-white" placeholder="رقم الكود">
+                <input type="password" id="activation-pass-input" class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-center text-white" placeholder="كلمة السر">
+                <button onclick="checkActivationCode()" class="w-full bg-amber-500 py-4 rounded-xl font-bold text-slate-900 mt-4">دخول للمكتبة</button>
             </div>
-            
-            <p class="text-[11px] text-gray-400 mt-8">جميع الحقوق محفوظة لمنصة هوبا تيك </p>
-        </div>
-    `;
+        </div>`;
     document.body.appendChild(overlay);
 }
 
+// 5. التشغيل عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
-    const homePage = document.getElementById('home-page');
     const isAuth = localStorage.getItem('hoba_student_auth');
     const savedCode = localStorage.getItem('hoba_user_id');
+    const savedName = localStorage.getItem('hoba_user_name');
 
-    if (isAuth === 'true' && savedCode) {
-        homePage.classList.remove('hidden');
-        const n = localStorage.getItem('hoba_user_name') || "Student";
-        startWatermark(n, savedCode);
-        // تحقق سريع بالخلفية
-        rtdb.ref('codes/' + savedCode).once('value').then(snapshot => {
-            if (!snapshot.val()) { localStorage.clear(); location.reload(); }
-        });
-        return;
+    if (isAuth === 'true' && savedCode && savedName) {
+        document.getElementById('home-page').classList.remove('hidden');
+        startWatermark(savedName, savedCode);
+    } else {
+        showLoginOverlay();
     }
-
-    homePage.classList.remove('hidden');
-    showLoginOverlay();
 });
   </script>
   </div>
