@@ -853,6 +853,12 @@ function showLoginOverlay() {
             <p class="text-[11px] text-gray-400 mt-8">جميع الحقوق محفوظة لمنصة هوبا تيك </p>
         </div>
     `;
+  document.body.appendChild(overlay);
+}
+document.addEventListener('DOMContentLoaded', async () => {
+    const homePage = document.getElementById('home-page');
+    const isAuth = localStorage.getItem('hoba_student_auth');
+    const savedCode = localStorage.getItem('hoba_user_id');
 
 // 5. التشغيل عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
