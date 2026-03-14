@@ -834,35 +834,30 @@ function showLoginOverlay() {
     `;
     document.body.appendChild(overlay);
 }
-
 document.addEventListener('DOMContentLoaded', async () => {
-    // في البداية بنخفي كل حاجة عشان البلور يبان شيك
     const homePage = document.getElementById('home-page');
-    homePage.classList.add('hidden');
-
     const isAuth = localStorage.getItem('hoba_student_auth');
     const savedCode = localStorage.getItem('hoba_user_id');
 
+    // لو الطالب مسجل قبل كدة (عنده العلامة الخضراء في المتصفح)
     if (isAuth === 'true' && savedCode) {
-        try {
-            const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
-            const snapshot = await rtdb.ref('codes/' + savedCode).once('value');
+        // بنفتح له المنصة فوراً عشان م يحسش ببطء
+        homePage.classList.remove('hidden');
+        console.log("Welcome back, Chief!");
+        
+        // فحص "خلفي" سريع للتأكد إن الكود لسه شغال (بدون ما نعطل الطالب)
+        rtdb.ref('codes/' + savedCode).once('value').then(snapshot => {
             const studentData = snapshot.val();
-
-            if (studentData) {
-                const d1 = studentData.device || "";
-                const d2 = studentData.device2 || "";
-
-                if (currentFP === d1 || currentFP === d2) {
-                    // لو تمام.. بنظهر المكتبة فوراً وبدون شاشة دخول
-                    homePage.classList.remove('hidden');
-                    return; 
-                }
+            if (!studentData) {
+                // لو الكود اتمسح من الداتا بيس مثلاً.. نطرده
+                localStorage.clear();
+                location.reload();
             }
-        } catch (e) { console.log("Auto-login skip"); }
+        });
+        return; // بننهي الدالة هنا ونخليه جوه المنصة
     }
 
-    // لو مفيش دخول تلقائي.. بنظهر المكتبة "ورا" البلور (عشان البلور يشتغل صح)
+    // لو مفيش بيانات تسجيل.. اظهر الواجهة الجزاز
     homePage.classList.remove('hidden'); 
     showLoginOverlay(); 
 });
@@ -870,6 +865,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
