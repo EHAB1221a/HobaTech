@@ -778,19 +778,17 @@ async function checkActivationCode() {
                 localStorage.setItem('hoba_user_id', userCode);
                 
                 showWelcomeAndEntry(studentData.name, userCode);
-            } else {
-                alert("❌ الكود مسجل على جهازين آخرين!");
-                btn.innerHTML = "دخول للمكتبة"; btn.disabled = false;
-            }
-        } else {
-            alert("❌ الكود أو الباسورد خطأ!");
-            btn.innerHTML = "دخول"; btn.disabled = false;
-        }
-    } catch (error) { 
-        alert("خطأ في الاتصال بالسيرفر"); 
-        btn.disabled = false; 
-    }
+             else {
+                    alert("❌ الكود مسجل على جهازين بالفعل!");
+                    btn.innerHTML = "دخول للمكتبة";
+                    btn.disabled = false;
+                }
+
+            } else { alert("❌كلمة  السر غير صححة."); btn.disabled = false; btn.innerHTML = "دخول"; }
+        } else { alert("❌ هذا الكود غير مسجل لدينا تواصل مع الدعم الفني."); btn.disabled = false; btn.innerHTML = "دخول"; }
+    } catch (error) { alert("خطأ في السيرفر."); btn.disabled = false; }
 }
+
 
 // 3. دالة الترحيب والدخول
 // 2. دالة الترحيب (مظبوطة)
