@@ -327,7 +327,6 @@
     // 1. استيراد مكتبات Firebase (المحرك الأساسي)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
-    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-messaging.js";
     // 2. إعدادات الربط بمشروعك (HOBA-TECH)
     const firebaseConfig = {
         apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
@@ -339,7 +338,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const messaging = getMessaging(app);
     // فحص تلقائي: لو المستخدم مسجل قبل كده، ويه على الداشبورد فوراً
 const savedUser = localStorage.getItem('isLoggedIn');
 if (savedUser === 'true') {
@@ -414,27 +412,7 @@ localStorage.setItem('userSerial', code); // اختياري لو محتاج ال
         }
     };
  
-// تسجيل FCM Token لكل مستخدم بعد الدخول
-Notification.requestPermission().then(permission => {
-    if (permission === "granted") {
-        getToken(messaging, { vapidKey: "BMNk4O4d-IEFU_yg_WBMc02PlIeBnKQvkhh5_T8PlFJqVMXjAN1Qg3QHL0L32IoJNRMGOYrTFXgVB6R6xii4qbEده" })
-        .then((currentToken) => {
-            if (currentToken) {
-                console.log("Token المستخدم:", currentToken);
-                // احفظه في قاعدة البيانات جنب الكود أو المستخدم
-                const userSerial = localStorage.getItem('userSerial');
-                if(userSerial){
-                    update(ref(db, 'codes/' + userSerial), { fcmToken: currentToken });
-                }
-            } else {
-                console.log("لم يتم الحصول على token");
-            }
-        })
-        .catch((err) => { console.log("خطأ في الحصول على token:", err); });
-    } else {
-        console.log("المستخدم رفض الإشعارات ❌");
-    }
-});
+
     // 4. محرك الخلفية النيون (الأنميشن)
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
