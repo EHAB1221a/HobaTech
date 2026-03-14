@@ -927,20 +927,7 @@ window.onfocus = function() {
     document.body.style.filter = "none";
 };
 
-/* 2. منع تصوير الشاشة (بقدر الإمكان في الويب) وتسويدها عند الطباعة */
-const style = document.createElement('style');
-style.innerHTML = `
-    @media print {
-        body { display: none !important; }
-    }
-    /* منع تحديد النصوص والصور تماماً */
-    body {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-`;
+
 document.head.appendChild(style);
 
 /* 3. الواتر مارك "الشبح" (عشان العين متتعبش) */
