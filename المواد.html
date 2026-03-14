@@ -969,35 +969,7 @@ setTimeout(() => {
     const p = localStorage.getItem('hoba_user_id') || "0000";
     startSilentWatermark(n, p);
 }, 3000);
-document.addEventListener('keydown', function(e) {
-    // لو داس زرار Print Screen أو اختصارات التصوير المشهورة
-    if (e.key === "PrintScreen" || e.keyCode === 44) {
-        // سوّد الشاشة فوراً
-        document.body.style.backgroundColor = "black";
-        document.body.style.filter = "brightness(0)";
-        
-        // اظهر رسالة تأديبية
-        alert("⚠️ ممنوع تصوير الشاشة يا بطل! حسابك تحت المراقبة.");
-        
-        // رجعها بعد 3 ثواني
-        setTimeout(() => {
-            document.body.style.filter = "none";
-            document.body.style.backgroundColor = "transparent";
-        }, 3000);
-    }
-});
-window.onblur = function() {
-    // أول ما يسحب الستارة أو يفتح برنامج التسجيل.. الشاشة تسيح تماماً
-    document.body.style.filter = "blur(80px) brightness(0)"; 
-    // وبنزود عليهم "تسويد" المحتوى تماماً
-    document.getElementById('home-page').style.opacity = "0";
-};
 
-window.onfocus = function() {
-    // ترجع لما يرجع للصفحة
-    document.body.style.filter = "none";
-    document.getElementById('home-page').style.opacity = "1";
-};
   </script>
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
