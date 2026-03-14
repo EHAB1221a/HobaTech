@@ -412,6 +412,7 @@ localStorage.setItem('userSerial', code); // اختياري لو محتاج ال
             m.innerText = "خطأ في الاتصال بقاعدة البيانات!";
         }
     };
+    const messaging = getMessaging(app);
  
 // تسجيل FCM Token لكل مستخدم بعد الدخول
 Notification.requestPermission().then(permission => {
