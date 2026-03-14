@@ -15,6 +15,29 @@
   <script src="/_sdk/element_sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
   <style>
+
+    /* الحركة دي بتخلي الشاشة تسود أو تختفي في أغلب برامج التسجيل */
+#home-page {
+    isolation: isolate;
+}
+
+#home-page::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: black;
+    z-index: 999999;
+    mix-blend-mode: difference; /* دي المعجزة: بتخلي الشاشة سودة في التصوير */
+    pointer-events: none;
+    opacity: 0; /* في العادي مش باينة */
+}
+
+/* لو الطالب حاول يطبع (Print) أو يسحب سكرين بطريقة معينة */
+@media screen and (min-width: 0px) {
+    .taking-screenshot #home-page::after {
+        opacity: 1;
+    }
+}
     * { font-family: 'Tajawal', sans-serif; }
     
     .subject-card {
@@ -158,7 +181,10 @@
    <div class="flex flex-wrap justify-center gap-4 text-sm">
     <a href="داش 4.html"><div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
             <span class="text-green-400">🏫</span> <span> الرجوع للصفحة الرئيسية</span>
-           </div></a> 
+         </div></a> 
+         <a href="الاختبارات.html"><div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+            <span class="text-green-400">🎓</span> <span> اختبر نفسك</span>
+         </div></a> 
     <div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
         <span class="text-green-400">✓</span> <span> مواد</span>
        </div>
@@ -716,6 +742,39 @@ updateAdminHeader();
 // وكمان ضيف السطر ده جوه دالة الـ loginAdmin بعد ما الباسورد يطلع صح:
 // updateAdminHeader();
 const rtdb = firebase.database();
+function startWatermark(studentName, studentPhone) {
+    // لو موجودة قبل كدة امسحها عشان متكررش
+    const oldWatermark = document.getElementById('hoba-watermark');
+    if (oldWatermark) oldWatermark.remove();
+
+    const watermark = document.createElement('div');
+    watermark.id = 'hoba-watermark';
+    watermark.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        pointer-events: none;
+        z-index: 999999;
+        color: rgba(255, 255, 255, 0.15); /* شفافية هادية جداً */
+        font-size: 16px;
+        font-family: sans-serif;
+        font-weight: bold;
+        white-space: nowrap;
+        user-select: none;
+        transition: all 2s ease-in-out;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    `;
+    watermark.innerHTML = `${studentName} - ${studentPhone}`;
+    document.body.appendChild(watermark);
+
+    // حركة عشوائية كل 4 ثواني
+    setInterval(() => {
+        const x = Math.random() * (window.innerWidth - 150);
+        const y = Math.random() * (window.innerHeight - 50);
+        watermark.style.left = `${x}px`;
+        watermark.style.top = `${y}px`;
+    }, 4000);
+}
 
 async function checkActivationCode() {
     const userCode = document.getElementById('activation-code-input').value.trim();
@@ -863,6 +922,88 @@ document.addEventListener('DOMContentLoaded', async () => {
     homePage.classList.remove('hidden'); 
     showLoginOverlay(); 
 });
+// دالة الواتر مارك المحسنة
+/* 1. حركة التعتيم والبلور القوي لو الطالب خرج من الصفحة (لو فتح برنامج تسجيل) */
+window.onblur = function() {
+    document.body.style.filter = "blur(40px) brightness(0.1)"; // تعتيم وبلور قاسي جداً
+    document.body.style.transition = "0.2s";
+};
+
+window.onfocus = function() {
+    document.body.style.filter = "none";
+};
+
+/* 2. منع تصوير الشاشة (بقدر الإمكان في الويب) وتسويدها عند الطباعة */
+const style = document.createElement('style');
+style.innerHTML = `
+    @media print {
+        body { display: none !important; }
+    }
+    /* منع تحديد النصوص والصور تماماً */
+    body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+`;
+document.head.appendChild(style);
+
+/* 3. الواتر مارك "الشبح" (عشان العين متتعبش) */
+function startSilentWatermark(name, phone) {
+    const wm = document.createElement('div');
+    wm.innerHTML = `${name} <br> ${phone}`;
+    wm.style.cssText = `
+        position: fixed; top: 10%; left: 10%;
+        z-index: 999999; 
+        color: rgba(255,255,255,0.07); /* شفافية شبحية مش هتتعب العين */
+        pointer-events: none; font-weight: bold; font-size: 15px;
+        user-select: none; transition: all 10s linear; /* حركة ناعمة جداً */
+    `;
+    document.body.appendChild(wm);
+    
+    // بيتحرك كل دقيقة مرة.. مش هيحسوا بيه
+    setInterval(() => {
+        wm.style.top = Math.random() * 1000 + '%';
+        wm.style.left = Math.random() * 1000 + '%';
+    }, 60000); 
+}
+
+// تشغيل الواتر مارك الشبح
+setTimeout(() => {
+    const n = localStorage.getItem('hoba_user_name') || "Student";
+    const p = localStorage.getItem('hoba_user_id') || "0000";
+    startSilentWatermark(n, p);
+}, 3000);
+document.addEventListener('keydown', function(e) {
+    // لو داس زرار Print Screen أو اختصارات التصوير المشهورة
+    if (e.key === "PrintScreen" || e.keyCode === 44) {
+        // سوّد الشاشة فوراً
+        document.body.style.backgroundColor = "black";
+        document.body.style.filter = "brightness(0)";
+        
+        // اظهر رسالة تأديبية
+        alert("⚠️ ممنوع تصوير الشاشة يا بطل! حسابك تحت المراقبة.");
+        
+        // رجعها بعد 3 ثواني
+        setTimeout(() => {
+            document.body.style.filter = "none";
+            document.body.style.backgroundColor = "transparent";
+        }, 3000);
+    }
+});
+window.onblur = function() {
+    // أول ما يسحب الستارة أو يفتح برنامج التسجيل.. الشاشة تسيح تماماً
+    document.body.style.filter = "blur(80px) brightness(0)"; 
+    // وبنزود عليهم "تسويد" المحتوى تماماً
+    document.getElementById('home-page').style.opacity = "0";
+};
+
+window.onfocus = function() {
+    // ترجع لما يرجع للصفحة
+    document.body.style.filter = "none";
+    document.getElementById('home-page').style.opacity = "1";
+};
   </script>
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
