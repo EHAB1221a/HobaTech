@@ -789,7 +789,8 @@ async function checkActivationCode() {
 }
 
 // 3. دالة الترحيب والدخول
-function showWelcomeAndEntry(name, code) {
+// 2. دالة الترحيب (مظبوطة)
+function showWelcomeAndEntry(name) {
     const card = document.querySelector('.glass-panel');
     card.innerHTML = `
         <div class="welcome-anim">
@@ -797,8 +798,10 @@ function showWelcomeAndEntry(name, code) {
             <h2 class="text-3xl font-bold mb-2 text-amber-400">أهلاً بك</h2>
             <p class="text-xl text-white mb-6">${name}</p>
             <div class="loading-spinner mx-auto"></div>
+            <p class="text-sm text-gray-400 mt-4">جاري فتح مكتبتك الخاصة...</p>
         </div>
     `;
+    
     
     setTimeout(() => {
         const overlay = document.getElementById('login-overlay');
