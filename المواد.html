@@ -724,11 +724,11 @@ async function checkActivationCode() {
     const btn = document.querySelector('#login-overlay button');
     
     if (!userCode || !userPass) {
-        alert("يا مستشار كمل بياناتك! ");
+        alert("يا مستشار كمل بياناتك! 🧐");
         return;
     }
 
-    btn.innerHTML = "جاري التسجيل...⏳";
+    btn.innerHTML = "⏳ جاري الفحص...";
     btn.disabled = true;
 
     try {
@@ -736,36 +736,41 @@ async function checkActivationCode() {
         const studentData = snapshot.val();
 
         if (studentData) {
-            // 1. التأكد من الباسورد
             if (studentData.pass === userPass) {
                 
-                // 2. فحص حماية الجهاز (Device Lock)
-                const currentFingerprint = navigator.userAgent + navigator.language; // بصمة بسيطة للجهاز
+                // --- الحل هنا: نظام البصمة الثابتة ---
+                let myDeviceID = localStorage.getItem('hoba_device_id');
                 
-                if (studentData.device && studentData.device !== "" && studentData.device !== currentFingerprint) {
-                    alert("❌ عفواً.. هذا الكود مسجل على جهاز آخر. تواصل مع الدعم.");
+                // لو المتصفح معندوش ID بنعمله واحد جديد
+                if (!myDeviceID) {
+                    myDeviceID = 'dev-' + Math.random().toString(36).substr(2, 9) + Date.now();
+                }
+
+                // فحص هل الكود مربوط بجهاز آخر في الداتا بيس؟
+                if (studentData.device && studentData.device !== "" && studentData.device !== myDeviceID) {
+                    alert("❌ عفواً.. هذا الكود مسجل على جهاز آخر.");
                     btn.innerHTML = "دخول للمنصة";
                     btn.disabled = false;
                     return;
                 }
 
-                // 3. لو أول مرة يسجل، نربط الجهاز
+                // لو الجهاز سليم أو أول مرة، بنحدث البيانات
                 if (!studentData.device || studentData.device === "") {
-                    await rtdb.ref('codes/' + userCode).update({ device: currentFingerprint });
+                    await rtdb.ref('codes/' + userCode).update({ device: myDeviceID });
                 }
-
-                // 4. الحفظ التلقائي (عشان ميسجلش تاني أبدًا)
+                
+                // حفظ الـ ID في المتصفح عشان يفضل ثابت في كل صفحاتك
+                localStorage.setItem('hoba_device_id', myDeviceID);
                 localStorage.setItem('hoba_student_auth', 'true');
                 localStorage.setItem('hoba_user_id', userCode);
-                localStorage.setItem('hoba_user_name', studentData.name);
                 
                 showWelcomeAndEntry(studentData.name);
 
             } else {
-                alert("❌ الباسورد غلط تواصل مع الادارة.");
+                alert("❌ الباسورد غلط.");
             }
         } else {
-            alert("❌ خطأ في الكود اوكلمة السر تواصل مع الادارة.");
+            alert("❌ الكود غير موجود.");
         }
     } catch (error) {
         alert("فشل الاتصال: " + error.message);
@@ -774,7 +779,6 @@ async function checkActivationCode() {
         btn.disabled = false;
     }
 }
-
 // دالة الترحيب الشيك والدخول
 function showWelcomeAndEntry(name) {
     const card = document.querySelector('.glass-panel');
