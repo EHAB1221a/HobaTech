@@ -717,11 +717,13 @@ updateAdminHeader();
 
 // وكمان ضيف السطر ده جوه دالة الـ loginAdmin بعد ما الباسورد يطلع صح:
 // updateAdminHeader();
-const rtdb = firebase.database();
+let watermarkInterval;
+
 function startWatermark(studentName, studentPhone) {
     // لو موجودة قبل كدة امسحها عشان متكررش
     const oldWatermark = document.getElementById('hoba-watermark');
     if (oldWatermark) oldWatermark.remove();
+    if (watermarkInterval) clearInterval(watermarkInterval);
 
     const watermark = document.createElement('div');
     watermark.id = 'hoba-watermark';
@@ -731,7 +733,7 @@ function startWatermark(studentName, studentPhone) {
         left: 50%;
         pointer-events: none;
         z-index: 999999;
-        color: rgba(255, 255, 255, 0.15); /* شفافية هادية جداً */
+        color: rgba(255, 255, 255, 0.15);
         font-size: 16px;
         font-family: sans-serif;
         font-weight: bold;
@@ -744,7 +746,7 @@ function startWatermark(studentName, studentPhone) {
     document.body.appendChild(watermark);
 
     // حركة عشوائية كل 4 ثواني
-    setInterval(() => {
+    watermarkInterval = setInterval(() => {
         const x = Math.random() * (window.innerWidth - 150);
         const y = Math.random() * (window.innerHeight - 50);
         watermark.style.left = `${x}px`;
@@ -772,46 +774,38 @@ async function checkActivationCode() {
                 const d1 = studentData.device || "";
                 const d2 = studentData.device2 || "";
 
-                // لو الجهاز سليم.. خزن البيانات وادخل
                 if (currentFP === d1 || currentFP === d2) {
-                    proceedLogin(studentData.name, userCode); // بعتنا الاسم والكود هنا
+                    proceedLogin(studentData.name, userCode);
                     return;
                 }
 
                 if (d1 === "") {
                     await rtdb.ref('codes/' + userCode).update({ device: currentFP });
                     proceedLogin(studentData.name, userCode);
-                } 
-                else if (d2 === "") {
+                } else if (d2 === "") {
                     await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
                     proceedLogin(studentData.name, userCode);
-                } 
-                else {
+                } else {
                     alert("❌ الكود مسجل على جهازين بالفعل!");
                     btn.innerHTML = "دخول للمكتبة";
                     btn.disabled = false;
                 }
-
             } else { alert("❌ الباسورد خطأ."); btn.disabled = false; btn.innerHTML = "دخول"; }
         } else { alert("❌ الكود غير موجود."); btn.disabled = false; btn.innerHTML = "دخول"; }
     } catch (error) { alert("خطأ في السيرفر."); btn.disabled = false; }
 }
 
-// 1. الدالة دي هي اللي "بتصم" البيانات في ذاكرة المتصفح
 function proceedLogin(name, code) {
     localStorage.setItem('hoba_student_auth', 'true');
-    localStorage.setItem('hoba_user_name', name); // عشان الواتر مارك تظهر صح
-    localStorage.setItem('hoba_user_id', code);   // عشان الدخول التلقائي
-    
+    localStorage.setItem('hoba_user_name', name);
+    localStorage.setItem('hoba_user_id', code);
+
     showWelcomeAndEntry(name);
-    
+
     // تشغيل الواتر مارك فوراً
-    if (typeof startWatermark === "function") {
-        startWatermark(name, code);
-    }
+    startWatermark(name, code);
 }
 
-// 2. دالة الترحيب (مظبوطة)
 function showWelcomeAndEntry(name) {
     const card = document.querySelector('.glass-panel');
     card.innerHTML = `
@@ -835,13 +829,12 @@ function showWelcomeAndEntry(name) {
         }
     }, 2000);
 }
-// دالة إظهار الواجهة "الجزاز" (Glass Overlay)
+
 function showLoginOverlay() {
     if (document.getElementById('login-overlay')) return;
 
     const overlay = document.createElement('div');
     overlay.id = "login-overlay";
-    // هنا خليت الـ overlay هو اللي شايل البلور الأساسي للشاشة كلها
     overlay.className = "fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-700";
     
     overlay.innerHTML = `
@@ -855,13 +848,11 @@ function showLoginOverlay() {
             <p class="text-amber-200/70 text-sm mb-8 font-medium">معا نحو الافضل</p>
             
             <div class="space-y-4">
-                <input type="text" id="activation-code-input" 
-                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
-                       placeholder="رقم الكود ">
+                <input type="text" id="activation-code-input" placeholder="رقم الكود " 
+                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
                 
-                <input type="password" id="activation-pass-input" 
-                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
-                       placeholder="كلمة السر">
+                <input type="password" id="activation-pass-input" placeholder="كلمة السر"
+                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all">
 
                 <button onclick="checkActivationCode()" 
                         class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 py-4 rounded-2xl font-bold text-lg text-slate-900 shadow-xl hover:shadow-amber-500/20 active:scale-95 transition-all mt-4">
@@ -874,40 +865,26 @@ function showLoginOverlay() {
     `;
     document.body.appendChild(overlay);
 }
-document.addEventListener('DOMContentLoaded', async () => {
+
+document.addEventListener('DOMContentLoaded', () => {
     const homePage = document.getElementById('home-page');
     const isAuth = localStorage.getItem('hoba_student_auth');
     const savedCode = localStorage.getItem('hoba_user_id');
 
-    // لو الطالب مسجل قبل كدة (عنده العلامة الخضراء في المتصفح)
     if (isAuth === 'true' && savedCode) {
-        // بنفتح له المنصة فوراً عشان م يحسش ببطء
         homePage.classList.remove('hidden');
-        console.log("Welcome back, Chief!");
-        
-        // فحص "خلفي" سريع للتأكد إن الكود لسه شغال (بدون ما نعطل الطالب)
+        const n = localStorage.getItem('hoba_user_name') || "Student";
+        startWatermark(n, savedCode);
+        // تحقق سريع بالخلفية
         rtdb.ref('codes/' + savedCode).once('value').then(snapshot => {
-            const studentData = snapshot.val();
-            if (!studentData) {
-                // لو الكود اتمسح من الداتا بيس مثلاً.. نطرده
-                localStorage.clear();
-                location.reload();
-            }
+            if (!snapshot.val()) { localStorage.clear(); location.reload(); }
         });
-        return; // بننهي الدالة هنا ونخليه جوه المنصة
+        return;
     }
 
-    // لو مفيش بيانات تسجيل.. اظهر الواجهة الجزاز
-    homePage.classList.remove('hidden'); 
-    showLoginOverlay(); 
-});
-				if (isAuth === 'true' && savedCode) {
     homePage.classList.remove('hidden');
-    const n = localStorage.getItem('hoba_user_name') || "Student";
-    startWatermark(n, savedCode); // شغل البصمة فوراً للمشتركين
-    return;
-}
-
+    showLoginOverlay();
+});
   </script>
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
