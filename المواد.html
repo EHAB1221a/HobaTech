@@ -815,18 +815,17 @@ function showWelcomeAndEntry(name) {
         }
     }, 2000);
 }
-
-// دالة إظهار الواجهة "الجزاز" (Glass Overlay)
+// 2. دالة إظهار الواجهة الجزاز (كاملة كما أرسلتها مع تعديل بسيط للربط)
 function showLoginOverlay() {
     if (document.getElementById('login-overlay')) return;
 
     const overlay = document.createElement('div');
     overlay.id = "login-overlay";
-    // هنا خليت الـ overlay هو اللي شايل البلور الأساسي للشاشة كلها
-    overlay.className = "fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-700";
+    // إضافة الـ Backdrop Blur هنا عشان يسود ويغبش اللي وراه بجد
+    overlay.className = "fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-700 bg-slate-950/60 backdrop-blur-2xl";
     
     overlay.innerHTML = `
-        <div class="glass-panel max-w-sm w-full text-center welcome-anim">
+        <div class="glass-panel max-w-sm w-full text-center welcome-anim p-8 border border-white/10 rounded-[2rem] bg-white/5 shadow-2xl">
             <div class="relative inline-block mb-8">
                 <div class="absolute inset-0 bg-amber-500 blur-3xl opacity-30 animate-pulse"></div>
                 <img src="1769979851931.png" class="w-20 h-20 mx-auto relative z-10">
@@ -838,7 +837,7 @@ function showLoginOverlay() {
             <div class="space-y-4">
                 <input type="text" id="activation-code-input" 
                        class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
-                       placeholder="رقم الكود ">
+                       placeholder="رقم الكود">
                 
                 <input type="password" id="activation-pass-input" 
                        class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
@@ -850,26 +849,27 @@ function showLoginOverlay() {
                 </button>
             </div>
             
-            <p class="text-[11px] text-gray-400 mt-8">جميع الحقوق محفوظة لمنصة هوبا تيك </p>
+            <p class="text-[11px] text-gray-400 mt-8">جميع الحقوق محفوظة لمنصة هوبا تيك</p>
         </div>
     `;
-  document.body.appendChild(overlay);
+    document.body.appendChild(overlay);
 }
+
+// 3. منطق الدخول والتحقق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', async () => {
     const homePage = document.getElementById('home-page');
     const isAuth = localStorage.getItem('hoba_student_auth');
     const savedCode = localStorage.getItem('hoba_user_id');
-
-// 5. التشغيل عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-    const isAuth = localStorage.getItem('hoba_student_auth');
-    const savedCode = localStorage.getItem('hoba_user_id');
     const savedName = localStorage.getItem('hoba_user_name');
 
+// 5. التشغيل عند تحميل الصفح
+
     if (isAuth === 'true' && savedCode && savedName) {
-        document.getElementById('home-page').classList.remove('hidden');
-        startWatermark(savedName, savedCode);
+        // لو مسجل دخول جاهز
+        homePage.classList.remove('hidden');
+        startWatermark(savedName, savedCode); // تشغيل الواتر مارك المطلوبة
     } else {
+        // لو مش مسجل.. اظهر الواجهة الجزاز
         showLoginOverlay();
     }
 });
