@@ -770,6 +770,23 @@ async function checkActivationCode() {
 
         if (studentData) {
             if (studentData.pass === userPass) {
+                // التحقق من تاريخ انتهاء الاشتراك
+const now = new Date();
+const expiry = new Date(studentData.expiryDate);
+
+if (now > expiry) {
+    alert("❌ انتهت صلاحية اشتراكك.. سيتم تحويلك لصفحة التسجيل.");
+    
+    // مسح حالة الدخول
+    localStorage.removeItem('hoba_student_auth');
+    localStorage.removeItem('hoba_user_id');
+    localStorage.removeItem('hoba_user_name');
+
+    // التحويل لصفحة التسجيل
+    window.location.href = "التسجيل.html";
+
+    return;
+}
                 // بصمة الجهاز الحالية
                 const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
                 const d1 = studentData.device || "";
@@ -909,11 +926,3 @@ document.addEventListener('DOMContentLoaded', async () => {
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
-
-
-
-
-
-
-
