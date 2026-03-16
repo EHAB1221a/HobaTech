@@ -901,8 +901,11 @@ OneSignalDeferred.push(async function(OneSignal) {
         <a href="احصائيات.html" style="text-decoration: none;"><div class="nav-link"><i class="fas fa-chart-pie"></i> الاحصائيات</div></a>  
        <a href="تقييم.html" style="text-decoration: none;"><div class="nav-link"><i class="fas fa-star"></i> تقييم المنصة</div></a>  
         <div class="nav-link" onclick="showPage('settings')"><i class="fas fa-cog"></i> الإعدادات</div>
-        <a href="index.html" style="text-decoration: none;"><div class="nav-link"><i class="fas fa-sign-out-alt"></i> خروج</div></a>  
-    </div>
+  <a href="javascript:void(0);" onclick="logoutAndClean()" style="text-decoration: none;">
+            <div class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> خروج
+            </div>
+        </a>    </div>
     <div class="news-footer">
         <div class="footer-label"><i class="fas fa-satellite-dish"></i> LIVE FEED</div>
         <div class="footer-scroll" id="hoba-ticker-container">
@@ -1587,6 +1590,21 @@ document.getElementById('deleteAccountBtn').onclick = function () {
             activeRef.onDisconnect().transaction(c => (c || 0) <= 0 ? 0 : c - 1);
         }
     });
+         function logoutAndClean() {
+    // 1. مسح كل البيانات المخزنة يدوياً (Local & Session Storage)
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // 2. مسح الكوكيز (Cookies) الخاصة بالموقع لزيادة الأمان
+    document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+
+    // 3. التحويل لصفحة "تجربة انتهاء الصلاحية.html" 
+    // مع إضافة كود منع الكاش (Cache Buster)
+    const timeStamp = new Date().getTime();
+    window.location.href = "التسجيل.html?refresh=" + timeStamp;
+}
 </script>
 </body>
 </html>
