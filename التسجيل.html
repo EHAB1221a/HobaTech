@@ -325,11 +325,9 @@
 </div>
 
 <script type="module">
-    // 1. استيراد مكتبات Firebase (المحرك الأساسي)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
-    // 2. إعدادات الربط بمشروعك (HOBA-TECH)
     const firebaseConfig = {
         apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
         authDomain: "hoba-tech.firebaseapp.com",
@@ -340,13 +338,133 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    // فحص تلقائي: لو المستخدم مسجل قبل كده، ويه على الداشبورد فوراً
-const savedUser = localStorage.getItem('isLoggedIn');
-if (savedUser === 'true') {
-    window.location.href = "داش 4.html";
-}
 
-    // 3. وظيفة تسجيل الدخول والحماية
+    // --- نظام الحماية الذكي (Security Check) ---
+    async function checkSecurity(userCode) {
+        const codeRef = ref(db, 'codes/' + userCode);
+        const snapshot = await get(codeRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const today = new Date();
+            const expire = new Date(data.expiryDate);
+
+            if (today > expire) {
+            // 1. استدعاء الأيقونات
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+document.head.appendChild(link);
+
+// 2. ستايلات الفخامة والـ Curve (APPLE STYLE)
+const style = document.createElement('style');
+style.innerHTML = `
+    @keyframes fastAppear { 
+        from { opacity: 0; transform: scale(0.9) translateY(20px); } 
+        to { opacity: 1; transform: scale(1) translateY(0); } 
+    }
+    .main-glass-card { 
+        animation: fastAppear 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67); /* ظهور سريع وانسيابي */
+        background: rgba(15, 15, 15, 0.7) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(25px) !important; /* بلور قوي للكارد */
+        -webkit-backdrop-filter: blur(25px) !important;
+        border-radius: 45px !important; /* انحناءات عميقة وفخمة جداً */
+        box-shadow: 0 40px 100px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,255,255,0.03) !important;
+        padding: 50px 35px !important;
+        text-align: center;
+        width: 85%;
+        max-width: 400px;
+        position: relative;
+        cursor: default;
+        overflow: hidden;
+    }
+    /* توهج ناعم خلف الكارد */
+    .main-glass-card::before {
+        content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.00) 0%, transparent 70%);
+        z-index: -1; animation: fastAppear 1s;
+    }
+    .btn-action {
+        text-decoration: none; padding: 18px; 
+        border-radius: 25px; /* انحناءات للأزرار متناسقة */
+        font-weight: 700; display: flex; align-items: center; 
+        justify-content: center; gap: 12px; transition: 0.3s; font-size: 16px;
+        letter-spacing: 0.5px;
+    }
+    .whatsapp-style { background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.2); color: #25d366; }
+    .whatsapp-style:hover { background: #25d366; color: #fff; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); }
+    .telegram-style { background: rgba(0, 136, 204, 0.1); border: 1px solid rgba(0, 136, 204, 0.2); color: #0088cc; }
+    .telegram-style:hover { background: #0088cc; color: #fff; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 136, 204, 0.3); }
+`;
+document.head.appendChild(style);
+
+// 3. إنشاء شاشة القفل (فخمة وهادية)
+const lockScreen = document.createElement('div');
+lockScreen.id = 'hoba-tech-lock';
+lockScreen.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+    background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(4px); 
+    display: flex; align-items: center; justify-content: center; 
+    z-index: 10000000; cursor: pointer; direction: rtl; font-family: 'Poppins', sans-serif;
+`;
+
+// 4. بناء الكارد (الفخامة الملكية)
+lockScreen.innerHTML = `
+    <div class="main-glass-card" onclick="event.stopPropagation()">
+        
+        <div style="margin-bottom: 30px;">
+            <img src="1769979851931.png" alt="Logo" style="width: 140px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 0 8px rgba(255,255,255,0.1));">
+        </div>
+
+        <h1 style="color: #fff; font-size: 28px; margin-bottom: 5px; font-weight: 800; 
+        background: linear-gradient(to bottom, #fff, #aaa);
+         -webkit-background-clip: text; -webkit-text-fill-color: transparent;">HobaTech <span style="color: #d4af37;"></span></h1>
+       <p style="color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 35px; line-height: 1.8;">
+    عفواً يمستشار، انتهت فترة صلاحية الوصول للمنصة.<br>
+    برجاء التواصل مع الدعم الفني لتجديد اشتراكك عبر الروابط التالية.
+</p>
+
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <a href="https://wa.me/201129813193?text= السلام عليكم اريد تجديد اشتراكي في منصة هوبا تيك" target="_blank" class="btn-action whatsapp-style">
+                <i class="fab fa-whatsapp" style="font-size: 20px;"></i> للتواصل عبر واتساب
+            </a>
+            <a href="https://t.me/ehab713" target="_blank" class="btn-action telegram-style">
+                <i class="fab fa-telegram-plane" style="font-size: 20px;"></i> للتواصل عبر تليجرام
+            </a>
+        </div>
+
+      <div style="margin-top: 45px; color: rgba(255,255,255,0.9); font-size: 13px; font-weight: bold; letter-spacing: 1px;">
+    جميع الحقوق محفوظة لمنصة هوبا تيك © 2026
+</div>
+    </div>
+`;
+
+document.body.appendChild(lockScreen);
+document.body.style.overflow = 'hidden';
+
+// إغلاق لحظي عند الضغط بره
+lockScreen.addEventListener('click', function() {
+    this.remove();
+    document.body.style.overflow = 'auto';
+});
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    // فحص تلقائي عند الدخول لو المتصفح مسجل دخول قديم
+    const savedSerial = localStorage.getItem('userSerial');
+    if (localStorage.getItem('isLoggedIn') === 'true' && savedSerial) {
+        checkSecurity(savedSerial).then(isValid => {
+            if (isValid) window.location.href = "داش 4.html";
+            else localStorage.clear(); // لو انتهى نمسح بيانات الدخول
+        });
+    }
+
+    // وظيفة تسجيل الدخول
     window.handleLogin = async () => {
         const code = document.getElementById("l-code").value;
         const pass = document.getElementById("l-pass").value;
@@ -357,60 +475,54 @@ if (savedUser === 'true') {
             m.innerText = "برجاء إدخال البيانات كاملة";
             return;
         }
-
         m.style.color = "#00f2ff";
         m.innerText = "جاري فحص السيرفر...";
-
         try {
-            // الوصول لمكان الكود في Firebase
             const codeRef = ref(db, 'codes/' + code);
             const snapshot = await get(codeRef);
 
             if (snapshot.exists()) {
                 const userData = snapshot.val();
 
-                // التحقق من الباسورد
+                // 1. فحص الباسورد
                 if (userData.pass === pass) {
                     
-                    // توليد بصمة فريدة للجهاز (بصمة المتصفح + دقة الشاشة)
-                    const deviceID = navigator.userAgent + window.screen.width; 
+                    // 2. فحص تاريخ الصلاحية فوراً قبل الدخول
+                    const isValid = await checkSecurity(code);
+                    if (!isValid) return; 
 
-                    // فحص الحماية: هل الكود مسجل لجهاز آخر في السيرفر؟
+                    // 3. فحص البصمة (Device ID)
+                    const deviceID = navigator.userAgent + window.screen.width; 
                     if (userData.device && userData.device !== deviceID) {
                         m.style.color = "#ff4444";
                         m.innerText = "⚠️ عذراً.. هذا الكود مفعل على جهاز آخر!";
                         return;
                     }
 
-                    // لو أول مرة يدخل، اقفل الكود على جهازه في السيرفر للأبد
                     if (!userData.device) {
                         await update(codeRef, { device: deviceID });
                     }
 
                     // نجاح الدخول
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('subscriberName', userData.name);
+                    localStorage.setItem('userSerial', code);
+                    
                     m.style.color = "#00ff88";
                     m.innerText = "تم التحقق.. أهلاً يا " + userData.name;
-                    localStorage.setItem('subscriberName', userData.name);
                     
-                    setTimeout(() => {
-                        location.href = "داش 4.html";
-                    }, 1500);
-
-                    // --- السطور الجديدة للحفظ التلقائي ---
-localStorage.setItem('isLoggedIn', 'true'); 
-localStorage.setItem('subscriberName', userData.name);
-localStorage.setItem('userSerial', code); // اختياري لو محتاج السيريال بعدين
+                    setTimeout(() => { location.href = "داش 4.html"; }, 1500);
                 } else {
                     m.style.color = "#ff4444";
                     m.innerText = "كلمة السر غير صحيحة!";
                 }
             } else {
                 m.style.color = "#ff4444";
-                m.innerText = "رقم السيريال غير موجود بالسجلات!";
+                m.innerText = "رقم السيريال غير موجود!";
             }
         } catch (error) {
             console.error(error);
-            m.innerText = "خطأ في الاتصال بقاعدة البيانات!";
+            m.innerText = "خطأ في الاتصال بالسيرفر!";
         }
     };
 
@@ -442,6 +554,7 @@ localStorage.setItem('userSerial', code); // اختياري لو محتاج ال
         requestAnimationFrame(loop);
     }
     loop();
+    
 </script>
 
 </body>
