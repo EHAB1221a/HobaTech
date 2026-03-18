@@ -835,11 +835,14 @@ function proceedLogin(name, code) {
     localStorage.setItem('hoba_student_auth', 'true');
     localStorage.setItem('hoba_user_name', name);
     localStorage.setItem('hoba_user_id', code);
+
+    startSubscriptionChecker(); // تشغيل فحص الاشتراك
+
     showWelcomeAndEntry(name, code);
 }
 // 3. دالة الترحيب والدخول
 // 2. دالة الترحيب (مظبوطة)
-function showWelcomeAndEntry(name) {
+function showWelcomeAndEntry(name, code){
     const card = document.querySelector('.glass-panel');
     card.innerHTML = `
         <div class="welcome-anim">
@@ -912,16 +915,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     const savedName = localStorage.getItem('hoba_user_name');
 
 // 5. التشغيل عند تحميل الصفح
-
-    if (isAuth === 'true' && savedCode && savedName) {
-        // لو مسجل دخول جاهز
-        homePage.classList.remove('hidden');
-        startWatermark(savedName, savedCode); // تشغيل الواتر مارك المطلوبة
-    } else {
-        // لو مش مسجل.. اظهر الواجهة الجزاز
-        showLoginOverlay();
-    }
+if (isAuth === 'true' && savedCode && savedName) {
+    homePage.classList.remove('hidden');
+    startWatermark(savedName, savedCode);
+    startSubscriptionChecker(); // هنا كمان
+}
 });
+// التحقق الدوري من صلاحية الاشتراك
+function startSubscriptionChecker() {
+
+const userCode = localStorage.getItem('hoba_user_id');
+if (!userCode) return;
+
+setInterval(async () => {
+    try {
+        const snapshot = await rtdb.ref('codes/' + userCode).once('value');
+        const data = snapshot.val();
+
+        if (!data) return;
+
+        const now = new Date();
+        const expiry = new Date(data.expiryDate);
+
+        if (now > expiry) {
+
+            alert("❌ انتهى اشتراكك.. سيتم تحويلك لصفحة التسجيل");
+
+            localStorage.removeItem('hoba_student_auth');
+            localStorage.removeItem('hoba_user_id');
+            localStorage.removeItem('hoba_user_name');
+
+            window.location.href = "التسجيل.html";
+        }
+
+    } catch (e) {
+        console.log("خطأ في فحص الاشتراك", e);
+    }
+
+}, 60000); // كل دقيقة
+}
   </script>
   </div>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
