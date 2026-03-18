@@ -1001,7 +1001,7 @@ OneSignalDeferred.push(async function(OneSignal) {
                             <input type="text" value="محمي " readonly style="background: rgba(255,255,255,0.02); color: #888; padding-right: 40px;">
                             <i class="fas fa-shield-alt" style="position: absolute; right: 15px; top: 15px; color: #555; font-size: 12px;"></i>
                         </div>
-                        <small style="color: #666; font-size: 11px;">لتحديث الرقم <a href="https://wa.me/201129813193?text=احتاج تعديل الكود الخاص بي" style="color: var(--glow-color); text-decoration: none; font-weight: bold;">تواصل مع الادارة</a></small>
+                        <small style="color: #666; font-size: 11px;">تغيير الكود  الخاص بي <a href="https://wa.me/201129813193?text=احتاج تعديل الكود الخاص بي" style="color: var(--glow-color); text-decoration: none; font-weight: bold;">تواصل مع الادارة</a></small>
                     </div>
         
                     <div class="setting-group">
@@ -1010,7 +1010,7 @@ OneSignalDeferred.push(async function(OneSignal) {
                             <input type="email" id="set-email" readonly style="background: rgba(255,255,255,0.02); color: #888; padding-right: 40px;">
                             <i class="fas fa-fingerprint" style="position: absolute; right: 15px; top: 15px; color: #555; font-size: 12px;"></i>
                         </div>
-                                              <small style="color: #666; font-size: 11px;">لتحديث الايميل الخاص بك <a href="https://wa.me/201129813193?text=احتاج تحديث كلمة السر الخاصة بي" style="color: var(--glow-color); text-decoration: none; font-weight: bold;">تواصل مع الادارة</a></small>
+                                              <small style="color: #666; font-size: 11px;">لتغيير كلمة السر <a href="https://wa.me/201129813193?text=احتاج تحديث كلمة السر الخاصة بي" style="color: var(--glow-color); text-decoration: none; font-weight: bold;">تواصل مع الادارة</a></small>
 
                     </div>
                    <div class="setting-group" style="grid-column: span 2; text-align: center;">
@@ -1150,7 +1150,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlS
                     container.innerHTML += `
                     <div class="member-card ${isAdmin ? 'admin-card' : ''}">
                         <div class="status-badge ${isAdmin ? 'admin' : ''}">
-                            ${isAdmin ? ' آلمالك' : ' مستشار مشترك'}
+                            ${isAdmin ? 'vip' : ' مستشار مشترك'}
                         </div>
                         <div class="info-container">
                             <div class="info-row">
@@ -1161,9 +1161,9 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlS
                                 </div>
                             </div>
                             <div class="info-row">
-                                <i class="fas fa-phone-alt ${iconClass}"></i>
+                                <i class="fas fa-star ${iconClass}"></i>
                                 <div>
-                                    <span class="label">رقم الموبايل</span>
+                                    <span class="label">الرتبة</span>
                                     <span class="value" style="direction: ltr; display:inline-block;">${user.phone || '---'}</span>
                                 </div>
                             </div>
@@ -1175,9 +1175,9 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlS
                                 </div>
                             </div>
                             <div class="info-row" style="border:none;">
-                                <i class="fas fa-envelope ${iconClass}"></i>
+                                <i class="fas fa-graduation-cap ${iconClass}"></i>
                                 <div>
-                                    <span class="label">البريد الإلكتروني</span>
+                                    <span class="label">المرحلة الدراسية</span>
                                     <span class="value" style="font-size:12px;">${user.email || 'لا يوجد إيميل'}</span>
                                 </div>
                             </div>
@@ -1615,8 +1615,6 @@ document.getElementById('deleteAccountBtn').onclick = function () {
 </script>
 </body>
 </html>
-
-
 
 
 
