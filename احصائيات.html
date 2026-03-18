@@ -1,594 +1,1362 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Ultimate Dashboard</title>
-    <link rel="icon" type="image/png" href="1769979851931.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-    <style>
-        :root {
-            --primary: #6366f1;
-            --accent: #06b6d4;
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الإدارة</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;display=swap" rel="stylesheet"><!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'tajawal': ['Tajawal', 'sans-serif'],
+          }
         }
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: #050505;
-            color: white;
-            overflow-x: hidden;
-        }
-        #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .main-content { position: relative; z-index: 10; }
-
-        .liquid-glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(25px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .neon-card {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .neon-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .time-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.3s;
-        }
-        .time-btn.active {
-            background: linear-gradient(45deg, #6366f1, #06b6d4);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-            border: none;
-        }
-
-        @keyframes float {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(30px, 50px); }
+      }
     }
-    @keyframes float-slow {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(-40px, -20px); }
+  </script>
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .animate-float { animation: float 10s ease-in-out infinite; }
-    .animate-float-slow { animation: float-slow 15s ease-in-out infinite; }
 
-    /* أنيميشن خط الليزر (Scan) */
-    @keyframes scan {
-        0% { top: -10%; }
-        100% { top: 110%; }
+    .stat-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .animate-scan { animation: scan 3s linear infinite; }
-
-    /* أنيميشن الحلقات */
-    .animate-spin-slow { animation: spin 8s linear infinite; }
-    .animate-reverse-spin { animation: spin 12s linear reverse infinite; }
-
-    /* لمعة الزرار */
-    @keyframes shine {
-        100% { transform: translateX(100%); }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
-    .animate-shine { animation: shine 0.6s ease-in-out; }
 
-    /* تدرج الألوان المتغير */
-    @keyframes gradient-xy {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
+    .glow-cyan { box-shadow: 0 0 30px rgba(6, 182, 212, 0.15); }
+    .glow-emerald { box-shadow: 0 0 30px rgba(16, 185, 129, 0.15); }
+    .glow-violet { box-shadow: 0 0 30px rgba(139, 92, 246, 0.15); }
+    .glow-amber { box-shadow: 0 0 30px rgba(245, 158, 11, 0.15); }
+
+    .pulse-dot {
+      animation: pulse-dot 2s ease-in-out infinite;
     }
-    .animate-gradient-xy { background-size: 400% 400%; animation: gradient-xy 15s ease infinite; }
-  
-  max-width: 100%;
-    overflow-x: hidden; /* يمنع الهزة اليمين والشمال نهائياً */
-    position: relative;
-    height: 100%;
-    -webkit-overflow-scrolling: touch; /* يخلي السكرول ناعم جداً على الآيفون */
-}
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
 
-/* يضمن إن أي عنصر ميتخطاش حدود الشاشة */
-* {
-    box-sizing: border-box;
-}
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(15px); }
+    }
 
-/* لو فيه أي صورة أو لوجو بيتحرك ميبوظش الأبعاد */
-#login-overlay, .main-content {
-    width: 100vw;
-    overflow-x: hidden;
-}
+    .slide-up {
+      animation: slideUp 0.5s ease-out forwards;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-/* تحسين شكل السكرول بار عشان مياخدش مساحة من الشاشة */
-::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-}
+    .table-row-hover:hover {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .online-badge {
+      animation: onlinePulse 2s ease-in-out infinite;
+    }
+    @keyframes onlinePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    }
+
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+      background: linear-gradient(145deg, #1a1a2e 0%, #0f0f1a 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .scrollbar-custom::-webkit-scrollbar { width: 6px; }
+    .scrollbar-custom::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+    .scrollbar-custom::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    .login-bg {
+      background: radial-gradient(ellipse at 30% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                  linear-gradient(135deg, #0a0a14 0%, #0f0f23 50%, #0a0a14 100%);
+    }
+
+    .dash-bg {
+      background: radial-gradient(ellipse at 20% 10%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+                  radial-gradient(ellipse at 80% 90%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
+                  #0a0a14;
+    }
+
+    .input-dark {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+    .input-dark:focus {
+      border-color: rgba(6, 182, 212, 0.5);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+      transition: all 0.3s;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3);
+      transform: translateY(-2px);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .sidebar-item {
+      transition: all 0.3s;
+      border-right: 3px solid transparent;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+      background: rgba(6, 182, 212, 0.08);
+      border-right-color: #06b6d4;
+    }
+
+    .search-bar {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.3s;
+    }
+    .search-bar:focus-within {
+      border-color: rgba(6, 182, 212, 0.4);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.08);
+    }
+
+    .detail-field {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    .chart-bar {
+      transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .notification-badge {
+      animation: notifPulse 2s ease-in-out infinite;
+    }
+    @keyframes notifPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .shimmer {
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 50%, transparent 100%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .progress-ring {
+      transition: stroke-dashoffset 1s ease-in-out;
+    }
   </style>
-</head>
-<body class="p-4 md:p-12">
-
-    <div id="particles-js"></div>
-    <div class="bg-glow top-0 left-0"></div>
-    <div class="bg-glow bottom-0 right-0"></div>
-
-    <div class="max-w-7xl mx-auto main-content">
-        
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div>
-                <span class="text-indigo-500 font-bold tracking-[0.3em] text-xs uppercase">Main Intelligence</span>
-                <h1 class="text-6xl font-black mt-2 tracking-tighter">المركز <span class="text-transparent bg-clip-text bg-gradient-to-l from-cyan-400 to-indigo-500">الرقمي</span></h1>
-            </div>
-            
-            <div class="flex gap-2 p-1.5 liquid-glass rounded-2xl">
-                <button onclick="changeMode('daily')" id="btn-daily" class="time-btn px-8 py-2.5 rounded-xl text-sm font-bold">يومي</button>
-                <button onclick="changeMode('weekly')" id="btn-weekly" class="time-btn active px-8 py-2.5 rounded-xl text-sm font-bold">أسبوعي</button>
-                <button onclick="changeMode('monthly')" id="btn-monthly" class="time-btn px-8 py-2.5 rounded-xl text-sm font-bold">شهري</button>
-            </div>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full text-white"><!-- LOGIN PAGE -->
+  <div id="loginPage" class="login-bg h-full flex items-center justify-center p-4">
+   <div class="w-full max-w-md">
+    <div class="glass-card rounded-3xl p-8 fade-in" style="animation-delay: 0.1s"><!-- Logo -->
+     <div class="text-center mb-8">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-lg shadow-cyan-500/20"><i class="fas fa-shield-halved text-3xl text-white"></i>
+      </div>
+      <h1 id="loginTitle" class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">لوحة الإدارة</h1>
+      <p class="text-gray-500 mt-2 text-sm">تسجيل الدخول للوحة التحكم</p>
+     </div>
+     <form id="loginForm" onsubmit="return false;">
+      <div class="space-y-5">
+       <div><label class="block text-gray-400 text-sm mb-2 font-medium"> <i class="fas fa-envelope ml-1 text-cyan-400"></i> البريد الإلكتروني </label> <input type="email" id="loginEmail" class="input-dark w-full rounded-xl px-4 py-3.5 text-white placeholder-gray-600" placeholder="admin@example.com">
+       </div>
+       <div><label class="block text-gray-400 text-sm mb-2 font-medium"> <i class="fas fa-lock ml-1 text-violet-400"></i> كلمة المرور </label>
+        <div class="relative"><input type="password" id="loginPassword" class="input-dark w-full rounded-xl px-4 py-3.5 text-white placeholder-gray-600" placeholder="••••••••"> <button type="button" onclick="togglePassword()" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"> <i id="eyeIcon" class="fas fa-eye"></i> </button>
         </div>
-
-        <!-- الإحصائيات -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-            <!-- إجمالي الزيارات -->
-            <div class="liquid-glass neon-card p-8 group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <span class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-                    </span>
-                </div>
-                <p class="text-slate-400 text-sm font-bold mb-1 uppercase tracking-tighter">ضغط العمل الحالي</p>
-                <div class="flex items-baseline gap-1">
-                    <h3 class="text-4xl font-black tracking-tight text-white" id="live-pulsate">85</h3>
-                    <span class="text-orange-400 text-xl font-bold">%</span>
-                </div>
-            </div>
-
-            <!-- النشطين الآن -->
-            <div class="liquid-glass neon-card p-8 group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 rounded-2xl bg-cyan-500/10 text-cyan-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h-2m-2 0H8m6 0h2M8 12a2 2 0 114 0 2 2 0 01-4 0z"></path>
-                        </svg>
-                    </div>
-                    <span id="trend-2" class="text-cyan-400 text-xs font-bold pulse-live">🔴 LIVE</span>
-                </div>
-                <p class="text-slate-400 text-sm font-bold mb-1 uppercase tracking-tighter">النشطون الان
-                </p>
-                <h3 class="text-4xl font-black tracking-tight" id="stat-2">0</h3>
-            </div>
-
-            <!-- عدد المشتركين -->
-            <div class="liquid-glass neon-card p-8 group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 rounded-2xl bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20 transition-all">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <span id="trend-2" class="text-cyan-400 text-xs font-bold pulse-live">🔴 LIVE</span>
-                </div>
-                <p class="text-slate-400 text-sm font-bold mb-1 uppercase tracking-tighter">الاعضاء المشتركون حتي الان</p>
-                <h3 class="text-4xl font-black tracking-tight text-white" id="stat-3">0</h3>
-            </div>
-
-            <!-- أداء النظام -->
-            <div class="liquid-glass neon-card p-8 md:col-span-1">
-                 <p class="text-slate-400 text-sm font-bold mb-4 uppercase tracking-tighter">أداء النظام</p>
-                 <div class="flex items-center gap-4">
-                     <div class="h-2 flex-1 bg-white/5 rounded-full overflow-hidden">
-                         <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 w-[85%]"></div>
-                     </div>
-                     <span class="font-mono text-cyan-400 text-sm">85%</span>
-                 </div>
-            </div>
-        </div>
-
-        <!-- الرسم البياني -->
-        <div class="liquid-glass p-10 mb-12">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-black tracking-widest uppercase">Analytics Stream</h2>
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 bg-indigo-500 rounded-full animate-ping"></span>
-                    <span class="text-xs font-mono opacity-50">SYNCING REAL-TIME DATA</span>
-                </div>
-            </div>
-            <div class="h-[450px]">
-                <canvas id="nexusChart"></canvas>
-            </div>
-        </div>
-
-        <!-- الأعضاء المشتركين -->
-        <div id="new-member-toast" class="fixed bottom-10 left-10 transform translate-y-20 opacity-0 transition-all duration-500 z-[100] liquid-glass p-4 flex items-center gap-4 border-l-4 border-indigo-500">
-            <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-xl">👤</div>
-            <div>
-                <p class="text-xs text-indigo-400 font-bold uppercase tracking-widest">عضو جديد انضم الآن</p>
-                <h4 id="new-member-name" class="text-white font-bold">---</h4>
-            </div>
-        </div>
-
-       <div id="login-overlay" class="fixed inset-0 z-[999] bg-[#020205] flex items-center justify-center p-6 overflow-hidden">
-    
-        <div id="login-overlay" class="fixed inset-0 z-[999] bg-[#020205] flex items-center justify-center p-6 overflow-hidden">
-    
-            <div class="absolute inset-0">
-                <div class="absolute w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px] top-[-10%] left-[-10%]"></div>
-                <div class="absolute w-[500px] h-[500px] bg-cyan-600/5 rounded-full blur-[100px] bottom-[-10%] right-[-10%]"></div>
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
-            </div>
-        
-            <div class="relative group">
-                <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-indigo-500/20 rounded-[3rem] blur-xl opacity-40"></div>
-                
-                <div class="relative bg-black/60 backdrop-blur-[40px] p-12 max-w-md w-[380px] sm:w-[450px] text-center border border-white/10 rounded-[3rem] shadow-2xl">
-                    
-                    <div class="relative inline-block mb-10">
-                        <div class="absolute inset-0 bg-cyan-500/10 blur-2xl rounded-full animate-pulse"></div>
-                        
-                        <div class="absolute -inset-3 border border-cyan-500/20 rounded-full animate-spin-slow"></div>
-                        <div class="absolute -inset-6 border border-purple-500/10 rounded-full animate-reverse-spin"></div>
-                        
-                        <div class="relative w-28 h-28 rounded-full border border-white/20 p-1 bg-white/5 backdrop-blur-sm overflow-hidden shadow-2xl">
-                            <img src="1769979851931.png" alt="Logo" 
-                                 class="w-full h-full object-cover rounded-full filter contrast-[1.1] brightness-105">
-                            
-                            <div class="absolute top-0 left-0 w-full h-1 bg-cyan-400/40 shadow-[0_0_10px_cyan] animate-scan"></div>
-                        </div>
-                    </div>
-        
-                    <h2 class="text-4xl font-black mb-2 bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent tracking-tighter">ADMIN PORTAL</h2>
-                    <p class="text-cyan-400/40 mb-10 text-[10px] tracking-[0.4em] uppercase font-bold italic">System Identity Verified</p>
-                    
-                    <div class="space-y-6">
-                        <div class="relative group/input">
-                            <input type="password" id="admin-pass" placeholder="ENTER ACCESS CODE" 
-                                   class="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-center text-cyan-300 placeholder:text-cyan-900 outline-none focus:border-cyan-500/50 focus:bg-cyan-500/5 transition-all duration-500 tracking-[0.6em] font-mono">
-                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-cyan-500 group-focus-within/input:w-3/4 transition-all duration-700"></div>
-                        </div>
-                        
-                        <button onclick="checkAccess()" 
-                                class="relative w-full overflow-hidden rounded-2xl py-5 bg-cyan-500/10 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-500 group/btn">
-                            <span class="relative z-10 text-cyan-400 font-black tracking-[0.2em] group-hover/btn:text-white transition-colors uppercase">Authorize Access</span>
-                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent -translate-x-full group-hover/btn:animate-shine"></div>
-                        </button>
-                    </div>
-        
-                    <p id="error-msg" class="text-red-500 mt-8 text-[10px] hidden tracking-widest uppercase font-bold animate-pulse">
-                        Access Denied: Terminal Locked
-                    </p>
-                </div>
-            </div>
-        </div>
-        
-        
-    <div class="absolute inset-0">
-        <div class="absolute w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px] top-[-10%] left-[-10%]"></div>
-        <div class="absolute w-[500px] h-[500px] bg-cyan-600/5 rounded-full blur-[100px] bottom-[-10%] right-[-10%]"></div>
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+       </div>
+      </div>
+      <div id="loginError" class="hidden mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center"></div><button type="submit" onclick="handleLogin(event)" class="btn-primary w-full mt-6 py-3.5 rounded-xl text-white font-bold text-lg"> <span id="loginBtnText">دخول</span> <i id="loginSpinner" class="fas fa-spinner fa-spin hidden mr-2"></i> </button>
+     </form>
+     <div class="mt-6 text-center">
+      <p class="text-gray-600 text-xs">⚡جميع الحقوق محففوظة لمنصة هوبا تيك</p>
+     </div>
+    </div><!-- Firebase Config Notice -->
+   
+      <div>
+      </div>
+     </div>
     </div>
-
-    <div class="relative group">
-        <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-indigo-500/20 rounded-[3rem] blur-xl opacity-40"></div>
-        
-        <div class="relative bg-black/60 backdrop-blur-[40px] p-12 max-w-md w-[380px] sm:w-[450px] text-center border border-white/10 rounded-[3rem] shadow-2xl">
-            
-            <div class="relative inline-block mb-10">
-                <div class="absolute inset-0 bg-cyan-500/10 blur-2xl rounded-full animate-pulse"></div>
-                
-                <div class="absolute -inset-3 border border-cyan-500/20 rounded-full animate-spin-slow"></div>
-                <div class="absolute -inset-6 border border-purple-500/10 rounded-full animate-reverse-spin"></div>
-                
-                <div class="relative w-28 h-28 rounded-full border border-white/20 p-1 bg-white/5 backdrop-blur-sm overflow-hidden shadow-2xl">
-                    <img src="1769979851931.png" alt="Logo" 
-                         class="w-full h-full object-cover rounded-full filter contrast-[1.1] brightness-105">
-                    
-                    <div class="absolute top-0 left-0 w-full h-1 bg-cyan-400/40 shadow-[0_0_10px_cyan] animate-scan"></div>
-                </div>
-            </div>
-
-            <h2 class="text-4xl font-black mb-2 bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent tracking-tighter">ADMIN PORTAL</h2>
-            <p class="text-cyan-400/40 mb-10 text-[10px] tracking-[0.4em] uppercase font-bold italic">System Identity Verified</p>
-            
-            <div class="space-y-6">
-                <div class="relative group/input">
-                    <input type="password" id="admin-pass" placeholder="ENTER ACCESS CODE" 
-                           class="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-center text-cyan-300 placeholder:text-cyan-900 outline-none focus:border-cyan-500/50 focus:bg-cyan-500/5 transition-all duration-500 tracking-[0.6em] font-mono">
-                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-cyan-500 group-focus-within/input:w-3/4 transition-all duration-700"></div>
-                </div>
-                
-                <button onclick="checkAccess()" 
-                        class="relative w-full overflow-hidden rounded-2xl py-5 bg-cyan-500/10 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-500 group/btn">
-                    <span class="relative z-10 text-cyan-400 font-black tracking-[0.2em] group-hover/btn:text-white transition-colors uppercase">Authorize Access</span>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent -translate-x-full group-hover/btn:animate-shine"></div>
-                </button>
-            </div>
-
-            <p id="error-msg" class="text-red-500 mt-8 text-[10px] hidden tracking-widest uppercase font-bold animate-pulse">
-                Access Denied: Terminal Locked
-            </p>
+   </div>
+  </div><!-- DASHBOARD PAGE -->
+  <div id="dashboardPage" class="dash-bg h-full hidden">
+   <div class="flex h-full"><!-- Sidebar -->
+    <aside id="sidebar" class="w-72 h-full flex-shrink-0 border-l border-white/5 flex flex-col overflow-y-auto scrollbar-custom" style="background: rgba(10,10,20,0.95);"><!-- Sidebar Header -->
+     <div class="p-6 border-b border-white/5">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center"><i class="fas fa-shield-halved text-white"></i>
+       </div>
+       <div>
+        <h2 id="sidebarTitle" class="font-bold text-white text-lg">لوحة الإدارة</h2>
+        <p class="text-gray-500 text-xs">إدارة النظام</p>
+       </div>
+      </div>
+     </div><!-- Nav Items -->
+     <nav class="flex-1 p-4 space-y-1"><button onclick="switchTab('overview')" data-tab="overview" class="sidebar-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300"> <i class="fas fa-chart-pie w-5 text-center text-cyan-400"></i> <span>نظرة عامة</span> </button> <button onclick="switchTab('members')" data-tab="members" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300"> <i class="fas fa-users w-5 text-center text-violet-400"></i> <span>الأعضاء</span> <span id="memberCountBadge" class="mr-auto bg-violet-500/20 text-violet-400 text-xs px-2 py-0.5 rounded-full">0</span> </button> <button onclick="switchTab('exams')" data-tab="exams" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300"> <i class="fas fa-file-alt w-5 text-center text-emerald-400"></i> <span>الامتحانات</span> </button> <button onclick="switchTab('activity')" data-tab="activity" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300"> <i class="fas fa-clock-rotate-left w-5 text-center text-amber-400"></i> <span>النشاط الأخير</span> </button>
+     </nav><!-- Admin Info -->
+     <div class="p-4 border-t border-white/5">
+      <div class="flex items-center gap-3 px-3 py-2">
+       <div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center"><i class="fas fa-user text-white text-sm"></i>
+       </div>
+       <div class="flex-1 min-w-0">
+        <p id="adminNameDisplay" class="text-sm text-white font-medium truncate">المدير</p>
+        <p class="text-xs text-gray-500">مشرف</p>
+       </div><button onclick="handleLogout()" class="text-gray-500 hover:text-red-400 transition-colors" title="تسجيل الخروج"> <i class="fas fa-right-from-bracket"></i> </button>
+      </div>
+     </div>
+    </aside><!-- Main Content -->
+    <main class="flex-1 h-full overflow-y-auto scrollbar-custom"><!-- Top Bar -->
+     <header class="sticky top-0 z-30 px-6 py-4 border-b border-white/5" style="background: rgba(10,10,20,0.9); backdrop-filter: blur(20px);">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-4"><button id="menuToggle" onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white"> <i class="fas fa-bars text-xl"></i> </button>
+        <div>
+         <h1 id="pageTitle" class="text-xl font-bold text-white">نظرة عامة</h1>
+         <p class="text-gray-500 text-xs mt-0.5"><i class="fas fa-circle text-emerald-400 text-[6px] ml-1 pulse-dot"></i> متصل بالقاعدة | <span id="currentDateTime"></span></p>
         </div>
+       </div>
+       <div class="flex items-center gap-3"><button onclick="refreshData()" class="btn-secondary px-4 py-2 rounded-xl text-gray-300 text-sm flex items-center gap-2"> <i id="refreshIcon" class="fas fa-rotate"></i> تحديث </button>
+        <div class="relative"><button onclick="toggleNotifications()" class="w-10 h-10 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center text-gray-400 hover:text-white transition-colors"> <i class="fas fa-bell"></i> </button> <span id="notifBadge" class="hidden absolute -top-1 -left-1 w-5 h-5 bg-red-500 rounded-full text-[10px] flex items-center justify-center notification-badge">0</span>
+        </div>
+       </div>
+      </div>
+     </header><!-- Content Area -->
+     <div class="p-6"><!-- OVERVIEW TAB -->
+      <section id="tab-overview" class="space-y-6"><!-- Stats Grid -->
+       <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-5 glow-cyan fade-in" style="animation-delay:0.1s">
+         <div class="flex items-center justify-between mb-3">
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center"><i class="fas fa-users text-cyan-400 text-xl"></i>
+          </div><span class="text-cyan-400/60 text-xs font-medium">إجمالي</span>
+         </div>
+         <p id="statTotalMembers" class="text-3xl font-bold text-white">0</p>
+         <p class="text-gray-500 text-sm mt-1">عدد الأعضاء</p>
+        </div>
+        <div class="stat-card rounded-2xl p-5 glow-emerald fade-in" style="animation-delay:0.2s">
+         <div class="flex items-center justify-between mb-3">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center"><i class="fas fa-signal text-emerald-400 text-xl"></i>
+          </div><span class="text-emerald-400/60 text-xs font-medium">الآن</span>
+         </div>
+         <p id="statOnlineNow" class="text-3xl font-bold text-white">0</p>
+         <p class="text-gray-500 text-sm mt-1">أونلاين الآن</p>
+        </div>
+        <div class="stat-card rounded-2xl p-5 glow-violet fade-in" style="animation-delay:0.3s">
+         <div class="flex items-center justify-between mb-3">
+          <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center"><i class="fas fa-file-lines text-violet-400 text-xl"></i>
+          </div><span class="text-violet-400/60 text-xs font-medium">اليوم</span>
+         </div>
+         <p id="statExamsToday" class="text-3xl font-bold text-white">0</p>
+         <p class="text-gray-500 text-sm mt-1">امتحانات اليوم</p>
+        </div>
+        <div class="stat-card rounded-2xl p-5 glow-amber fade-in" style="animation-delay:0.4s">
+         <div class="flex items-center justify-between mb-3">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center"><i class="fas fa-chart-line text-amber-400 text-xl"></i>
+          </div><span class="text-amber-400/60 text-xs font-medium">متوسط</span>
+         </div>
+         <p id="statAvgScore" class="text-3xl font-bold text-white">0%</p>
+         <p class="text-gray-500 text-sm mt-1">متوسط الدرجات</p>
+        </div>
+       </div><!-- Charts Row -->
+       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4"><!-- Activity Chart -->
+        <div class="lg:col-span-2 glass-card rounded-2xl p-6 fade-in" style="animation-delay:0.5s">
+         <div class="flex items-center justify-between mb-6">
+          <h3 class="font-bold text-white flex items-center gap-2"><i class="fas fa-chart-bar text-cyan-400"></i> نشاط الأسبوع</h3><span class="text-xs text-gray-500">آخر 7 أيام</span>
+         </div>
+         <div id="weeklyChart" class="flex items-end justify-between gap-2 h-40"><!-- Chart bars rendered by JS -->
+         </div>
+         <div class="flex justify-between mt-3 text-[10px] text-gray-600"><span>سبت</span><span>أحد</span><span>اثنين</span><span>ثلاثاء</span><span>أربعاء</span><span>خميس</span><span>جمعة</span>
+         </div>
+        </div><!-- Online Members Ring -->
+        <div class="glass-card rounded-2xl p-6 fade-in" style="animation-delay:0.6s">
+         <h3 class="font-bold text-white flex items-center gap-2 mb-6"><i class="fas fa-circle-nodes text-emerald-400"></i> حالة الأعضاء</h3>
+         <div class="flex flex-col items-center">
+          <div class="relative w-36 h-36">
+           <svg class="w-full h-full -rotate-90" viewbox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10" /> <circle id="progressRing" class="progress-ring" cx="60" cy="60" r="52" fill="none" stroke="url(#grad1)" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73" /> <defs>
+             <lineargradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#06b6d4" />
+              <stop offset="100%" style="stop-color:#8b5cf6" />
+             </lineargradient>
+            </defs>
+           </svg>
+           <div class="absolute inset-0 flex flex-col items-center justify-center"><span id="onlinePercent" class="text-2xl font-bold text-white">0%</span> <span class="text-xs text-gray-500">أونلاين</span>
+           </div>
+          </div>
+          <div class="flex gap-6 mt-4 text-sm">
+           <div class="flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div><span class="text-gray-400">أونلاين: <span id="onlineCount2" class="text-white font-bold">0</span></span>
+           </div>
+           <div class="flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-gray-600"></div><span class="text-gray-400">أوفلاين: <span id="offlineCount" class="text-white font-bold">0</span></span>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div><!-- Recent Activity -->
+       <div class="glass-card rounded-2xl p-6 fade-in" style="animation-delay:0.7s">
+        <div class="flex items-center justify-between mb-4">
+         <h3 class="font-bold text-white flex items-center gap-2"><i class="fas fa-clock text-amber-400"></i> آخر الأنشطة</h3>
+        </div>
+        <div id="recentActivityList" class="space-y-3">
+         <div class="text-center py-8 text-gray-600"><i class="fas fa-inbox text-3xl mb-2"></i>
+          <p>لا توجد أنشطة حالياً</p>
+         </div>
+        </div>
+       </div>
+      </section><!-- MEMBERS TAB -->
+      <section id="tab-members" class="hidden space-y-4"><!-- Members Header -->
+       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-users text-violet-400"></i> قائمة الأعضاء <span id="membersTotal" class="text-sm text-gray-500 font-normal">(0)</span></h3>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+         <div class="search-bar flex items-center gap-2 rounded-xl px-4 py-2.5 flex-1 sm:flex-initial sm:w-72"><i class="fas fa-search text-gray-500 text-sm"></i> <input type="text" id="memberSearch" oninput="filterMembers()" placeholder="بحث عن عضو..." class="bg-transparent border-none outline-none text-white text-sm w-full placeholder-gray-600">
+         </div><select id="filterStatus" onchange="filterMembers()" class="input-dark rounded-xl px-3 py-2.5 text-sm text-gray-300 cursor-pointer"> <option value="all">الكل</option> <option value="online">أونلاين</option> <option value="offline">أوفلاين</option> <option value="expired">منتهي</option> </select>
+        </div>
+       </div><!-- Members Table -->
+       <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+         <table class="w-full text-sm">
+          <thead>
+           <tr class="border-b border-white/5">
+            <th class="text-right px-6 py-4 text-gray-400 font-medium text-xs">العضو</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs">الحالة</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs hidden md:table-cell">الاشتراك</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs hidden lg:table-cell">المحاضرات</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs hidden lg:table-cell">الامتحانات</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs hidden md:table-cell">آخر نشاط</th>
+            <th class="text-center px-4 py-4 text-gray-400 font-medium text-xs">تفاصيل</th>
+           </tr>
+          </thead>
+          <tbody id="membersTableBody">
+           <tr>
+            <td colspan="7" class="text-center py-12 text-gray-600"><i class="fas fa-users text-3xl mb-3 block"></i> جارٍ تحميل البيانات...</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+      </section><!-- EXAMS TAB -->
+      <section id="tab-exams" class="hidden space-y-4">
+       <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-file-alt text-emerald-400"></i> نتائج الامتحانات</h3>
+       <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+         <table class="w-full text-sm">
+          <thead>
+           <tr class="border-b border-white/5">
+            <th class="text-right px-6 py-4 text-gray-400 font-medium text-xs">الطالب</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs">الامتحان</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs">الدرجة</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs hidden md:table-cell">التاريخ</th>
+            <th class="text-right px-4 py-4 text-gray-400 font-medium text-xs">النتيجة</th>
+           </tr>
+          </thead>
+          <tbody id="examsTableBody">
+           <tr>
+            <td colspan="5" class="text-center py-12 text-gray-600"><i class="fas fa-file-lines text-3xl mb-3 block"></i> لا توجد نتائج بعد</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+      </section><!-- ACTIVITY TAB -->
+      <section id="tab-activity" class="hidden space-y-4">
+       <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fas fa-clock-rotate-left text-amber-400"></i> سجل النشاطات</h3>
+       <div id="activityLogList" class="space-y-3">
+        <div class="glass-card rounded-2xl p-8 text-center text-gray-600"><i class="fas fa-history text-3xl mb-3"></i>
+         <p>لا توجد أنشطة مسجلة</p>
+        </div>
+       </div>
+      </section>
+     </div>
+    </main>
+   </div>
+  </div><!-- MEMBER DETAIL MODAL -->
+  <div id="memberModal" class="fixed inset-0 z-50 hidden">
+   <div class="modal-overlay absolute inset-0" onclick="closeMemberModal()"></div>
+   <div class="absolute inset-4 sm:inset-8 lg:inset-y-8 lg:inset-x-auto lg:right-8 lg:w-[550px] modal-content rounded-3xl overflow-hidden flex flex-col slide-up"><!-- Modal Header -->
+    <div class="p-6 border-b border-white/5 flex items-center justify-between flex-shrink-0">
+     <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fas fa-user-circle text-cyan-400"></i> بيانات العضو</h3>
+     <div class="flex items-center gap-2"><button id="editModeBtn" onclick="toggleEditMode()" class="w-9 h-9 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all"> <i class="fas fa-edit"></i> </button> <button onclick="closeMemberModal()" class="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"> <i class="fas fa-xmark"></i> </button>
+     </div>
+    </div><!-- Modal Body -->
+    <div class="flex-1 overflow-y-auto scrollbar-custom p-6">
+     <div id="memberDetailContent" class="space-y-4"><!-- Filled by JS -->
+     </div>
+    </div><!-- Modal Footer -->
+    <div id="modalFooter" class="hidden p-6 border-t border-white/5 gap-3 flex-shrink-0"><button onclick="isEditMode = false; renderMemberModal()" class="flex-1 btn-secondary py-2.5 rounded-xl text-white font-medium"> إلغاء </button> <button onclick="saveMemberChanges()" class="flex-1 btn-primary py-2.5 rounded-xl text-white font-medium"> <i class="fas fa-save ml-1"></i> حفظ التغييرات </button>
     </div>
-</div>
-    <script>
-       // Firebase Config
-const firebaseConfig = {
-    apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
-    authDomain: "hoba-tech.firebaseapp.com",
-    databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
-    projectId: "hoba-tech",
-    storageBucket: "hoba-tech.firebasestorage.app",
-    messagingSenderId: "465948708700",
-    appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
-    measurementId: "G-EBHF8FEDB2"
+   </div>
+  </div><!-- NOTIFICATION PANEL -->
+  <div id="notifPanel" class="fixed top-0 left-0 w-80 h-full z-50 hidden" style="background: rgba(15,15,30,0.98); border-right: 1px solid rgba(255,255,255,0.06);">
+   <div class="p-5 border-b border-white/5 flex items-center justify-between">
+    <h3 class="font-bold text-white">الإشعارات</h3><button onclick="toggleNotifications()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark"></i></button>
+   </div>
+   <div id="notifList" class="p-4 space-y-3 overflow-y-auto scrollbar-custom" style="height: calc(100% - 65px);">
+    <p class="text-center text-gray-600 py-8 text-sm">لا توجد إشعارات</p>
+   </div>
+  </div>
+  <script>
+    // ========================
+    // Firebase Configuration
+    // ========================
+    // ضع بيانات مشروعك هنا من Firebase Console
+    const firebaseConfig = {
+  apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+  authDomain: "hoba-tech.firebaseapp.com",
+  databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+  projectId: "hoba-tech",
+  storageBucket: "hoba-tech.appspot.com",
+  messagingSenderId: "465948708700",
+  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99"
 };
 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const rtdb = firebase.database();
+    // ⚠️ بنية البيانات المطلوبة في Firebase:
+    // 
+    // 📁 members (أو users)
+    //    ├── USR-001
+    //    │   ├── name: "اسم العضو"
+    //    │   ├── pass: "****"
+    //    │   ├── device: "اسم الجهاز"
+    //    │   ├── device2: "جهاز مشفر"
+    //    │   ├── expiryDate: "2025-08-15"
+    //    │   ├── online: true/false
+    //    │   ├── lecturesWatched: 42
+    //    │   ├── lastActive: 1704067200000 (timestamp)
+    //    │   ├── userCode: "USR-001"
+    //    │   ├── examsTaken: 5
+    //    │   └── examResults: [85, 92, 78, 95, 88]
+    //    └── USR-002, USR-003, ...
+    //
+    // 📁 exams
+    //    ├── exam-001
+    //    │   ├── studentName: "الاسم"
+    //    │   ├── examName: "اسم الامتحان"
+    //    │   ├── score: 85
+    //    │   ├── total: 100
+    //    │   └── date: 1704067200000
+    //    └── exam-002, exam-003, ...
+    //
 
-// ✅ دالة الأنميشن للأرقام (مهمة جداً عشان الأرقام تظهر)
-function animateValue(id, end) {
-    const obj = document.getElementById(id);
-    if (!obj) return;
-    let start = parseInt(obj.innerText.replace(/,/g, '')) || 0;
-    const duration = 1000;
-    let startTime = null;
+    let firebaseInitialized = false;
+    let db = null;
+    let allMembers = [];
+    let allExams = [];
+    let notifications = [];
+    let currentTab = 'overview';
 
-    function step(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        obj.innerText = Math.floor(progress * (end - start) + start).toLocaleString();
-        if (progress < 1) window.requestAnimationFrame(step);
+    // Demo credentials
+    const DEMO_EMAIL = 'admin@admin.com';
+    const DEMO_PASS = 'admin123';
+
+    // ========================
+    // Element SDK
+    // ========================
+    const defaultConfig = {
+      dashboard_title: 'لوحة الإدارة',
+      admin_name: 'المدير',
+      background_color: '#0a0a14',
+      surface_color: '#12121f',
+      text_color: '#ffffff',
+      primary_action_color: '#06b6d4',
+      secondary_action_color: '#8b5cf6',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const title = config.dashboard_title || defaultConfig.dashboard_title;
+      const adminName = config.admin_name || defaultConfig.admin_name;
+      const bgColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      const loginTitle = document.getElementById('loginTitle');
+      if (loginTitle) loginTitle.textContent = title;
+      const sidebarTitle = document.getElementById('sidebarTitle');
+      if (sidebarTitle) sidebarTitle.textContent = title;
+      const adminDisplay = document.getElementById('adminNameDisplay');
+      if (adminDisplay) adminDisplay.textContent = adminName;
+
+      document.documentElement.style.setProperty('--bg-color', bgColor);
+      document.documentElement.style.setProperty('--surface-color', surfaceColor);
+      document.documentElement.style.setProperty('--text-color', textColor);
+      document.documentElement.style.setProperty('--primary-color', primaryColor);
+      document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+
+      document.body.style.fontFamily = `${fontFamily}, Tajawal, sans-serif`;
+      document.body.style.fontSize = `${fontSize}px`;
     }
-    window.requestAnimationFrame(step);
-}
 
-// ✅ جلب البيانات الحية من Firebase
-function loadLiveData() {
-    console.log("بروتوكول الربط يعمل...");
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => { applyConfig(config); },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+            { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['dashboard_title', config.dashboard_title || defaultConfig.dashboard_title],
+          ['admin_name', config.admin_name || defaultConfig.admin_name]
+        ])
+      });
+    }
+    applyConfig(defaultConfig);
 
-    rtdb.ref('visits').on('value', snap => {
-        animateValue('stat-1', snap.val() || 0);
-    });
+    // ========================
+    // Utility Functions
+    // ========================
+    function formatDate(timestamp) {
+      if (!timestamp) return 'غير محدد';
+      const d = new Date(timestamp);
+      if (isNaN(d.getTime())) return 'غير محدد';
+      return d.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
 
-    rtdb.ref('active_now').on('value', snap => {
-        document.getElementById('stat-2').innerText = (snap.val() || 0).toLocaleString();
-    });
+    function getDaysRemaining(expiryDate) {
+      if (!expiryDate) return null;
+      const d = new Date(expiryDate);
+      if (isNaN(d.getTime())) return null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      d.setHours(0, 0, 0, 0);
+      const diff = d.getTime() - today.getTime();
+      const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      return days;
+    }
 
-    rtdb.ref('subscribers').on('value', snap => {
-        animateValue('stat-3', snap.val() || 0);
-    });
-}
+    function formatTime(timestamp) {
+      if (!timestamp) return '';
+      const d = new Date(timestamp);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    }
 
-/* ================= إدارة المشتركين الجدد (Toast) ================= */
-/* ================= تحديث عداد المشتركين من الشيت ================= */
-const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlSJb7p6v6RTvawyrUcMMPwFmPfzxueT5lkmkP_vwi3mZAvGA/exec?action=read';
+    function timeAgo(timestamp) {
+      if (!timestamp) return 'غير معروف';
+      const now = Date.now();
+      const diff = now - new Date(timestamp).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'الآن';
+      if (mins < 60) return `منذ ${mins} دقيقة`;
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return `منذ ${hrs} ساعة`;
+      const days = Math.floor(hrs / 24);
+      return `منذ ${days} يوم`;
+    }
 
-async function updateMemberCount() {
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        
-        if (Array.isArray(data)) {
-            const totalMembers = data.length; // هنا الـ "عَد" بيحصل
+    function isExpired(expiryDate) {
+      if (!expiryDate) return false;
+      return new Date(expiryDate).getTime() < Date.now();
+    }
+
+    function updateDateTime() {
+      const el = document.getElementById('currentDateTime');
+      if (el) {
+        const now = new Date();
+        el.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ' - ' + now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+      }
+    }
+
+    // ========================
+    // Auth
+    // ========================
+    function togglePassword() {
+      const inp = document.getElementById('loginPassword');
+      const icon = document.getElementById('eyeIcon');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+      } else {
+        inp.type = 'password';
+        icon.className = 'fas fa-eye';
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      const btnText = document.getElementById('loginBtnText');
+      const spinner = document.getElementById('loginSpinner');
+
+      errEl.classList.add('hidden');
+
+      if (!email || !pass) {
+        errEl.textContent = 'يرجى إدخال البريد وكلمة المرور';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      btnText.textContent = 'جارٍ الدخول...';
+      spinner.classList.remove('hidden');
+
+      setTimeout(() => {
+        if (email === DEMO_EMAIL && pass === DEMO_PASS) {
+          showDashboard();
+        } else {
+          errEl.textContent = 'بيانات الدخول غير صحيحة';
+          errEl.classList.remove('hidden');
+        }
+        btnText.textContent = 'دخول';
+        spinner.classList.add('hidden');
+      }, 800);
+    }
+
+    function handleLogout() {
+      document.getElementById('dashboardPage').classList.add('hidden');
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
+    }
+
+    function showDashboard() {
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('dashboardPage').classList.remove('hidden');
+      initFirebase();
+      updateDateTime();
+      setInterval(updateDateTime, 30000);
+      loadDemoData();
+    }
+
+    // ========================
+    // Firebase Init
+    // ========================
+    function initFirebase() {
+      try {
+        if (firebaseConfig.apiKey !== 'YOUR_API_KEY' && !firebaseInitialized) {
+          firebase.initializeApp(firebaseConfig);
+          db = firebase.database();
+          firebaseInitialized = true;
+          setupRealtimeListeners();
+          addNotification('تم الاتصال بـ Firebase بنجاح', 'success');
+        }
+      } catch (err) {
+        console.error('Firebase init error:', err);
+      }
+    }
+
+    function setupRealtimeListeners() {
+      if (!db) return;
+
+      // Listen to codes (members database)
+      db.ref('codes').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && typeof data === 'object') {
+          allMembers = Object.entries(data).map(([key, val]) => {
+            if (!val || typeof val !== 'object') return null;
             
-            // تحديث الرقم في العداد الكبير فوق مع أنميشن
-            animateValue('stat-3', totalMembers);
-            
-            // تحديث لو فيه إشعار لعضو جديد (الـ Toast اللي عملناه)
-            if (lastCount !== 0 && totalMembers > lastCount) {
-                showToast(data[0].name); // بيظهر اسم آخر واحد سجل
+            // تحويل examResults إلى array
+            let examResults = [];
+            if (Array.isArray(val.examResults)) {
+              examResults = val.examResults.filter(x => typeof x === 'number');
+            } else if (typeof val.examResults === 'number') {
+              examResults = [val.examResults];
             }
-            lastCount = totalMembers;
+
+            return { 
+              id: key, 
+              ...val,
+              examResults: examResults,
+              userCode: val.userCode || key,
+              name: val.name || 'بدون اسم',
+              pass: val.pass || '****',
+              device: val.device || '-',
+              device2: val.device2 || '-',
+              online: val.online === true,
+              lecturesWatched: val.lecturesWatched || 0,
+              examsTaken: val.examsTaken || 0,
+              lastActive: val.lastActive ? new Date(val.lastActive).getTime() : Date.now(),
+              expiryDate: val.expiryDate || null
+            };
+          }).filter(x => x !== null);
+          
+          updateAllStats();
+          renderMembers();
+          renderActivity();
+          addNotification(`تم تحديث بيانات الأعضاء (${allMembers.length})`, 'success');
         }
-    } catch (error) {
-        console.error('خطأ في جلب بيانات الشيت:', error);
-    }
-}
+      });
 
-// دالة إظهار الإشعار (Toast)
-function showToast(name) {
-    const toast = document.getElementById('new-member-toast');
-    document.getElementById('new-member-name').innerText = name || "طالب جديد";
-    toast.classList.remove('translate-y-20', 'opacity-0');
-    setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-    }, 5000);
-}
-
-// تعديل في الـ window load عشان يشتغل تلقائي
-window.addEventListener('load', () => {
-    loadLiveData(); // زيارات الفايربيس
-    updateMemberCount(); // عداد الشيت
-    setInterval(updateMemberCount, 10000); // يحدث كل 20 ثانية
-});
-
-// --- بقية أكواد الـ Chart و الـ Particles زي ما هي ---
-particlesJS("particles-js", { "particles": { "number": { "value": 40 }, "color": { "value": "#ffffff" }, "opacity": { "value": 0.1 }, "size": { "value": 2 }, "line_linked": { "enable": true, "distance": 200, "color": "#ffffff", "opacity": 0.05, "width": 1 }, "move": { "enable": true, "speed": 1 } } });
-
-const modes = {
-    daily: { labels: ['12am', '4am', '8am', '12pm', '4pm', '8pm'], data: [20, 50, 15, 80, 120, 90], color: '#06b6d4' },
-    weekly: { labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'], data: [400, 700, 550, 900, 1100, 850, 1200], color: '#6366f1' },
-    monthly: { labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'], data: [12000, 18000, 15000, 25000, 22000, 30000], color: '#10b981' }
-};
-
-let myChart;
-const ctx = document.getElementById('nexusChart').getContext('2d');
-
-function drawChart(mode) {
-    if (myChart) myChart.destroy();
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, modes[mode].color + '44');
-    gradient.addColorStop(1, 'transparent');
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: modes[mode].labels, datasets: [{ data: modes[mode].data, borderColor: modes[mode].color, borderWidth: 4, fill: true, backgroundColor: gradient, tension: 0.5 }] },
-        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.3)' } } } }
-    });
-}
-
-function changeMode(mode) {
-    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-' + mode).classList.add('active');
-    drawChart(mode);
-}
-
-/// ✅ وظيفة صفحة الإحصاءات هي العرض فقط
-function loadLiveData() {
-    // جلب إجمالي الزيارات من CountAPI (بيشتغل على كل الأجهزة)
-    async function getGlobalVisits() {
-        try {
-            const res = await fetch('https://api.countapi.xyz/get/hoba-tech-nexus/visits');
-            const data = await res.json();
-            animateValue('stat-1', data.value || 0);
-        } catch (e) { console.log("Error loading count"); }
-    }
-
-    // تحديث الرقم كل 10 ثواني
-    getGlobalVisits();
-    setInterval(getGlobalVisits, 10000);
-
-    // خلي الـ active_now زي ما هي من Firebase (لأنها غالباً هتشتغل عادي)
-    rtdb.ref('active_now').on('value', (snap) => {
-        animateValue('stat-2', snap.val() || 0);
-    });
-}
-
-// تشغيل عند التحميل
-window.addEventListener('load', () => {
-    loadLiveData();      // قراءة البيانات من فايربيس
-    drawChart('weekly'); // رسم البياني
-    if (typeof syncMembers === 'function') syncMembers(); // قراءة عدد المشتركين
-});
-
-let lastCount = 0; 
-
-    // دالة عرض الأرقام بأنميشن
-    function animateValue(id, end) {
-        const obj = document.getElementById(id);
-        if (!obj) return;
-        let start = parseInt(obj.innerText.replace(/,/g, '')) || 0;
-        const duration = 1000;
-        let startTime = null;
-
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            obj.innerText = Math.floor(progress * (end - start) + start).toLocaleString();
-            if (progress < 1) window.requestAnimationFrame(step);
+      // Listen to results if they exist
+      db.ref('results').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && typeof data === 'object') {
+          allExams = Object.entries(data).map(([key, val]) => {
+            if (!val || typeof val !== 'object') return null;
+            return { 
+              id: key, 
+              studentName: val.studentName || val.name || 'طالب',
+              examName: val.examName || val.exam_name || 'امتحان',
+              score: val.score || val.result || 0,
+              total: val.total || 100,
+              date: val.date ? new Date(val.date).getTime() : Date.now()
+            };
+          }).filter(x => x !== null);
+          
+          renderExams();
+          updateAllStats();
         }
-        window.requestAnimationFrame(step);
+      });
     }
 
-    // ربط الداشبورد بالفايربيس (قراءة فقط)
-    function loadLiveData() {
-        const db = firebase.database();
+    // ========================
+    // Demo Data
+    // ========================
+    function loadDemoData() {
+      if (firebaseInitialized) return; // Use real data if Firebase connected
 
-        // قراءة إجمالي الزيارات
-        db.ref('visits').on('value', (snap) => {
-            animateValue('stat-1', snap.val() || 0);
+      allMembers = [
+        { id: '1', name: 'أحمد محمد علي', pass: '****', device: 'Samsung Galaxy S23', device2: 'enc_dev_001', expiryDate: '2025-08-15', online: true, lecturesWatched: 42, lastActive: Date.now() - 120000, userCode: 'USR-001', examsTaken: 5, examResults: [85, 92, 78, 95, 88] },
+        { id: '2', name: 'سارة أحمد حسن', pass: '****', device: 'iPhone 15 Pro', device2: 'enc_dev_002', expiryDate: '2025-07-20', online: true, lecturesWatched: 38, lastActive: Date.now() - 300000, userCode: 'USR-002', examsTaken: 4, examResults: [90, 88, 95, 92] },
+        { id: '3', name: 'محمد خالد إبراهيم', pass: '****', device: 'Xiaomi 14', device2: 'enc_dev_003', expiryDate: '2025-03-01', online: false, lecturesWatched: 15, lastActive: Date.now() - 86400000 * 3, userCode: 'USR-003', examsTaken: 2, examResults: [65, 72] },
+        { id: '4', name: 'نورا عبدالله', pass: '****', device: 'iPad Air', device2: 'enc_dev_004', expiryDate: '2025-09-30', online: true, lecturesWatched: 55, lastActive: Date.now() - 60000, userCode: 'USR-004', examsTaken: 6, examResults: [98, 95, 100, 92, 97, 99] },
+        { id: '5', name: 'عمر حسين', pass: '****', device: 'Oppo Find X6', device2: 'enc_dev_005', expiryDate: '2025-06-10', online: false, lecturesWatched: 28, lastActive: Date.now() - 86400000, userCode: 'USR-005', examsTaken: 3, examResults: [75, 80, 70] },
+        { id: '6', name: 'فاطمة الزهراء', pass: '****', device: 'Samsung Galaxy Tab S9', device2: 'enc_dev_006', expiryDate: '2025-12-01', online: true, lecturesWatched: 67, lastActive: Date.now() - 180000, userCode: 'USR-006', examsTaken: 7, examResults: [88, 91, 85, 93, 90, 87, 94] },
+      ];
+
+      allExams = [
+        { id: 'e1', studentName: 'أحمد محمد علي', examName: 'امتحان الفصل الأول', score: 85, total: 100, date: Date.now() - 3600000 },
+        { id: 'e2', studentName: 'سارة أحمد حسن', examName: 'امتحان الفصل الأول', score: 92, total: 100, date: Date.now() - 7200000 },
+        { id: 'e3', studentName: 'نورا عبدالله', examName: 'الاختبار الشامل', score: 98, total: 100, date: Date.now() - 1800000 },
+        { id: 'e4', studentName: 'محمد خالد إبراهيم', examName: 'امتحان الفصل الأول', score: 65, total: 100, date: Date.now() - 86400000 * 2 },
+        { id: 'e5', studentName: 'فاطمة الزهراء', examName: 'اختبار منتصف الفصل', score: 91, total: 100, date: Date.now() - 86400000 },
+      ];
+
+      updateAllStats();
+      renderMembers();
+      renderExams();
+      renderActivity();
+      renderWeeklyChart();
+    }
+
+    // ========================
+    // Stats
+    // ========================
+    function updateAllStats() {
+      const total = allMembers.length;
+      const online = allMembers.filter(m => m.online).length;
+      const offline = total - online;
+      const todayExams = allExams.filter(e => {
+        const d = new Date(e.date);
+        const now = new Date();
+        return d.toDateString() === now.toDateString();
+      }).length;
+
+      let avgScore = 0;
+      if (allExams.length > 0) {
+        avgScore = Math.round(allExams.reduce((sum, e) => sum + (e.score / e.total * 100), 0) / allExams.length);
+      }
+
+      animateNumber('statTotalMembers', total);
+      animateNumber('statOnlineNow', online);
+      animateNumber('statExamsToday', todayExams);
+      document.getElementById('statAvgScore').textContent = avgScore + '%';
+
+      document.getElementById('memberCountBadge').textContent = total;
+      document.getElementById('membersTotal').textContent = `(${total})`;
+
+      // Progress ring
+      const percent = total > 0 ? (online / total * 100) : 0;
+      const circumference = 326.73;
+      const offset = circumference - (percent / 100 * circumference);
+      document.getElementById('progressRing').style.strokeDashoffset = offset;
+      document.getElementById('onlinePercent').textContent = Math.round(percent) + '%';
+      document.getElementById('onlineCount2').textContent = online;
+      document.getElementById('offlineCount').textContent = offline;
+    }
+
+    function animateNumber(elId, target) {
+      const el = document.getElementById(elId);
+      const current = parseInt(el.textContent) || 0;
+      if (current === target) return;
+      const step = target > current ? 1 : -1;
+      const duration = 400;
+      const steps = Math.abs(target - current);
+      const interval = Math.max(duration / steps, 20);
+      let val = current;
+      const timer = setInterval(() => {
+        val += step;
+        el.textContent = val;
+        if (val === target) clearInterval(timer);
+      }, interval);
+    }
+
+    // ========================
+    // Weekly Chart
+    // ========================
+    function renderWeeklyChart() {
+      const chart = document.getElementById('weeklyChart');
+      const heights = [35, 65, 50, 80, 45, 90, 60];
+      const colors = ['from-cyan-500/60 to-cyan-500/20', 'from-violet-500/60 to-violet-500/20', 'from-cyan-500/60 to-cyan-500/20', 'from-emerald-500/60 to-emerald-500/20', 'from-cyan-500/60 to-cyan-500/20', 'from-violet-500/60 to-violet-500/20', 'from-cyan-500/60 to-cyan-500/20'];
+      chart.innerHTML = heights.map((h, i) => `
+        <div class="flex-1 flex flex-col items-center justify-end h-full">
+          <span class="text-[10px] text-gray-500 mb-1">${h}%</span>
+          <div class="chart-bar w-full bg-gradient-to-t ${colors[i]} rounded-t-lg" style="height: 0%; max-width: 40px; margin: 0 auto;"></div>
+        </div>
+      `).join('');
+
+      setTimeout(() => {
+        chart.querySelectorAll('.chart-bar').forEach((bar, i) => {
+          bar.style.height = heights[i] + '%';
         });
+      }, 200);
+    }
 
-        // قراءة النشطين الآن
-        db.ref('active_now').on('value', (snap) => {
-            let active = snap.val() || 0;
-            animateValue('stat-2', active < 0 ? 0 : active);
+    // ========================
+    // Render Members
+    // ========================
+    function renderMembers() {
+      const tbody = document.getElementById('membersTableBody');
+      const searchVal = (document.getElementById('memberSearch')?.value || '').toLowerCase();
+      const filterVal = document.getElementById('filterStatus')?.value || 'all';
+
+      let filtered = allMembers.filter(m => {
+        const matchSearch = m.name.toLowerCase().includes(searchVal) || (m.userCode || '').toLowerCase().includes(searchVal);
+        let matchFilter = true;
+        if (filterVal === 'online') matchFilter = m.online === true;
+        else if (filterVal === 'offline') matchFilter = m.online !== true;
+        else if (filterVal === 'expired') matchFilter = isExpired(m.expiryDate);
+        return matchSearch && matchFilter;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-gray-600">
+          <i class="fas fa-search text-3xl mb-3 block"></i>
+          لا توجد نتائج مطابقة
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(m => {
+        const expired = isExpired(m.expiryDate);
+        const avgExam = m.examResults && m.examResults.length > 0 ? Math.round(m.examResults.reduce((a,b)=>a+b,0)/m.examResults.length) : 0;
+        return `
+        <tr class="table-row-hover border-b border-white/3 cursor-pointer" onclick="openMemberDetail('${m.id}')">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-br ${m.online ? 'from-cyan-500 to-emerald-500' : 'from-gray-600 to-gray-700'} flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                ${m.name.charAt(0)}
+              </div>
+              <div>
+                <p class="text-white font-medium text-sm">${m.name}</p>
+                <p class="text-gray-500 text-xs">${m.userCode || '-'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-4">
+            ${m.online ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 online-badge"></span>أونلاين</span>` : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-500/10 text-gray-400 text-xs"><span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span>أوفلاين</span>`}
+          </td>
+          <td class="px-4 py-4 hidden md:table-cell">
+            <span class="text-xs ${expired ? 'text-red-400' : 'text-gray-300'}">${formatDate(m.expiryDate)}</span>
+            ${expired ? '<span class="block text-[10px] text-red-500">منتهي</span>' : ''}
+          </td>
+          <td class="px-4 py-4 hidden lg:table-cell">
+            <span class="text-gray-300 text-sm">${m.lecturesWatched || 0}</span>
+          </td>
+          <td class="px-4 py-4 hidden lg:table-cell">
+            <div class="flex items-center gap-2">
+              <span class="text-gray-300 text-sm">${m.examsTaken || 0}</span>
+              ${avgExam > 0 ? `<span class="text-[10px] px-1.5 py-0.5 rounded ${avgExam >= 80 ? 'bg-emerald-500/10 text-emerald-400' : avgExam >= 60 ? 'bg-amber-500/10 text-amber-400' : 'bg-red-500/10 text-red-400'}">${avgExam}%</span>` : ''}
+            </div>
+          </td>
+          <td class="px-4 py-4 hidden md:table-cell">
+            <span class="text-gray-500 text-xs">${timeAgo(m.lastActive)}</span>
+          </td>
+          <td class="px-4 py-4 text-center">
+            <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all mx-auto">
+              <i class="fas fa-chevron-left text-xs"></i>
+            </button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function filterMembers() { renderMembers(); }
+
+    // ========================
+    // Member Detail Modal
+    // ========================
+    let currentEditingMember = null;
+    let isEditMode = false;
+
+    function openMemberDetail(id) {
+      const member = allMembers.find(x => x.id === id);
+      if (!member) return;
+      currentEditingMember = JSON.parse(JSON.stringify(member));
+      isEditMode = false;
+      renderMemberModal();
+      document.getElementById('memberModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function toggleEditMode() {
+      isEditMode = !isEditMode;
+      renderMemberModal();
+    }
+
+    function renderMemberModal() {
+      const m = currentEditingMember;
+      const expired = isExpired(m.expiryDate);
+      const avgExam = m.examResults && m.examResults.length > 0 ? Math.round(m.examResults.reduce((a,b)=>a+b,0)/m.examResults.length) : 0;
+      const daysLeft = getDaysRemaining(m.expiryDate);
+
+      const content = document.getElementById('memberDetailContent');
+      const footer = document.getElementById('modalFooter');
+      const editBtn = document.getElementById('editModeBtn');
+
+      if (isEditMode) {
+        editBtn.innerHTML = '<i class="fas fa-times"></i>';
+        editBtn.classList.add('bg-red-500/10', 'text-red-400');
+        editBtn.classList.remove('bg-cyan-500/10', 'text-cyan-400');
+        footer.classList.remove('hidden');
+        footer.classList.add('flex');
+      } else {
+        editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+        editBtn.classList.remove('bg-red-500/10', 'text-red-400');
+        editBtn.classList.add('bg-cyan-500/10', 'text-cyan-400');
+        footer.classList.add('hidden');
+        footer.classList.remove('flex');
+      }
+
+      const inputStyle = isEditMode ? 'input-dark w-full rounded-lg px-3 py-2 text-white text-sm' : '';
+
+      content.innerHTML = `
+        <!-- Profile Header -->
+        <div class="text-center pb-4">
+          <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br ${m.online ? 'from-cyan-500 to-emerald-500' : 'from-gray-600 to-gray-700'} flex items-center justify-center text-white text-3xl font-bold mb-3">
+            ${m.name.charAt(0)}
+          </div>
+          ${isEditMode ? `
+            <input type="text" id="edit_name" value="${m.name || ''}" class="${inputStyle}" placeholder="اسم العضو">
+            <input type="text" id="edit_userCode" value="${m.userCode || ''}" class="${inputStyle} mt-2" placeholder="كود العضو">
+          ` : `
+            <h4 class="text-xl font-bold text-white">${m.name}</h4>
+            <p class="text-gray-500 text-sm">${m.userCode || '-'}</p>
+          `}
+          <div class="mt-2">
+            ${isEditMode ? `
+              <select id="edit_online" class="${inputStyle}">
+                <option value="true" ${m.online ? 'selected' : ''}>أونلاين</option>
+                <option value="false" ${!m.online ? 'selected' : ''}>أوفلاين</option>
+              </select>
+            ` : `
+              ${m.online ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm"><span class="w-2 h-2 rounded-full bg-emerald-400 online-badge"></span>أونلاين الآن</span>` : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-500/10 text-gray-400 text-sm"><span class="w-2 h-2 rounded-full bg-gray-500"></span>أوفلاين</span>`}
+            `}
+          </div>
+        </div>
+
+        <!-- Section: Account -->
+        <div class="space-y-2">
+          <h5 class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">
+            <i class="fas fa-user-gear ml-1 text-cyan-400"></i> معلومات الحساب
+          </h5>
+          <div class="detail-field ${isEditMode ? 'p-0 bg-transparent border-none' : ''}">
+            <span class="text-gray-400 text-sm block ${isEditMode ? 'mb-2' : ''}">كود العضو</span>
+            ${isEditMode ? `<input type="text" id="edit_userCode2" value="${m.userCode || ''}" class="${inputStyle}" placeholder="كود العضو">` : `<span class="text-white font-mono text-sm">${m.userCode || '-'}</span>`}
+          </div>
+          <div class="detail-field ${isEditMode ? 'p-0 bg-transparent border-none' : ''}">
+            <span class="text-gray-400 text-sm block ${isEditMode ? 'mb-2' : ''}">كلمة المرور</span>
+            ${isEditMode ? `<input type="text" id="edit_pass" value="${m.pass || ''}" class="${inputStyle}" placeholder="كلمة المرور">` : `<span class="text-white text-sm">${m.pass || '****'}</span>`}
+          </div>
+          <div class="detail-field ${isEditMode ? 'p-0 bg-transparent border-none' : ''}">
+            <span class="text-gray-400 text-sm block ${isEditMode ? 'mb-2' : ''}">تاريخ انتهاء الاشتراك</span>
+            ${isEditMode ? `<input type="date" id="edit_expiry" value="${m.expiryDate ? m.expiryDate.split('T')[0] : ''}" class="${inputStyle}">` : `<div class="flex items-center justify-between gap-2"><div class="flex-1"><span class="text-sm ${expired ? 'text-red-400' : 'text-emerald-400'}">${formatDate(m.expiryDate)}</span><p class="text-xs text-gray-600 mt-0.5">${expired ? '❌ منتهي الاشتراك' : '✅ فعّال'}</p></div><span class="text-xs px-2.5 py-1 rounded-lg font-bold flex-shrink-0 ${daysLeft <= 7 ? 'bg-red-500/10 text-red-400' : daysLeft <= 30 ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'}">${daysLeft} يوم</span></div>`}
+          </div>
+        </div>
+
+        <!-- Section: Device -->
+        <div class="space-y-2">
+          <h5 class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">
+            <i class="fas fa-mobile-screen ml-1 text-violet-400"></i> معلومات الجهاز
+          </h5>
+          <div class="detail-field ${isEditMode ? 'p-0 bg-transparent border-none' : ''}">
+            <span class="text-gray-400 text-sm block ${isEditMode ? 'mb-2' : ''}">الجهاز الأساسي</span>
+            ${isEditMode ? `<input type="text" id="edit_device" value="${(m.device || '').replace(/"/g, '&quot;')}" class="${inputStyle}" placeholder="اسم الجهاز">` : `<span class="text-white text-sm">${m.device || '-'}</span>`}
+          </div>
+          <div class="detail-field ${isEditMode ? 'p-0 bg-transparent border-none' : ''}">
+            <span class="text-gray-400 text-sm block ${isEditMode ? 'mb-2' : ''}">جهاز ثانوي/مشفر</span>
+            ${isEditMode ? `<input type="text" id="edit_device2" value="${m.device2 || ''}" class="${inputStyle}" placeholder="جهاز ثانوي">` : `<span class="text-white text-sm font-mono text-xs">${m.device2 || '-'}</span>`}
+          </div>
+        </div>
+
+        <!-- Section: Activity -->
+        <div class="space-y-2">
+          <h5 class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">
+            <i class="fas fa-chart-simple ml-1 text-emerald-400"></i> النشاط
+          </h5>
+          <div class="detail-field ${isEditMode ? 'p-0 bg-transparent border-none' : ''}">
+            <span class="text-gray-400 text-sm block ${isEditMode ? 'mb-2' : ''}">عدد المحاضرات المشاهدة</span>
+            ${isEditMode ? `<input type="number" id="edit_lectures" value="${m.lecturesWatched || 0}" class="${inputStyle}" min="0">` : `<span class="text-white font-bold">${m.lecturesWatched || 0} <span class="text-gray-500 font-normal text-xs">محاضرة</span></span>`}
+          </div>
+          <div class="detail-field flex justify-between items-center">
+            <span class="text-gray-400 text-sm">آخر نشاط</span>
+            <span class="text-white text-sm">${timeAgo(m.lastActive)}</span>
+          </div>
+        </div>
+
+        <!-- Section: Exams -->
+        <div class="space-y-2">
+          <h5 class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">
+            <i class="fas fa-graduation-cap ml-1 text-amber-400"></i> الامتحانات
+          </h5>
+          <div class="detail-field ${isEditMode ? 'p-0 bg-transparent border-none' : ''}">
+            <span class="text-gray-400 text-sm block ${isEditMode ? 'mb-2' : ''}">عدد الامتحانات</span>
+            ${isEditMode ? `<input type="number" id="edit_exams" value="${m.examsTaken || 0}" class="${inputStyle}" min="0">` : `<span class="text-white font-bold">${m.examsTaken || 0}</span>`}
+          </div>
+          <div class="detail-field flex justify-between items-center">
+            <span class="text-gray-400 text-sm">متوسط الدرجات</span>
+            <span class="font-bold ${avgExam >= 80 ? 'text-emerald-400' : avgExam >= 60 ? 'text-amber-400' : 'text-red-400'}">${avgExam > 0 ? avgExam + '%' : '-'}</span>
+          </div>
+          ${isEditMode ? `
+            <div class="detail-field p-0 bg-transparent border-none">
+              <span class="text-gray-400 text-sm block mb-2">نتائج الامتحانات (مفصول بفواصل)</span>
+              <textarea id="edit_results" class="${inputStyle} h-20 resize-none" placeholder="85, 92, 78, 95...">${m.examResults && m.examResults.length > 0 ? m.examResults.join(', ') : ''}</textarea>
+              <p class="text-gray-600 text-xs mt-1">اكتب الدرجات مفصول بفواصل: 85, 92, 78</p>
+            </div>
+          ` : `
+            ${m.examResults && m.examResults.length > 0 ? `
+              <div class="detail-field">
+                <span class="text-gray-400 text-sm block mb-2">نتائج الامتحانات</span>
+                <div class="flex flex-wrap gap-2">
+                  ${m.examResults.map((score, i) => `
+                    <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${score >= 80 ? 'bg-emerald-500/10 text-emerald-400' : score >= 60 ? 'bg-amber-500/10 text-amber-400' : 'bg-red-500/10 text-red-400'}">
+                      ${i+1}# ${score}%
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          `}
+        </div>
+
+        ${isEditMode ? `
+          <div class="glass-card rounded-2xl p-4 border border-amber-500/20 bg-amber-500/5 mt-4">
+            <p class="text-amber-400 text-sm flex items-start gap-2">
+              <i class="fas fa-info-circle mt-0.5"></i>
+              <span>سيتم حفظ جميع التغييرات في قاعدة البيانات عند النقر على "حفظ التغييرات"</span>
+            </p>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function saveMemberChanges() {
+      if (!currentEditingMember) return;
+
+      const name = document.getElementById('edit_name')?.value || currentEditingMember.name;
+      const userCode = document.getElementById('edit_userCode')?.value || document.getElementById('edit_userCode2')?.value || currentEditingMember.userCode;
+      const pass = document.getElementById('edit_pass')?.value || currentEditingMember.pass;
+      const expiryDate = document.getElementById('edit_expiry')?.value || currentEditingMember.expiryDate;
+      const device = document.getElementById('edit_device')?.value || currentEditingMember.device;
+      const device2 = document.getElementById('edit_device2')?.value || currentEditingMember.device2;
+      const lecturesWatched = parseInt(document.getElementById('edit_lectures')?.value || currentEditingMember.lecturesWatched) || 0;
+      const examsTaken = parseInt(document.getElementById('edit_exams')?.value || currentEditingMember.examsTaken) || 0;
+      
+      let examResults = [];
+      const resultsText = document.getElementById('edit_results')?.value || '';
+      if (resultsText.trim()) {
+        examResults = resultsText.split(',').map(s => {
+          const num = parseInt(s.trim());
+          return isNaN(num) ? 0 : Math.min(100, Math.max(0, num));
         });
+      }
+
+      const online = document.getElementById('edit_online')?.value === 'true' || currentEditingMember.online;
+
+      // تحديث البيانات المحلية بشكل مباشر
+      const originalMember = allMembers.find(m => m.id === currentEditingMember.id);
+      if (originalMember) {
+        originalMember.name = name;
+        originalMember.userCode = userCode;
+        originalMember.pass = pass;
+        originalMember.expiryDate = expiryDate;
+        originalMember.device = device;
+        originalMember.device2 = device2;
+        originalMember.lecturesWatched = lecturesWatched;
+        originalMember.examsTaken = examsTaken;
+        originalMember.examResults = examResults;
+        originalMember.online = online;
+        originalMember.lastActive = Date.now();
+      }
+
+      // حفظ في Firebase إذا كانت متصلة
+      if (firebaseInitialized && db) {
+        const updateData = {
+          name, userCode, pass, expiryDate, device, device2,
+          lecturesWatched, examsTaken, examResults, online, lastActive: Date.now()
+        };
+        db.ref(`codes/${currentEditingMember.id}`).update(updateData).then(() => {
+          addNotification('✓ تم حفظ التغييرات بنجاح', 'success');
+          isEditMode = false;
+          closeMemberModal();
+          updateAllStats();
+          renderMembers();
+        }).catch(err => {
+          addNotification('✗ خطأ في الحفظ: ' + err.message, 'warning');
+        });
+      } else {
+        addNotification('✓ تم حفظ التغييرات محلياً', 'success');
+        isEditMode = false;
+        closeMemberModal();
+        updateAllStats();
+        renderMembers();
+      }
     }
 
-    // تشغيل كل الوظائف عند فتح الصفحة
-    window.addEventListener('load', () => {
-        loadLiveData();
-        if (typeof updateMemberCount === 'function') updateMemberCount();
-    });
-    // 1. رابط الـ Web App بتاعك (تأكد إنه بين علامتين التنصيص)
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxBZ2uzh8QnukkGuf8aeq4zw0clxVseUJ6CG6nh0A-2rK6x7sQ34VsfVNBIVB-XPZpoBQ/exec';
+    function closeMemberModal() {
+      document.getElementById('memberModal').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
 
-async function fetchSubs() {
-    try {
-        // نطلب البيانات من شيت جوجل
-        const res = await fetch(SHEET_URL + '?action=getStats');
-        const data = await res.json();
-        
-        console.log("البيانات وصلت:", data); // عشان تشوفها في الـ Inspect
+    // ========================
+    // Render Exams
+    // ========================
+    function renderExams() {
+      const tbody = document.getElementById('examsTableBody');
+      if (allExams.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-600"><i class="fas fa-file-lines text-3xl mb-3 block"></i>لا توجد نتائج بعد</td></tr>`;
+        return;
+      }
 
-        // 2. تحديث عداد المشتركين
-        if (data.totalMembers !== undefined) {
-            document.getElementById('stat-subs').innerText = data.totalMembers;
+      tbody.innerHTML = allExams.sort((a, b) => (b.date || 0) - (a.date || 0)).map(e => {
+        const pct = Math.round(e.score / e.total * 100);
+        const pass = pct >= 60;
+        return `
+        <tr class="table-row-hover border-b border-white/3">
+          <td class="px-6 py-4 text-white text-sm">${e.studentName}</td>
+          <td class="px-4 py-4 text-gray-300 text-sm">${e.examName}</td>
+          <td class="px-4 py-4">
+            <div class="flex items-center gap-2">
+              <span class="text-white font-bold text-sm">${e.score}/${e.total}</span>
+              <span class="text-xs ${pct >= 80 ? 'text-emerald-400' : pct >= 60 ? 'text-amber-400' : 'text-red-400'}">(${pct}%)</span>
+            </div>
+          </td>
+          <td class="px-4 py-4 hidden md:table-cell text-gray-500 text-xs">${formatDate(e.date)} ${formatTime(e.date)}</td>
+          <td class="px-4 py-4">
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${pass ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">
+              ${pass ? 'ناجح ✓' : 'راسب ✗'}
+            </span>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ========================
+    // Render Activity
+    // ========================
+    function renderActivity() {
+      const list = document.getElementById('recentActivityList');
+      const actLog = document.getElementById('activityLogList');
+
+      const activities = allMembers
+        .filter(m => m.lastActive)
+        .sort((a, b) => (b.lastActive || 0) - (a.lastActive || 0))
+        .slice(0, 8)
+        .map(m => ({
+          name: m.name,
+          action: m.online ? 'متصل الآن' : 'آخر ظهور',
+          time: m.lastActive,
+          online: m.online,
+          lectures: m.lecturesWatched || 0
+        }));
+
+      if (activities.length === 0) {
+        const empty = `<div class="text-center py-8 text-gray-600"><i class="fas fa-inbox text-3xl mb-2"></i><p>لا توجد أنشطة حالياً</p></div>`;
+        list.innerHTML = empty;
+        actLog.innerHTML = `<div class="glass-card rounded-2xl p-8 text-center text-gray-600"><i class="fas fa-history text-3xl mb-3"></i><p>لا توجد أنشطة مسجلة</p></div>`;
+        return;
+      }
+
+      const html = activities.map(a => `
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/3 transition-colors">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br ${a.online ? 'from-cyan-500/20 to-emerald-500/20' : 'from-gray-700 to-gray-800'} flex items-center justify-center flex-shrink-0">
+            <i class="fas ${a.online ? 'fa-signal text-emerald-400' : 'fa-clock text-gray-500'} text-sm"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-white text-sm font-medium truncate">${a.name}</p>
+            <p class="text-gray-500 text-xs">${a.action} · ${a.lectures} محاضرة</p>
+          </div>
+          <span class="text-gray-600 text-xs flex-shrink-0">${timeAgo(a.time)}</span>
+        </div>
+      `).join('');
+
+      list.innerHTML = html;
+      actLog.innerHTML = activities.map(a => `
+        <div class="glass-card rounded-2xl p-4 flex items-center gap-4">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br ${a.online ? 'from-cyan-500/10 to-emerald-500/10' : 'from-gray-800 to-gray-900'} flex items-center justify-center flex-shrink-0">
+            <i class="fas ${a.online ? 'fa-signal text-emerald-400' : 'fa-clock text-gray-500'}"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-white font-medium">${a.name}</p>
+            <p class="text-gray-500 text-sm">${a.action} · شاهد ${a.lectures} محاضرة</p>
+          </div>
+          <div class="text-left flex-shrink-0">
+            <p class="text-gray-500 text-xs">${timeAgo(a.time)}</p>
+            <p class="text-gray-600 text-[10px]">${formatTime(a.time)}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ========================
+    // Navigation
+    // ========================
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+
+      document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
+
+      const titles = { overview: 'نظرة عامة', members: 'الأعضاء', exams: 'الامتحانات', activity: 'النشاط الأخير' };
+      document.getElementById('pageTitle').textContent = titles[tab] || '';
+
+      if (tab === 'overview') renderWeeklyChart();
+    }
+
+    function toggleSidebar() {
+      const sb = document.getElementById('sidebar');
+      sb.classList.toggle('hidden');
+    }
+
+    function toggleNotifications() {
+      const panel = document.getElementById('notifPanel');
+      panel.classList.toggle('hidden');
+    }
+
+    // ========================
+    // Notifications
+    // ========================
+    function addNotification(text, type = 'info') {
+      notifications.unshift({ text, type, time: Date.now() });
+      if (notifications.length > 20) notifications.pop();
+
+      const badge = document.getElementById('notifBadge');
+      badge.textContent = notifications.length;
+      badge.classList.remove('hidden');
+      badge.classList.add('flex');
+
+      renderNotifications();
+    }
+
+    function renderNotifications() {
+      const list = document.getElementById('notifList');
+      if (notifications.length === 0) {
+        list.innerHTML = '<p class="text-center text-gray-600 py-8 text-sm">لا توجد إشعارات</p>';
+        return;
+      }
+      const icons = { info: 'fa-info-circle text-cyan-400', success: 'fa-check-circle text-emerald-400', warning: 'fa-exclamation-triangle text-amber-400' };
+      list.innerHTML = notifications.map(n => `
+        <div class="p-3 rounded-xl bg-white/3 border border-white/5">
+          <div class="flex items-start gap-2">
+            <i class="fas ${icons[n.type] || icons.info} mt-0.5"></i>
+            <div>
+              <p class="text-gray-300 text-sm">${n.text}</p>
+              <p class="text-gray-600 text-xs mt-1">${timeAgo(n.time)}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ========================
+    // Refresh
+    // ========================
+    function refreshData() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('fa-spin');
+      setTimeout(() => {
+        if (firebaseInitialized) {
+          // Firebase auto-syncs
+        } else {
+          // Randomize some demo online states
+          allMembers.forEach(m => {
+            if (Math.random() > 0.5) m.online = !m.online;
+            m.lastActive = Date.now() - Math.floor(Math.random() * 86400000);
+          });
         }
-
-        // 3. تحديث الرسم البياني (Chart)
-        if (data.dailyStats && data.dailyStats.length > 0) {
-            // استخراج التواريخ والأرقام
-            const dates = data.dailyStats.map(row => row[0]); 
-            const counts = data.dailyStats.map(row => row[1]);
-
-            myChart.data.labels = dates;
-            myChart.data.datasets[0].data = counts;
-            myChart.update(); // تنشيط الرسم البياني
-        }
-    } catch (e) {
-        console.error("خطأ في جلب البيانات: ", e);
+        updateAllStats();
+        renderMembers();
+        renderActivity();
+        renderWeeklyChart();
+        addNotification('تم تحديث البيانات', 'success');
+        icon.classList.remove('fa-spin');
+      }, 800);
     }
-}
 
-// تشغيل الدالة أول ما الصفحة تفتح
-window.addEventListener('load', fetchSubs);
-
-// حط الباسورد اللي إنت عايزه هنا
-const ADMIN_PASSWORD = "111111"; 
-
-function checkAccess() {
-    const pass = document.getElementById('admin-pass').value;
-    const correctPass = "$Hoba*911*Gate$2415#"; // الباسورد بتاعك
-
-    if (pass === correctPass) {
-        // لو صح: سجل الدخول واخفي الواجهة
-        localStorage.setItem('admin_authenticated', 'true');
-        
-        document.getElementById('login-overlay').classList.add('opacity-0');
-        setTimeout(() => {
-            document.getElementById('login-overlay').style.display = 'none';
-            if (typeof loadLiveData === "function") loadLiveData();
-        }, 500);
-        
-    } else {
-        // لو غلط: اظهر رسالة الخطأ ثانية واحدة وبعدين اطردوا بره
-        const errorMsg = document.getElementById('error-msg');
-        errorMsg.classList.remove('hidden');
-        errorMsg.innerText = " رمز الوصول خطأ.. سوف يتم حظرك اذا حاولت الدخول مجددا ";
-        
-        // تأخير لمدة ثانية عشان يلحق يقرأ الرسالة وبعدين يخرج
-        setTimeout(() => {
-            window.location.href = "index.html"; // تأكد من اسم الصفحة الرئيسية عندك
-        }, 1500);
-    }
-}
-
-// فحص لو كان دخل الباسورد قبل كدة عشان ميسألوش كل شوية
-window.addEventListener('load', () => {
-    if (localStorage.getItem('admin_access') === 'true') {
-        document.getElementById('login-overlay').style.display = 'none';
-    }
-});
-    </script>
-</body>
-
+    // Init Lucide
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9de40bab97193574',t:'MTc3MzgzNDg5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
