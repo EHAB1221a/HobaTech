@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+    <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الدعم الفني</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .card-link {
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .card-link:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+    .card-link:hover .icon-wrap {
+      transform: scale(1.25) rotate(8deg);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    }
+    .icon-wrap {
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
+    }
+    .icon-wrap::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .card-link:hover .icon-wrap::before {
+      opacity: 1;
+    }
+    .icon-wrap svg, .icon-wrap i {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+      transition: filter 0.3s ease;
+    }
+    .card-link:hover .icon-wrap svg,
+    .card-link:hover .icon-wrap i {
+      filter: drop-shadow(0 4px 8px rgba(99, 102, 241, 0.4));
+    }
+
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.06;
+      animation: floatShape 8s ease-in-out infinite;
+    }
+    .floating-shape:nth-child(2) { animation-delay: -2s; animation-duration: 10s; }
+    .floating-shape:nth-child(3) { animation-delay: -4s; animation-duration: 12s; }
+
+    @keyframes floatShape {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(10deg); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in {
+      animation: fadeInUp 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+      50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.25); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    .status-dot {
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto" style="font-family: 'Tajawal', sans-serif;">
+  <div id="app-wrapper" class="w-full min-h-full relative" style="background: #0B0F1A;"><!-- Floating decorative shapes -->
+   <div class="floating-shape" style="width: 300px; height: 300px; top: -80px; right: -60px; background: #6366F1;"></div>
+   <div class="floating-shape" style="width: 200px; height: 200px; bottom: 10%; left: -40px; background: #22D3EE;"></div>
+   <div class="floating-shape" style="width: 150px; height: 150px; top: 40%; right: 10%; background: #A78BFA;"></div>
+   <div class="relative z-10 w-full max-w-2xl mx-auto px-5 py-12"><!-- Header -->
+    <div class="text-center mb-10 animate-in" style="animation-delay: 0.1s;">
+     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3);"><span class="status-dot inline-block w-2 h-2 rounded-full" style="background: #22D3EE;"></span> <span class="text-sm font-medium" style="color: #A5B4FC;">متاح الآن</span>
+     </div>
+     <h1 id="page-title" class="text-4xl font-extrabold mb-3 leading-tight" style="color: #E0E7FF;">الدعم الفني</h1>
+     <p id="page-subtitle" class="text-lg font-light leading-relaxed" style="color: #7C83A1;">نحن هنا لمساعدتك على مدار الساعة. اختر طريقة التواصل المناسبة لك</p>
+    </div><!-- Contact Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10"><!-- WhatsApp --> <a id="whatsapp-card" href="https://wa.me/201129813193" target="_blank" rel="noopener noreferrer" class="card-link block rounded-2xl p-5 animate-in" style="animation-delay: 0.2s; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);">
+      <div class="flex items-center gap-4">
+       <div class="icon-wrap w-14 h-14 rounded-xl flex items-center justify-center" style="background: rgba(37, 211, 102, 0.15);">
+        <svg width="28" height="28" viewbox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+       </div>
+       <div>
+        <h3 class="font-bold text-base mb-0.5" style="color: #E0E7FF;">واتساب</h3>
+        <p id="whatsapp-display" class="text-sm" style="color: #7C83A1; direction: ltr; text-align: right;">+20 112 981 3193</p>
+       </div>
+      </div>
+    </a> <!-- Telegram --> <a id="telegram-card" href="https://t.me/ehab713" target="_blank" rel="noopener noreferrer" class="card-link block rounded-2xl p-5 animate-in" style="animation-delay: 0.3s; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);">
+      <div class="flex items-center gap-4">
+       <div class="icon-wrap w-14 h-14 rounded-xl flex items-center justify-center" style="background: rgba(38, 165, 224, 0.15);">
+        <svg width="28" height="28" viewbox="0 0 24 24" fill="none" stroke="#26A5E4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+         <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+       </div>
+       <div>
+        <h3 class="font-bold text-base mb-0.5" style="color: #E0E7FF;">تليجرام</h3>
+        <p id="telegram-display" class="text-sm" style="color: #7C83A1;">@ehab713</p>
+       </div>
+      </div></a> <!-- Email --> <a id="email-card" href="ea109754@gmail.com" target="_blank" rel="noopener noreferrer" class="card-link block rounded-2xl p-5 animate-in" style="animation-delay: 0.4s; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);">
+      <div class="flex items-center gap-4">
+       <div class="icon-wrap w-14 h-14 rounded-xl flex items-center justify-center" style="background: rgba(239, 68, 68, 0.15);"><i data-lucide="mail" style="width: 28px; height: 28px; color: #EF4444;"></i>
+       </div>
+       <div>
+        <h3 class="font-bold text-base mb-0.5" style="color: #E0E7FF;">البريد الإلكتروني</h3>
+        <p id="email-display" class="text-sm" style="color: #7C83A1;">ea109754@gmail.com</p>
+       </div>
+      </div></a> <!-- Facebook --> <a id="facebook-card" href="https://www.facebook.com/share/1azjDEV6Km/" target="_blank" rel="noopener noreferrer" class="card-link block rounded-2xl p-5 animate-in" style="animation-delay: 0.5s; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);">
+      <div class="flex items-center gap-4">
+       <div class="icon-wrap w-14 h-14 rounded-xl flex items-center justify-center" style="background: rgba(24, 119, 242, 0.15);"><i data-lucide="facebook" style="width: 28px; height: 28px; color: #1877F2;"></i>
+       </div>
+       <div>
+        <h3 class="font-bold text-base mb-0.5" style="color: #E0E7FF;">فيسبوك</h3>
+        <p class="text-sm" style="color: #7C83A1;">صفحتنا الرسمية</p>
+       </div>
+      </div></a> <!-- Instagram --> <a id="instagram-card" href="https://www.instagram.com/h_o_b_a_cr7?igsh=djd1Mm9ld2V1OXBlبس" target="_blank" rel="noopener noreferrer" class="card-link block rounded-2xl p-5 animate-in" style="animation-delay: 0.6s; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);">
+      <div class="flex items-center gap-4">
+       <div class="icon-wrap w-14 h-14 rounded-xl flex items-center justify-center" style="background: rgba(228, 64, 95, 0.15);"><i data-lucide="instagram" style="width: 28px; height: 28px; color: #E4405F;"></i>
+       </div>
+       <div>
+        <h3 class="font-bold text-base mb-0.5" style="color: #E0E7FF;">انستجرام</h3>
+        <p class="text-sm" style="color: #7C83A1;">تابعنا على انستجرام</p>
+       </div>
+      </div></a> <!-- Twitter / X --> <a id="twitter-card" href="https://x.com/ehab24152415?s=09" target="_blank" rel="noopener noreferrer" class="card-link block rounded-2xl p-5 animate-in" style="animation-delay: 0.7s; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);">
+      <div class="flex items-center gap-4">
+       <div class="icon-wrap w-14 h-14 rounded-xl flex items-center justify-center" style="background: rgba(255, 255, 255, 0.1);"><i data-lucide="twitter" style="width: 28px; height: 28px; color: #FFFFFF;"></i>
+       </div>
+       <div>
+        <h3 class="font-bold text-base mb-0.5" style="color: #E0E7FF;">تويتر (X)</h3>
+        <p class="text-sm" style="color: #7C83A1;">تابعنا على X</p>
+       </div>
+      </div></a>
+    </div><!-- CTA Section -->
+    <div class="text-center animate-in pulse-glow rounded-2xl p-8 mb-8" style="animation-delay: 0.8s; background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(34, 211, 238, 0.08)); border: 1px solid rgba(99, 102, 241, 0.2);">
+     <div class="mb-3"><i data-lucide="headphones" style="width: 36px; height: 36px; color: #A5B4FC; margin: 0 auto; display: block;"></i>
+     </div>
+     <h2 class="text-xl font-bold mb-2" style="color: #E0E7FF;">محتاج مساعدة فورية؟</h2>
+     <p class="text-sm mb-0" style="color: #7C83A1;">فريق الدعم الفني متاح على مدار الساعة لمساعدتك</p>
+    </div><!-- Footer -->
+    <footer class="text-center animate-in pb-4" style="animation-delay: 0.9s;">
+     <p id="footer-text" class="text-sm" style="color: #4B5178;">جميع الحقوق محفوظة © 2025</p>
+    </footer>
+   </div>
+  </div>
+  <script>
+    lucide.createIcons();
+
+    const defaultConfig = {
+      // Colors
+      background_color: '#0B0F1A',
+      surface_color: '#1A1F35',
+      text_color: '#E0E7FF',
+      primary_action_color: '#6366F1',
+      secondary_action_color: '#7C83A1',
+      // Font
+      font_family: 'Tajawal',
+      font_size: 16,
+      // Text content - القيم الأساسية محفوظة هنا
+      page_title: 'الدعم الفني',
+      page_subtitle: 'نحن هنا لمساعدتك على مدار الساعة. اختر طريقة التواصل المناسبة لك',
+      whatsapp_number: '01129813193',
+      telegram_username: '@ehab713',
+      email_address: 'ea107954@gmail.com',
+      facebook_url: 'https://www.facebook.com/share/1azjDEV6Km/',
+      instagram_url: 'https://www.instagram.com/h_o_b_a_cr7?igsh=djd1Mm9ld2V1OXBl',
+      twitter_url: 'https://x.com/ehab24152415?s=09',
+      footer_text: 'جميع الحقوق محفوظة لمنصة هوبا تيك © 2025'
+    };
+
+    async function onConfigChange(config) {
+      const c = key => config[key] || defaultConfig[key];
+      const font = c('font_family');
+      const baseSize = c('font_size');
+      const baseFontStack = `${font}, 'Tajawal', sans-serif`;
+
+      // Background
+      document.getElementById('app-wrapper').style.background = c('background_color');
+
+      // Cards border color based on surface
+      document.querySelectorAll('.card-link').forEach(card => {
+        card.style.borderColor = c('surface_color') + '33';
+        card.style.background = c('surface_color') + '18';
+      });
+
+      // Text colors
+      document.getElementById('page-title').style.color = c('text_color');
+      document.querySelectorAll('.card-link h3').forEach(h => h.style.color = c('text_color'));
+
+      // Secondary text
+      document.getElementById('page-subtitle').style.color = c('secondary_action_color');
+      document.querySelectorAll('.card-link p').forEach(p => p.style.color = c('secondary_action_color'));
+      document.getElementById('footer-text').style.color = c('secondary_action_color');
+
+      // Primary action color on CTA glow area
+      const ctaSection = document.querySelector('.pulse-glow');
+      if (ctaSection) {
+        ctaSection.style.borderColor = c('primary_action_color') + '33';
+      }
+
+      // Fonts
+      document.body.style.fontFamily = baseFontStack;
+      document.getElementById('page-title').style.fontSize = `${baseSize * 2.25}px`;
+      document.getElementById('page-subtitle').style.fontSize = `${baseSize * 1.1}px`;
+      document.querySelectorAll('.card-link h3').forEach(h => h.style.fontSize = `${baseSize}px`);
+      document.querySelectorAll('.card-link p').forEach(p => p.style.fontSize = `${baseSize * 0.875}px`);
+      document.getElementById('footer-text').style.fontSize = `${baseSize * 0.875}px`;
+
+      // Text content
+      document.getElementById('page-title').textContent = c('page_title');
+      document.getElementById('page-subtitle').textContent = c('page_subtitle');
+      document.getElementById('footer-text').textContent = c('footer_text');
+
+      // WhatsApp
+      const waNum = c('whatsapp_number').replace(/[^0-9+]/g, '');
+      const waDisplay = waNum.startsWith('+') ? waNum : '+20' + waNum;
+      document.getElementById('whatsapp-card').href = `https://wa.me/${waNum.replace('+', '')}`;
+      document.getElementById('whatsapp-display').textContent = waDisplay;
+
+      // Telegram
+      const tgUser = c('telegram_username').replace('@', '');
+      document.getElementById('telegram-card').href = `https://t.me/${tgUser}`;
+      document.getElementById('telegram-display').textContent = c('telegram_username');
+
+      // Email
+      document.getElementById('email-card').href = `mailto:${c('email_address')}`;
+      document.getElementById('email-display').textContent = c('email_address');
+
+      // Facebook
+      document.getElementById('facebook-card').href = c('facebook_url');
+
+      // Instagram
+      document.getElementById('instagram-card').href = c('instagram_url');
+
+      // Twitter
+      document.getElementById('twitter-card').href = c('twitter_url');
+    }
+
+    function mapToCapabilities(config) {
+      const c = key => config[key] || defaultConfig[key];
+      return {
+        recolorables: [
+          {
+            get: () => c('background_color'),
+            set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => c('surface_color'),
+            set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+          },
+          {
+            get: () => c('text_color'),
+            set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => c('primary_action_color'),
+            set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
+          },
+          {
+            get: () => c('secondary_action_color'),
+            set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => c('font_family'),
+          set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => c('font_size'),
+          set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      const c = key => config[key] || defaultConfig[key];
+      return new Map([
+        ['page_title', c('page_title')],
+        ['page_subtitle', c('page_subtitle')],
+        ['whatsapp_number', c('whatsapp_number')],
+        ['telegram_username', c('telegram_username')],
+        ['email_address', c('email_address')],
+        ['facebook_url', c('facebook_url')],
+        ['instagram_url', c('instagram_url')],
+        ['twitter_url', c('twitter_url')],
+        ['footer_text', c('footer_text')]
+      ]);
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange,
+      mapToCapabilities,
+      mapToEditPanelValues
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9de5a5de627b3574',t:'MTc3Mzg1MTY5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
