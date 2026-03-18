@@ -918,7 +918,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 if (isAuth === 'true' && savedCode && savedName) {
     homePage.classList.remove('hidden');
     startWatermark(savedName, savedCode);
-    startSubscriptionChecker(); // هنا كمان
+    startSubscriptionChecker();
+} else {
+    showLoginOverlay(); // 🔥 دي اللي ناقصة
 }
 });
 // التحقق الدوري من صلاحية الاشتراك
@@ -939,7 +941,7 @@ setInterval(async () => {
 
         if (now > expiry) {
 
-            alert("❌ للاسف تم انتهاء مدة الاشتراك الخاصة بك.. لتجديد الاشتراك تواصل مع ا.ايهاب الدرديري");
+            alert("❌ انتهى اشتراكك.. سيتم تحويلك لصفحة التسجيل");
 
             localStorage.removeItem('hoba_student_auth');
             localStorage.removeItem('hoba_user_id');
