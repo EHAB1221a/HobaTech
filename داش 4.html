@@ -1090,6 +1090,43 @@ OneSignalDeferred.push(async function(OneSignal) {
 <!-- نفس الـ HTML و CSS بدون أي تغيير -->
 
 <script>
+        // 1. تعريف خدمة الرسائل
+const messaging = firebase.messaging();
+
+// 2. دالة طلب الإذن والحصول على التوكن
+function activateNotifications(studentId) {
+    // طلب الإذن من المتصفح
+    messaging.requestPermission()
+        .then(() => {
+            console.log('تم السماح بالإشعارات');
+            // الحصول على التوكن باستخدام مفتاح VAPID الذي أرسلته
+            return messaging.getToken({ 
+                vapidKey: 'BJcqpwlnLLO4waAFv_j9nnVa53DZKibszEMC6hlgJsNHqSLyepD6Xp_5rux5hm4Vha6fhQRClD9yDUEIBdv61Ms' 
+            });
+        })
+        .then((token) => {
+            if (token) {
+                console.log('التوكن الخاص بك:', token);
+                
+                // 3. تحديث قاعدة البيانات فوراً (هذا ما سيجعله يظهر "مفعل" في الداش بورد)
+                firebase.database().ref('codes/' + studentId).update({
+                    fcmToken: token
+                }).then(() => {
+                    console.log("تم تفعيل الإشعارات في قاعدة البيانات ✅");
+                });
+
+            } else {
+                console.warn('لم يتم توليد توكن، تأكد من الـ HTTPS وملف الـ Service Worker');
+            }
+        })
+        .catch((err) => {
+            console.error('حدث خطأ أثناء تفعيل الإشعارات:', err);
+        });
+}
+
+// 4. استدعاء الدالة (تأكد من تمرير كود الطالب الصحيح ديناميكياً)
+// مثال للطالب إيهاب باشا:
+activateNotifications("38575565602");
 /* ================= Firebase ================= */
 const firebaseConfig = {
     apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
