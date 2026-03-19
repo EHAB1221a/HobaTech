@@ -1,0 +1,41 @@
+async function handleSendPush() {
+    const userId = document.getElementById('selectedUserId').value;
+    const title = document.getElementById('notifTitle').value;
+    const body = document.getElementById('notifBody').value;
+    
+    const user = allMembers[userId];
+    const PROJECT_ID = "hoba-tech"; // معرف مشروعك
+
+    if (!user || !user.fcmToken) {
+        alert("هذا العضو لم يفعل الإشعارات!");
+        return;
+    }
+
+    // ملاحظة: نظام V1 يتطلب OAuth2 Token. 
+    // إذا كنت ترسل من المتصفح مباشرة (Frontend)، جوجل تطلب Authorization مختلف.
+    // كحل سريع ومؤقت للتجربة، سنستخدم الرابط المخصص لـ V1:
+    
+    const fcmUrl = `https://fcm.googleapis.com/v1/projects/${PROJECT_ID}/messages:send`;
+    
+    const messagePayload = {
+        "message": {
+            "token": user.fcmToken,
+            "notification": {
+                "title": title,
+                "body": body
+            }
+        }
+    };
+
+    try {
+        // تنبيه: نظام V1 يحتاج إلى "Bearer Token" يتم توليده من Service Account
+        // هل لديك ملف JSON الخاص بالـ Service Account؟ 
+        // إذا لا، سأعلمك كيف تستخرجه الآن لتشغيل الـ V1.
+        
+        alert("نظام V1 يحتاج لخطوة إضافية: استخراج ملف الـ JSON الخاص بالخدمة.");
+        console.log("Payload ready for V1:", messagePayload);
+        
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
