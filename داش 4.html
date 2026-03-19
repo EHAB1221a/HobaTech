@@ -1090,35 +1090,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 <!-- نفس الـ HTML و CSS بدون أي تغيير -->
 
 <script>
-      // 1. تأكد إن ده في أول السكريبت
-const messaging = firebase.messaging();
-
-// 2. الدالة دي "محمية" مش هتشتغل غير لما تناديها
-function activateNotifications(studentId) {
-    if (!studentId) return;
-
-    // طلب الإذن
-    messaging.requestPermission()
-        .then(() => messaging.getToken({ 
-            vapidKey: 'BJcqpwlnLLO4waAFv_j9nnVa53DZKibszEMC6hlgJsNHqSLyepD6Xp_5rux5hm4Vha6fhQRClD9yDUEIBdv61Ms' 
-        }))
-        .then((token) => {
-            if (token) {
-                // تحديث قاعدة البيانات
-                return firebase.database().ref('codes/' + studentId).update({
-                    fcmToken: token
-                });
-            }
-        })
-        .then(() => console.log("✅ الإشعارات اشتغلت يا وحش"))
-        .catch((err) => console.log("❌ حصل مشكلة: ", err));
-}
-
-// 3. نادى الدالة دي "بعد" ما الجرس والصفحة يحملوا
-// حط السطر ده في آخر الكود عندك خالص
-setTimeout(() => {
-    activateNotifications("38575565602"); 
-}, 2000); // 
+     
 /* ================= Firebase ================= */
 const firebaseConfig = {
     apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
@@ -1162,7 +1134,35 @@ async function sendMyReset() {
     }
 }
 
+ // 1. تأكد إن ده في أول السكريبت
+const messaging = firebase.messaging();
 
+// 2. الدالة دي "محمية" مش هتشتغل غير لما تناديها
+function activateNotifications(studentId) {
+    if (!studentId) return;
+
+    // طلب الإذن
+    messaging.requestPermission()
+        .then(() => messaging.getToken({ 
+            vapidKey: 'BJcqpwlnLLO4waAFv_j9nnVa53DZKibszEMC6hlgJsNHqSLyepD6Xp_5rux5hm4Vha6fhQRClD9yDUEIBdv61Ms' 
+        }))
+        .then((token) => {
+            if (token) {
+                // تحديث قاعدة البيانات
+                return firebase.database().ref('codes/' + studentId).update({
+                    fcmToken: token
+                });
+            }
+        })
+        .then(() => console.log("✅ الإشعارات اشتغلت يا وحش"))
+        .catch((err) => console.log("❌ حصل مشكلة: ", err));
+}
+
+// 3. نادى الدالة دي "بعد" ما الجرس والصفحة يحملوا
+// حط السطر ده في آخر الكود عندك خالص
+setTimeout(() => {
+    activateNotifications("38575565602"); 
+}, 2000); // 
 /* ================= Members ================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlSJb7p6v6RTvawyrUcMMPwFmPfzxueT5lkmkP_vwi3mZAvGA/exec?action=read';
  async function loadTechMembers() {
