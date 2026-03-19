@@ -1086,8 +1086,12 @@ OneSignalDeferred.push(async function(OneSignal) {
             <button onclick="document.getElementById('resetModal').style.display='none'" style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer; font-size:13px;">إلغاء وإغلاق</button>
         </div>
     </div>
-<script>   
-        /* ================= Firebase ================= */
+
+<!-- نفس الـ HTML و CSS بدون أي تغيير -->
+
+<script>
+      
+/* ================= Firebase ================= */
 const firebaseConfig = {
     apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
     authDomain: "hoba-tech.firebaseapp.com",
@@ -1099,13 +1103,14 @@ const firebaseConfig = {
     measurementId: "G-EBHF8FEDB2"
 };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();  
+const db = firebase.database();
 const auth = firebase.auth();
 auth.onAuthStateChanged(user => {
     if (!user) return;
     const setEmail = document.getElementById('set-email');
     if (setEmail) setEmail.value = user.email;
 });
+      
 /* ================= Reset Password ================= */
 function openResetModal() {
     document.getElementById('resetModal').style.display = 'flex';
@@ -1128,6 +1133,7 @@ async function sendMyReset() {
         Swal.fire('خطأ', e.message, 'error');
     }
 }
+
 
 /* ================= Members ================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlSJb7p6v6RTvawyrUcMMPwFmPfzxueT5lkmkP_vwi3mZAvGA/exec?action=read';
@@ -1184,8 +1190,10 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlS
                 container.innerHTML = "<p style='text-align:center; color:red;'>حدث خطأ في تحميل البيانات.</p>";
             }
         }
-       
+
+        
 loadTechMembers();
+
 const legalDatabase = [
     "قانون حمورابي هو أول مجموعة قوانين مكتوبة في التاريخ، وكان يهدف لتحقيق العدالة.. تماماً مثل هدفك اليوم!",
     "العدل أساس الملك، والقانون هو الحصن المنيع الذي يحمي حقوق الأفراد وحرياتهم.",
@@ -1335,16 +1343,6 @@ async function fetchHobaNews() {
     }
 }
 
-     
-}
-// مثال: لو زرار الدخول عندك بينادي دالة اسمها login
-function login() {
-    let codeInput = document.getElementById('code-field').value;
-    
-    // بعد ما تتأكد إن الكود موجود في Firebase وتعمل Login
-    // نادي الوظيفة اللي فوق كدة:
-    syncNotificationId(codeInput);
-}
 function displayNextNews() {
     const container = document.getElementById('hoba-ticker-container');
     
@@ -1364,7 +1362,7 @@ function displayNextNews() {
         }, 800); 
 
     }, 7000); 
-
+}
 
 // استدعاء عند التحميل
 window.onload = () => {
@@ -1377,6 +1375,7 @@ if (window.innerWidth <= 768) {
     // بيجمع الأخبار كلها في سطر واحد للموبايل فقط
     document.getElementById('hoba-ticker-container').innerText = newsItems.join("  ★  ");
 }
+
 
         (function() {
     // 1. إعدادات Firebase (معزولة داخلياً)
@@ -1451,23 +1450,8 @@ function animate(){
     requestAnimationFrame(animate);
 }
 animate();
-// التأكد من تحميل Firebase أولاً
-    window.addEventListener('load', function() {
-        if (typeof firebase !== 'undefined') {
-            const db = firebase.database();
-            
-            // 1. زيادة إجمالي الزيارات (مرة واحدة في كل جلسة)
-            if (!sessionStorage.getItem('counted')) {
-                db.ref('visits').transaction(c => (c || 0) + 1);
-                sessionStorage.setItem('counted', 'true');
-            }
 
-            // 2. تحديث النشطين الآن
-            const activeRef = db.ref('active_now');
-            activeRef.transaction(c => (c || 0) + 1);
-            activeRef.onDisconnect().transaction(c => (c || 0) <= 0 ? 0 : c - 1);
-        }
-    });
+
          function logoutAndClean() {
     // 1. مسح كل البيانات المخزنة يدوياً (Local & Session Storage)
     localStorage.clear();
@@ -1486,17 +1470,3 @@ animate();
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
