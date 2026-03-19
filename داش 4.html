@@ -1086,9 +1086,6 @@ OneSignalDeferred.push(async function(OneSignal) {
             <button onclick="document.getElementById('resetModal').style.display='none'" style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer; font-size:13px;">إلغاء وإغلاق</button>
         </div>
     </div>
-
-<!-- نفس الـ HTML و CSS بدون أي تغيير -->
-
 <script>   
         /* ================= Firebase ================= */
 const firebaseConfig = {
@@ -1109,7 +1106,6 @@ auth.onAuthStateChanged(user => {
     const setEmail = document.getElementById('set-email');
     if (setEmail) setEmail.value = user.email;
 });
-      
 /* ================= Reset Password ================= */
 function openResetModal() {
     document.getElementById('resetModal').style.display = 'flex';
@@ -1132,7 +1128,6 @@ async function sendMyReset() {
         Swal.fire('خطأ', e.message, 'error');
     }
 }
-
 
 /* ================= Members ================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlSJb7p6v6RTvawyrUcMMPwFmPfzxueT5lkmkP_vwi3mZAvGA/exec?action=read';
@@ -1189,10 +1184,8 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyBovL5L5F0QCU3BZ9jWLlS
                 container.innerHTML = "<p style='text-align:center; color:red;'>حدث خطأ في تحميل البيانات.</p>";
             }
         }
-
-        
+       
 loadTechMembers();
-
 const legalDatabase = [
     "قانون حمورابي هو أول مجموعة قوانين مكتوبة في التاريخ، وكان يهدف لتحقيق العدالة.. تماماً مثل هدفك اليوم!",
     "العدل أساس الملك، والقانون هو الحصن المنيع الذي يحمي حقوق الأفراد وحرياتهم.",
@@ -1458,68 +1451,6 @@ function animate(){
     requestAnimationFrame(animate);
 }
 animate();
-
-
-document.getElementById('deleteAccountBtn').onclick = function () {
-
-  Swal.fire({
-    title: '⚠️ تأكيد حذف الحساب',
-    text: 'سيتم حذف الحساب نهائيًا ولن يمكنك استخدام الإيميل لمدة 10 أيام',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#ff4444',
-    confirmButtonText: 'نعم، احذف الحساب',
-    cancelButtonText: 'إلغاء'
-  }).then(async (res) => {
-
-    if (!res.isConfirmed) return;
-
-    const user = auth.currentUser;
-    if (!user) {
-      Swal.fire('خطأ', 'غير مسجل دخول', 'error');
-      return;
-    }
-
-    const password = prompt('أدخل كلمة السر لتأكيد الحذف:');
-    if (!password) return;
-
-    try {
-      // إعادة التحقق
-      const credential =
-        firebase.auth.EmailAuthProvider.credential(user.email, password);
-      await user.reauthenticateWithCredential(credential);
-
-      // حظر الإيميل 10 أيام
-      await db.collection('banned_emails').doc(user.email).set({
-        bannedUntil: firebase.firestore.Timestamp.fromDate(
-          new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
-        )
-      });
-
-      // حذف بيانات المستخدم
-      await db.collection('users').doc(user.uid).delete();
-
-      // حذف الحساب نفسه
-      await user.delete();
-
-      Swal.fire(
-        'تم الحذف',
-        'تم حذف الحساب ولن يمكنك استخدام الإيميل لمدة 10 أيام',
-        'success'
-      ).then(() => {
-        window.location.href = 'التسجيل.html';
-      });
-
-    } catch (error) {
-      if (error.code === 'auth/wrong-password') {
-        Swal.fire('خطأ', 'كلمة السر غير صحيحة', 'error');
-      } else {
-        Swal.fire('خطأ', error.message, 'error');
-        console.error(error);
-      }
-    }
-  });
-};
 // التأكد من تحميل Firebase أولاً
     window.addEventListener('load', function() {
         if (typeof firebase !== 'undefined') {
