@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ar" dir="rtl">
  <head>
   <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
@@ -1043,7 +1043,7 @@ function renderLogin() {
       <div style="text-align:center;margin-bottom:32px;">
         <div class="fr-flag">🇫🇷</div>
         <div class="login-title">Français Academy</div>
-        <div class="login-sub">معا نحو الافضل</div>
+        <div class="login-sub">منصة تعلم اللغة الفرنسية المتكاملة</div>
       </div>
       <div id="form-login">
 <input class="inp" type="text" id="email-in" placeholder="الكود"/>        <input class="inp" type="password" id="pass-in" placeholder="كلمة السر" autocomplete="current-password"/>
@@ -1144,54 +1144,6 @@ function renderApp() {
   <!-- علامة مائية عائمة -->
   <div class="watermark" id="watermark-float"><div class="watermark-text"><strong>${currentUser?.name||''}</strong><br/>${currentUser?.code||''}</div></div>
 
-  <!-- الشريط الجانبي -->
-  <div class="sidebar" id="sidebar" style="transform:translateX(100%);transition:transform .3s;">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid rgba(255,255,255,.06);">
-      <div class="nav-logo">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:1.8rem;">🇫🇷</span>
-          <div>
-            <div style="font-weight:700;font-size:1rem;color:#ff6b35;">Français</div>
-            <div style="font-size:.7rem;color:rgba(255,255,255,.4);">Academy</div>
-          </div>
-        </div>
-      </div>
-      <button onclick="closeSidebar()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1.5rem;">×</button>
-    </div>
-    <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ff6b35,#f7c59f);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#0f0e17;">
-          ${currentUser?.name?.charAt(0)||'U'}
-        </div>
-        <div>
-          <div style="font-size:.85rem;font-weight:600;">${currentUser?.name||''}</div>
-          <div style="font-size:.7rem;color:#ff6b35;">${currentUser?.code||''}</div>
-        </div>
-      </div>
-    </div>
-    <nav style="padding-top:8px;">
-      <div class="nav-item ${currentPage==='home'?'active':''}" onclick="navigate('home');closeSidebar()">
-        <i data-lucide="home"></i>الرئيسية
-      </div>
-      <div class="nav-item ${currentPage==='curriculum'?'active':''}" onclick="navigate('curriculum');closeSidebar()">
-        <i data-lucide="book-open"></i>المنهج الدراسي
-      </div>
-      <div class="nav-item ${currentPage==='vocabulary'?'active':''}" onclick="navigate('vocabulary');closeSidebar()">
-        <i data-lucide="layers"></i>مستويات الكلمات
-      </div>
-      ${isAdmin?`<div class="nav-item ${currentPage==='stats'?'active':''}" onclick="navigate('stats');closeSidebar()">
-        <i data-lucide="bar-chart-3"></i>الإحصائيات
-      </div>`:''}
-      ${isAdmin?`<div class="nav-item ${currentPage==='admin'?'active':''}" onclick="navigate('admin');closeSidebar()">
-        <i data-lucide="settings"></i>لوحة الإدارة
-      </div>`:''}
-    </nav>
-    <div style="position:absolute;bottom:20px;width:100%;padding:0 20px;">
-      <button onclick="doLogout()" style="width:100%;padding:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;color:#ef4444;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <i data-lucide="log-out" style="width:16px;height:16px;"></i>تسجيل الخروج
-      </button>
-    </div>
-  </div>
 
   <!-- المحتوى الرئيسي -->
   <div class="main-content" id="main-content">
