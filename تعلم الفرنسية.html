@@ -1043,14 +1043,14 @@ function renderLogin() {
       <div style="text-align:center;margin-bottom:32px;">
         <div class="fr-flag">🇫🇷</div>
         <div class="login-title">Français Academy</div>
-        <div class="login-sub">هوبا تيك معا نحو الافضل</div>
+        <div class="login-sub">معا نحو الافضل</div>
       </div>
       <div id="form-login">
 <input class="inp" type="text" id="email-in" placeholder="الكود"/>        <input class="inp" type="password" id="pass-in" placeholder="كلمة السر" autocomplete="current-password"/>
         <div id="login-err" style="color:#ef4444;font-size:.85rem;margin-bottom:12px;text-align:center;min-height:20px;"></div>
         <button class="btn-primary" onclick="doLogin()">دخول 🚀</button>
         <div style="text-align:center;margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.3);">
-          جميع الحقوق محفوظة لمنصة هوبا تيك2026  
+          جميع الحقوق محفوظة لمنصة هوبا تيك
         </div>
       </div>
     </div>
@@ -1221,7 +1221,13 @@ function doLogin() {
   loginWithCode();
 }
 // ===================== التنقل =====================
-
+async function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  await refreshRemoteData(page);
+  renderPage(page);
+  lucide.createIcons();
+}
 
 function renderPage(page) {
   const c = document.getElementById('page-content');
