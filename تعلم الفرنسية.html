@@ -381,6 +381,8 @@ window.onValue = onValue;
     .sidebar.open{transform:translateX(0);}
     .main-content{margin-right:0;}
     #menu-toggle-btn{display:flex!important;}
+    .sidebar,#sidebar{display:none!important;}
+    #menu-toggle-btn{display:none!important;}
   }
 </style>
   <style>body { box-sizing: border-box; }</style>
@@ -403,14 +405,52 @@ padding:20px;
   <div id="app"></div>
   <script>
 // ===================== فتح وإغلاق القائمة الجانبية =====================
+function getPrimarySidebar() {
+  const candidates = Array.from(document.querySelectorAll('#sidebar, .sidebar, [id*="sidebar"]'))
+    .filter((el) => el.id !== 'main-menu-overlay');
+  if (!candidates.length) return null;
+
+  // على الموبايل: احذف اللي على اليمين وسيب التانية
+  const nonRightAnchored = candidates.find((el) => {
+    const st = window.getComputedStyle(el);
+    return !(st.position === 'fixed' && st.right !== 'auto');
+  });
+
+  return nonRightAnchored || candidates[0];
+}
+
+function getSidebarSide(el) {
+  const st = window.getComputedStyle(el);
+  if (st.position === 'fixed' && st.right !== 'auto') return 'right';
+  if (st.position === 'fixed' && st.left !== 'auto') return 'left';
+  return 'unknown';
+}
+
+function cleanupDuplicateSidebars() {
+  if (window.innerWidth > 768) return;
+  const candidates = Array.from(document.querySelectorAll('#sidebar, .sidebar, [id*="sidebar"]'))
+    .filter((el) => el.id !== 'main-menu-overlay');
+  if (candidates.length <= 1) return;
+
+  const keep = getPrimarySidebar();
+  candidates.forEach((el) => {
+    if (el !== keep) el.remove();
+  });
+}
+
 function openSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  if(sidebar) sidebar.style.transform='translateX(0)';
+  cleanupDuplicateSidebars();
+  const sidebar = getPrimarySidebar() || document.getElementById('sidebar');
+  if(!sidebar) return;
+  sidebar.style.transform = 'translateX(0)';
 }
 
 function closeSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  if(sidebar) sidebar.style.transform='translateX(100%)';
+  const sidebar = getPrimarySidebar() || document.getElementById('sidebar');
+  if(!sidebar) return;
+  const side = getSidebarSide(sidebar);
+  if (side === 'left') sidebar.style.transform = 'translateX(-100%)';
+  else sidebar.style.transform = 'translateX(100%)';
 }
 
 // ===================== البيانات التجريبية =====================
@@ -1043,14 +1083,14 @@ function renderLogin() {
       <div style="text-align:center;margin-bottom:32px;">
         <div class="fr-flag">🇫🇷</div>
         <div class="login-title">Français Academy</div>
-        <div class="login-sub">معا نحو الافضل</div>
+        <div class="login-sub">هوبا تيك معا نحو الافضل</div>
       </div>
       <div id="form-login">
 <input class="inp" type="text" id="email-in" placeholder="الكود"/>        <input class="inp" type="password" id="pass-in" placeholder="كلمة السر" autocomplete="current-password"/>
         <div id="login-err" style="color:#ef4444;font-size:.85rem;margin-bottom:12px;text-align:center;min-height:20px;"></div>
         <button class="btn-primary" onclick="doLogin()">دخول 🚀</button>
         <div style="text-align:center;margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.3);">
-          2026 جميع الحقوق محفوظة لمنصة هوبا تيك
+           2026 جميع الحقوق محفوظة لمنصة هوبا تيك
         </div>
       </div>
     </div>
@@ -1143,56 +1183,6 @@ function renderApp() {
   document.getElementById('app').innerHTML = `
   <!-- علامة مائية عائمة -->
   <div class="watermark" id="watermark-float"><div class="watermark-text"><strong>${currentUser?.name||''}</strong><br/>${currentUser?.code||''}</div></div>
-
-  <!-- الشريط الجانبي -->
-  <div class="sidebar" id="sidebar" style="transform:translateX(100%);transition:transform .3s;">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid rgba(255,255,255,.06);">
-      <div class="nav-logo">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:1.8rem;">🇫🇷</span>
-          <div>
-            <div style="font-weight:700;font-size:1rem;color:#ff6b35;">Français</div>
-            <div style="font-size:.7rem;color:rgba(255,255,255,.4);">Academy</div>
-          </div>
-        </div>
-      </div>
-      <button onclick="closeSidebar()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1.5rem;">×</button>
-    </div>
-    <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#ff6b35,#f7c59f);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#0f0e17;">
-          ${currentUser?.name?.charAt(0)||'U'}
-        </div>
-        <div>
-          <div style="font-size:.85rem;font-weight:600;">${currentUser?.name||''}</div>
-          <div style="font-size:.7rem;color:#ff6b35;">${currentUser?.code||''}</div>
-        </div>
-      </div>
-    </div>
-    <nav style="padding-top:8px;">
-      <div class="nav-item ${currentPage==='home'?'active':''}" onclick="navigate('home');closeSidebar()">
-        <i data-lucide="home"></i>الرئيسية
-      </div>
-      <div class="nav-item ${currentPage==='curriculum'?'active':''}" onclick="navigate('curriculum');closeSidebar()">
-        <i data-lucide="book-open"></i>المنهج الدراسي
-      </div>
-      <div class="nav-item ${currentPage==='vocabulary'?'active':''}" onclick="navigate('vocabulary');closeSidebar()">
-        <i data-lucide="layers"></i>مستويات الكلمات
-      </div>
-      ${isAdmin?`<div class="nav-item ${currentPage==='stats'?'active':''}" onclick="navigate('stats');closeSidebar()">
-        <i data-lucide="bar-chart-3"></i>الإحصائيات
-      </div>`:''}
-      ${isAdmin?`<div class="nav-item ${currentPage==='admin'?'active':''}" onclick="navigate('admin');closeSidebar()">
-        <i data-lucide="settings"></i>لوحة الإدارة
-      </div>`:''}
-    </nav>
-    <div style="position:absolute;bottom:20px;width:100%;padding:0 20px;">
-      <button onclick="doLogout()" style="width:100%;padding:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;color:#ef4444;font-family:'Cairo',sans-serif;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <i data-lucide="log-out" style="width:16px;height:16px;"></i>تسجيل الخروج
-      </button>
-    </div>
-  </div>
-
   <!-- المحتوى الرئيسي -->
   <div class="main-content" id="main-content">
     <!-- زر فتح الشريط الجانبي -->
@@ -1203,17 +1193,10 @@ function renderApp() {
     <div id="page-content"></div>
   </div>
 
-  <!-- زر الادمن السري (يضغط 3 مرات) -->
-  <div id="secret-admin-zone" onclick="secretAdminClick()" 
-    style="position:fixed;bottom:0;left:0;width:60px;height:60px;z-index:200;opacity:0;cursor:default;"></div>
-
-  <!-- مودال الادمن -->
-  <div id="admin-modal" style="display:none;" class="modal-bg">
-    <div class="modal-box" id="admin-modal-content"></div>
-  </div>
 
   </div>`;
 
+  cleanupDuplicateSidebars();
   lucide.createIcons();
   navigate(currentPage);
 }
@@ -1221,7 +1204,13 @@ function doLogin() {
   loginWithCode();
 }
 // ===================== التنقل =====================
-
+async function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  await refreshRemoteData(page);
+  renderPage(page);
+  lucide.createIcons();
+}
 
 function renderPage(page) {
   const c = document.getElementById('page-content');
