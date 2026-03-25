@@ -381,6 +381,8 @@ window.onValue = onValue;
     .sidebar.open{transform:translateX(0);}
     .main-content{margin-right:0;}
     #menu-toggle-btn{display:flex!important;}
+    .sidebar,#sidebar{display:none!important;}
+    #menu-toggle-btn{display:none!important;}
   }
 </style>
   <style>body { box-sizing: border-box; }</style>
@@ -1050,7 +1052,7 @@ function renderLogin() {
         <div id="login-err" style="color:#ef4444;font-size:.85rem;margin-bottom:12px;text-align:center;min-height:20px;"></div>
         <button class="btn-primary" onclick="doLogin()">دخول 🚀</button>
         <div style="text-align:center;margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.3);">
-          جميع الحقوق محفوظة لمنصة هوبا تيك2026  
+          جميع الحقوق محفوظة لمنصة هوبا تيك
         </div>
       </div>
     </div>
@@ -1221,7 +1223,13 @@ function doLogin() {
   loginWithCode();
 }
 // ===================== التنقل =====================
-
+async function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  await refreshRemoteData(page);
+  renderPage(page);
+  lucide.createIcons();
+}
 
 function renderPage(page) {
   const c = document.getElementById('page-content');
