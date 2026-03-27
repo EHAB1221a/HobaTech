@@ -1,239 +1,148 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-            <link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إختبار النخبة | Hoba Tech</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --blue: #00f2ff; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); }
-        body {
-            background: #020617 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            color: white; font-family: 'Cairo', sans-serif;
-            margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center;
-        }
-        .container {
-            max-width: 800px; width: 100%; background: var(--glass); 
-            backdrop-filter: blur(15px); border: 1px solid var(--border);
-            border-radius: 30px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 { color: var(--blue); font-weight: 900; font-size: 2.5rem; margin: 0; }
-        .header p { color: #888; margin-top: 10px; }
-        
-        .question-card {
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-            padding: 25px; border-radius: 20px; margin-bottom: 25px; transition: 0.3s;
-        }
-        .question-card:hover { border-color: var(--blue); background: rgba(0, 242, 255, 0.02); }
-        .question-text { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: #eee; }
-        
-        .option {
-            display: block; position: relative; padding: 15px 45px 15px 15px;
-            margin-bottom: 12px; cursor: pointer; background: rgba(255,255,255,0.05);
-            border-radius: 12px; transition: 0.2s; border: 1px solid transparent;
-        }
-        .option:hover { background: rgba(255,255,255,0.1); }
-        .option input { position: absolute; opacity: 0; }
-        .option .checkmark {
-            position: absolute; right: 15px; top: 18px; height: 18px; width: 18px;
-            background-color: transparent; border: 2px solid var(--blue); border-radius: 50%;
-        }
-        .option input:checked ~ .checkmark { background-color: var(--blue); }
-        
-        .btn-submit {
-            background: linear-gradient(45deg, #00f2ff, #0066ff);
-            color: white; border: none; padding: 20px; border-radius: 50px;
-            font-size: 1.3rem; font-weight: 900; cursor: pointer; width: 100%;
-            margin-top: 30px; transition: 0.3s; box-shadow: 0 10px 20px rgba(0, 242, 255, 0.2);
-        }
-        .btn-submit:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 242, 255, 0.4); }
-        
-        #loading { display: none; text-align: center; margin-top: 20px; color: var(--blue); font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>امتحان المسابقة | Hoba Tech</title>
+<link rel="icon" type="image/png" sizes="512x512" href="1769979851931.png">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<style>
+:root{--bg:#050b16;--panel:rgba(10,16,30,.84);--border:rgba(255,255,255,.1);--soft:rgba(255,255,255,.7);--primary:#31d7ff;--primary2:#2563ff;--ok:#22c55e;--warn:#f59e0b;--danger:#f43f5e}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:'Cairo',sans-serif;color:#fff;background:radial-gradient(circle at top right,rgba(49,215,255,.16),transparent 30%),radial-gradient(circle at 10% 20%,rgba(37,99,255,.18),transparent 25%),linear-gradient(180deg,#020617 0%,#07111f 48%,#030711 100%)}
+.shell{width:min(1180px,calc(100% - 24px));margin:20px auto;display:grid;gap:16px}.card{background:var(--panel);border:1px solid var(--border);border-radius:26px;backdrop-filter:blur(18px);box-shadow:0 24px 50px rgba(0,0,0,.25);padding:22px}.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.badge{display:inline-flex;padding:8px 14px;border-radius:999px;background:rgba(49,215,255,.12);border:1px solid rgba(49,215,255,.24);color:#dff8ff;font-size:12px;font-weight:800}.title{margin:14px 0 10px;font-size:clamp(1.9rem,4vw,3rem);font-weight:900}.text{margin:0;color:var(--soft);line-height:1.9}
+.stack{display:grid;gap:12px}.chip{padding:16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.chip strong{display:block;margin-bottom:6px}.chip span{color:var(--soft);font-size:13px;line-height:1.8}.chip.timer{background:rgba(49,215,255,.08);border-color:rgba(49,215,255,.16)}
+.grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:16px}.hidden{display:none!important}.subtitle{margin:0 0 16px;color:var(--soft);line-height:1.8}.field{display:grid;gap:6px;margin-bottom:12px}.label{color:#dbeafe;font-size:13px;font-weight:800}.inp{width:100%;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;padding:14px 16px;font-family:inherit;outline:none}
+.row{display:flex;gap:12px;flex-wrap:wrap}.btn{border:none;cursor:pointer;border-radius:14px;padding:14px 18px;font-family:inherit;font-weight:900;font-size:14px}.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}.btn.secondary{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.12)}.btn.danger{background:linear-gradient(135deg,#fb7185,#e11d48);color:#fff}.btn:disabled{opacity:.55;cursor:not-allowed}
+.status{margin-top:14px;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--soft);line-height:1.9}.status.ok{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.22);color:#d1fae5}.status.error{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.22);color:#ffe4e6}
+.item{padding:14px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);line-height:1.8;color:var(--soft);margin-bottom:10px}.item strong{display:block;color:#fff;margin-bottom:4px}
+.participant{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:16px}.pchip{display:flex;align-items:center;gap:12px}.avatar{width:62px;height:62px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:900}.avatar img{width:100%;height:100%;object-fit:cover}.meta{color:var(--soft);font-size:14px}
+.exam{display:grid;grid-template-columns:270px minmax(0,1fr);gap:16px}.side,.main{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px}.metric{padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:10px}.metric strong{display:block;margin-bottom:4px}.metric span{color:var(--soft);font-size:13px}.qgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:14px}.qdot{min-height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#fff;font-weight:900;cursor:pointer}.qdot.current{background:rgba(49,215,255,.12);border-color:rgba(49,215,255,.35)}.qdot.answered{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.25)}.qdot.marked{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.28)}
+.question{min-height:380px}.qhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.qb{display:inline-flex;padding:8px 14px;border-radius:999px;background:rgba(49,215,255,.12);border:1px solid rgba(49,215,255,.24);font-size:12px;font-weight:900;color:#dff8ff}.qtext{font-size:1.1rem;line-height:2;font-weight:800;margin:10px 0 18px}
+.option{display:block;position:relative;padding:16px 50px 16px 16px;margin-bottom:12px;cursor:pointer;background:rgba(255,255,255,.04);border-radius:16px;border:1px solid transparent;line-height:1.9}.option.selected{border-color:rgba(49,215,255,.34);background:rgba(49,215,255,.08)}.option input{position:absolute;opacity:0}.option .dot{position:absolute;right:16px;top:20px;width:18px;height:18px;border-radius:50%;border:2px solid var(--primary)}.option.selected .dot{background:var(--primary)}
+.actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px}.left,.right{display:flex;gap:12px;flex-wrap:wrap}.loading{display:none;text-align:center;margin-top:18px;color:var(--primary);font-weight:800}
+@media(max-width:1024px){.hero,.grid,.exam{grid-template-columns:1fr}}@media(max-width:768px){.qgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="header">
-            <h1> مسابقة Hoba Tech</h1>
-            <p>اختبار منظمات دولة -تحت اشراف ا. إيهاب الدرديري</p>
-        </div>
-
-      <div id="quiz-body">
-    <div class="question-card">
-        <div class="question-text">1. أي من المنظمات التالية تعتبر "منظمة عالمية عامة"؟</div>
-        <label class="option"> منظمة الأمم المتحدة (UN) <input type="radio" name="q1" value="10"><span class="checkmark"></span></label>
-        <label class="option"> جامعة الدول العربية <input type="radio" name="q1" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">2. تقع محكمة العدل الدولية (الجهاز القضائي للأمم المتحدة) في:</div>
-        <label class="option"> لاهاي (هولندا) <input type="radio" name="q2" value="10"><span class="checkmark"></span></label>
-        <label class="option"> نيويورك (أمريكا) <input type="radio" name="q2" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">3. كم عدد الأعضاء الدائمين في مجلس الأمن الدولي؟</div>
-        <label class="option"> 5 أعضاء (لهم حق الفيتو) <input type="radio" name="q3" value="10"><span class="checkmark"></span></label>
-        <label class="option"> 10 أعضاء <input type="radio" name="q3" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">4. تعتبر منظمة "اليونسكو" منظمة متخصصة في مجالات:</div>
-        <label class="option"> التربية والعلوم والثقافة <input type="radio" name="q4" value="10"><span class="checkmark"></span></label>
-        <label class="option"> الصحة والأدوية <input type="radio" name="q4" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">5. ما هي المنظمة المسؤولة عن تنظيم التجارة العالمية بين الدول؟</div>
-        <label class="option"> منظمة التجارة العالمية (WTO) <input type="radio" name="q5" value="10"><span class="checkmark"></span></label>
-        <label class="option"> البنك الدولي <input type="radio" name="q5" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">6. "جامعة الدول العربية" و "الاتحاد الأوروبي" أمثلة لمنظمات:</div>
-        <label class="option"> إقليمية <input type="radio" name="q6" value="10"><span class="checkmark"></span></label>
-        <label class="option"> عالمية شاملة <input type="radio" name="q6" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">7. أي منظمة تهتم بحماية حقوق العمال وتحسين ظروف العمل دولياً؟</div>
-        <label class="option"> منظمة العمل الدولية (ILO) <input type="radio" name="q7" value="10"><span class="checkmark"></span></label>
-        <label class="option"> منظمة الأغذية والزراعة (FAO) <input type="radio" name="q7" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">8. الجهاز الذي يضم جميع الدول الأعضاء في الأمم المتحدة هو:</div>
-        <label class="option"> الجمعية العامة <input type="radio" name="q8" value="10"><span class="checkmark"></span></label>
-        <label class="option"> مجلس الأمن <input type="radio" name="q8" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">9. منظمة "اليونيسيف" تابعة للأمم المتحدة وتهتم بـ:</div>
-        <label class="option"> حماية ورعاية الطفولة <input type="radio" name="q9" value="10"><span class="checkmark"></span></label>
-        <label class="option"> حماية البيئة والمناخ <input type="radio" name="q9" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">10. أين يوجد المقر الرئيسي لمنظمة الأمم المتحدة؟</div>
-        <label class="option"> نيويورك <input type="radio" name="q10" value="10"><span class="checkmark"></span></label>
-        <label class="option"> باريس <input type="radio" name="q10" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">11. منظمة "الفاو" (FAO) هي منظمة دولية متخصصة في:</div>
-        <label class="option"> الأغذية والزراعة <input type="radio" name="q11" value="10"><span class="checkmark"></span></label>
-        <label class="option"> الطيران المدني <input type="radio" name="q11" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">12. ما هي المنظمة الدولية التي تهدف لمكافحة الجريمة عبر الحدود؟</div>
-        <label class="option"> الإنتربول (INTERPOL) <input type="radio" name="q12" value="10"><span class="checkmark"></span></label>
-        <label class="option"> مجلس أوروبا <input type="radio" name="q12" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">13. يعتبر "صندوق النقد الدولي" (IMF) منظمة متخصصة في:</div>
-        <label class="option"> الشؤون المالية والنقدية <input type="radio" name="q13" value="10"><span class="checkmark"></span></label>
-        <label class="option"> الشؤون الثقافية <input type="radio" name="q13" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">14. أي مما يلي يعتبر من "مصادر" القانون الدولي للمنظمات؟</div>
-        <label class="option"> المواثيق والاتفاقيات المنشئة للمنظمة <input type="radio" name="q14" value="10"><span class="checkmark"></span></label>
-        <label class="option"> المقالات الصحفية اليومية <input type="radio" name="q14" value="0"><span class="checkmark"></span></label>
-    </div>
-
-    <div class="question-card">
-        <div class="question-text">15. حق "الفيتو" يعني قدرة الدولة الدائمة على:</div>
-        <label class="option"> منع صدور أي قرار من مجلس الأمن <input type="radio" name="q15" value="10"><span class="checkmark"></span></label>
-        <label class="option"> زيادة حصتها المالية في المنظمة <input type="radio" name="q15" value="0"><span class="checkmark"></span></label>
-    </div>
+<div class="shell" id="root">
+<section class="card hero">
+<div><span class="badge">Hoba Tech Contest</span><h1 class="title" id="contest-title">امتحان المسابقة</h1><p class="text" id="contest-description">المسابقة تفتح في الموعد الذي تحدده الإدارة، ولا يدخل الامتحان إلا من تم تسجيله فعليًا بكود خاص.</p></div>
+<div class="stack">
+<div class="chip"><strong id="public-status-title">حالة المسابقة</strong><span id="public-status-text">جارٍ تحميل الحالة...</span></div>
+<div class="chip"><strong>العد التنازلي</strong><span id="public-countdown-text">بانتظار الموعد...</span></div>
+<div class="chip timer"><strong>مدة الامتحان</strong><span id="public-duration-text">جارٍ تحميل مدة الامتحان...</span></div>
 </div>
-            <button class="btn-submit" onclick="sendResult()">إنهاء الاختبار</button>
-            <div id="loading">جاري  الانهاء انتظر...</div>
-        </div>
-    </div>
+</section>
 
-    <script>
-        async function sendResult() {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbyRkPfr4YzWyxegpFZ_n1agS5o8u-I4rbat_jF8UovVgdrIDGdeK1u5SMglVCMMKA6J/exec";
-            
-            // 1. سحب البيانات من الذاكرة
-            let userName = localStorage.getItem('hobaName');
-            let userImg = localStorage.getItem('hobaImg') || ""; 
-            
-            if(!userName) {
-                userName = prompt("برجاء إدخال اسمك المسجل به:");
-                if(!userName) return;
-            }
-    
-            // 2. فحص الإجابات
-            const q1 = document.querySelector('input[name="q1"]:checked');
-            const q2 = document.querySelector('input[name="q2"]:checked');
-            const q3 = document.querySelector('input[name="q3"]:checked');
-    
-            if(!q1 || !q2 || !q3) return alert("يا مستشار، لازم تحل كل الأسئلة!");
-    
-            let score = parseInt(q1.value) + parseInt(q2.value) + parseInt(q3.value);
-            
-            // 3. تجهيز الوقت
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('ar-EG');
-            const timeStr = now.toLocaleTimeString('ar-EG');
-    
-            document.getElementById('loading').style.display = 'block';
-    
-            // 4. إرسال البيانات بنظام JSON (الأنضف والأضمن)
-            try {
-                await fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors', // عشان نتخطى حوار الـ CORS
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: userName,
-                        image: userImg,
-                        score: score,
-                        date: dateStr,
-                        time: timeStr
-                    })
-                });
-    
-                function finishExam() {
-    // كود الـ fetch اللي بيبعت للشيت (الرابط اللي عملناه)
-    // ... بعد ما يخلص الإرسال بنجاح:
-    
-    localStorage.clear(); // بنفضي الذاكرة تماماً
-    alert("تم الإرسال.. بالتوفيق!");
-    location.reload(); // نرجع الصفحة لأصلها
-}
-                // تحويل المستخدم فوراً
-                statusMsg("عاش يا " + userName + "..  جاري حفظ النتيجة انتظر");
-                setTimeout(() => {
-                    window.location.href = "نتيجة الطلاب.html"; 
-                }, 1500);
-    
-            } catch (err) {
-                console.error(err);
-                alert("حدث خطأ، تأكد من الاتصال بالإنترنت!");
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-    
-        function statusMsg(msg) {
-            const loadDiv = document.getElementById('loading');
-            loadDiv.style.display = 'block';
-            loadDiv.innerText = msg;
-        }
-    </script>
+<section class="card" id="gate-shell">
+<div class="grid">
+<div>
+<h2>الدخول بالكود</h2>
+<p class="subtitle">اكتب الكود الخاص بك وارفع صورتك أول مرة فقط. بعد اعتمادك سيرتبط الكود بهذا الجهاز وحده.</p>
+<div class="field"><label class="label" for="participantCode">كود الدخول</label><input class="inp" id="participantCode" placeholder="مثال: CON-001"></div>
+<div class="field"><label class="label" for="participantImage">الصورة الشخصية</label><input class="inp" id="participantImage" type="file" accept="image/*"></div>
+<div class="row"><button class="btn primary" id="gate-enter-btn" type="button">اعتماد الكود</button><button class="btn secondary" type="button" onclick="location.href='داش 4.html'">العودة للهوم</button></div>
+<div class="status" id="gate-status">أدخل الكود وانتظر فتح المسابقة في الموعد المحدد من الإدارة.</div>
+</div>
+<div>
+<h2>قواعد المسابقة</h2>
+<div class="item"><strong>شاشة الامتحان وحدها</strong>بمجرد بدء الامتحان سندخل وضع الشاشة الكاملة، وأي خروج منه يُسجل كمخالفة.</div>
+<div class="item"><strong>الخروج والغش</strong>تغيير التبويب أو الخروج من الشاشة الكاملة يرفع عداد المخالفات، وبعد 3 مخالفات يتم إنهاء الامتحان بصفر.</div>
+<div class="item"><strong>الحفظ التلقائي</strong>كل إجابة تحفظ مباشرة، ولو رجعت من نفس الجهاز ستكمل من نفس السؤال.</div>
+</div>
+</div>
+</section>
+
+<section class="card hidden" id="intro-shell">
+<div class="grid">
+<div>
+<h2>قبل البدء</h2>
+<p class="subtitle">بعد الضغط على بدء سيتم تفعيل الشاشة الكاملة ويبدأ العد التنازلي فورًا.</p>
+<div class="item"><strong>تعليمات مهمة</strong>لا تخرج من الصفحة، لا تغيّر التبويب، ولا تغلق الشاشة الكاملة أثناء الامتحان.</div>
+<div class="item"><strong>المخالفات</strong>لديك 3 مخالفات فقط قبل إنهاء الامتحان تلقائيًا بصفر.</div>
+</div>
+<div>
+<div class="participant">
+<div class="pchip"><div class="avatar" id="participant-avatar">؟</div><div><div id="participant-name" style="font-weight:900;">متسابق</div><div class="meta" id="participant-code">الكود: --</div></div></div>
+<div class="meta">سيبدأ المؤقت فور الضغط</div>
+</div>
+<div class="row"><button class="btn primary" id="start-exam-btn" type="button">ابدأ الامتحان الآن</button><button class="btn secondary" id="back-to-gate-btn" type="button">رجوع</button></div>
+<div class="status" id="intro-status">بانتظار بدء الامتحان في وضع آمن.</div>
+</div>
+</div>
+</section>
+
+<section class="card hidden" id="exam-shell">
+<div class="participant">
+<div class="pchip"><div class="avatar" id="exam-avatar">؟</div><div><div id="exam-participant-name" style="font-weight:900;">جارٍ تجهيز بيانات المتسابق...</div><div class="meta" id="exam-participant-code">الكود: --</div></div></div>
+<div class="meta" id="exam-top-status">بانتظار بدء الامتحان</div>
+</div>
+<div class="exam">
+<aside class="side">
+<div class="metric"><strong id="exam-timer-value">00:00</strong><span>الوقت المتبقي</span></div>
+<div class="metric"><strong id="exam-violation-count">0 / 3</strong><span>عدد المخالفات</span></div>
+<div class="metric"><strong id="exam-progress-summary">0 / 0</strong><span>الأسئلة المجاب عنها</span></div>
+<div class="qgrid" id="question-progress-grid"></div>
+</aside>
+<main class="main">
+<div class="question" id="question-card"></div>
+<div class="actions"><div class="left"><button class="btn secondary" id="prev-question-btn" type="button">السابق</button><button class="btn secondary" id="next-question-btn" type="button">التالي</button></div><div class="right"><button class="btn secondary" id="mark-question-btn" type="button">علّم للمراجعة</button><button class="btn danger" id="submit-btn" type="button">إنهاء الامتحان</button></div></div>
+<div id="loading" class="loading">جارٍ حفظ النتيجة، انتظر لحظات...</div>
+</main>
+</div>
+</section>
+</div>
+
+<script>
+const firebaseConfig={apiKey:"AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",authDomain:"hoba-tech.firebaseapp.com",projectId:"hoba-tech",storageBucket:"hoba-tech.firebasestorage.app",messagingSenderId:"465948708700",appId:"1:465948708700:web:dac008d1cb9f8caa50fb99",databaseURL:"https://hoba-tech-default-rtdb.firebaseio.com"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const db=firebase.database(),CONTEST_ROOT='contest_hub/active_contest',CONTEST_DRAFT_PREFIX='hobaContestDraft_',CONTEST_WARN_LIMIT=3,scriptURL="https://script.google.com/macros/s/AKfycbyRkPfr4YzWyxegpFZ_n1agS5o8u-I4rbat_jF8UovVgdrIDGdeK1u5SMglVCMMKA6J/exec",CONTEST_TOTAL_POINTS=100;
+const DEFAULT_CONTEST_QUESTIONS=[{q:'أي من المنظمات التالية تعتبر منظمة عالمية عامة؟',options:['منظمة الأمم المتحدة','جامعة الدول العربية'],correctIndex:0,points:20},{q:'تقع محكمة العدل الدولية في:',options:['لاهاي','باريس'],correctIndex:0,points:20},{q:'كم عدد الأعضاء الدائمين في مجلس الأمن الدولي؟',options:['5 أعضاء','10 أعضاء'],correctIndex:0,points:20},{q:'منظمة اليونسكو متخصصة في:',options:['التربية والعلوم والثقافة','الصحة والأدوية'],correctIndex:0,points:20},{q:'المنظمة المسؤولة عن تنظيم التجارة العالمية بين الدول هي:',options:['منظمة التجارة العالمية','البنك الدولي'],correctIndex:0,points:20}];
+let contestMeta={},contestQuestions=[],contestParticipant=null,contestCountdownTimer=null,examTimer=null,examEndsAt=0,currentQuestionIndex=0,examStarted=false,isSubmitting=false,answers={},markedQuestions={},violationCount=0;
+function getContestWindow(meta=contestMeta){const startAt=Number(meta?.startAt||0)||0,durationSeconds=Number(meta?.durationSeconds||1200)||1200,registrationOpenAt=startAt?startAt-(30*60*1000):0,examEndsAtValue=startAt?startAt+(durationSeconds*1000):0;return{startAt,durationSeconds,registrationOpenAt,examEndsAtValue}}
+function parseStoredJson(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch(error){return null}}
+function stringifySafe(value){try{return JSON.stringify(value)}catch(error){return ''}}
+function getSessionToken(){let token=localStorage.getItem('hobaContestSessionToken');if(!token){token=`contest-${Date.now()}-${Math.random().toString(36).slice(2,10)}`;localStorage.setItem('hobaContestSessionToken',token)}return token}
+function normalizeParticipantCode(value){return String(value||'').trim().toUpperCase()}
+function getDraftKey(code){return `${CONTEST_DRAFT_PREFIX}${code}`}
+function readDraft(code){return parseStoredJson(getDraftKey(code))||{answers:{},markedQuestions:{},currentQuestionIndex:0,violationCount:0}}
+function writeDraft(){if(!contestParticipant?.code)return;localStorage.setItem(getDraftKey(contestParticipant.code),stringifySafe({answers,markedQuestions,currentQuestionIndex,violationCount}))}
+function clearDraft(){if(contestParticipant?.code)localStorage.removeItem(getDraftKey(contestParticipant.code))}
+function formatDuration(ms){const totalSeconds=Math.max(0,Math.floor(ms/1000)),days=Math.floor(totalSeconds/86400),hours=Math.floor((totalSeconds%86400)/3600),minutes=Math.floor((totalSeconds%3600)/60),seconds=totalSeconds%60,parts=[];if(days)parts.push(`${days} يوم`);if(hours||days)parts.push(`${hours} ساعة`);if(minutes||hours||days)parts.push(`${minutes} دقيقة`);parts.push(`${seconds} ثانية`);return parts.join(' و ')}
+function formatTimerShort(ms){const totalSeconds=Math.max(0,Math.floor(ms/1000)),minutes=Math.floor(totalSeconds/60),seconds=totalSeconds%60;return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`}
+function getContestAccessState(meta=contestMeta){const status=String(meta?.status||'scheduled').toLowerCase(),now=Date.now(),windowState=getContestWindow(meta);if(status==='paused')return{canRegister:false,canStart:false,title:'المسابقة موقوفة مؤقتًا',text:'الإدارة أوقفت المسابقة الآن وسيتم إعادة فتحها عند استئنافها.'};if(status==='closed')return{canRegister:false,canStart:false,title:'المسابقة مغلقة',text:'الاشتراك والدخول مغلقان حاليًا لهذه المسابقة.'};if(windowState.examEndsAtValue&&now>=windowState.examEndsAtValue)return{canRegister:false,canStart:false,title:'انتهى وقت المسابقة',text:'تم إغلاق الامتحان تلقائيًا بعد انتهاء المدة المحددة.'};if(windowState.registrationOpenAt&&now<windowState.registrationOpenAt)return{canRegister:false,canStart:false,title:'باب الدخول لم يُفتح بعد',text:`الدخول يفتح قبل الامتحان بنصف ساعة. المتبقي ${formatDuration(windowState.registrationOpenAt-now)} على فتح البوابة.`};if(windowState.startAt&&now<windowState.startAt)return{canRegister:true,canStart:false,title:'تم فتح البوابة والامتحان لم يبدأ بعد',text:`يمكنك اعتماد الكود الآن، لكن الأسئلة ستفتح عند موعد البداية بعد ${formatDuration(windowState.startAt-now)}.`};return{canRegister:true,canStart:true,title:'المسابقة مفتوحة الآن',text:'إذا كان معك كود صالح من الإدارة يمكنك دخول الامتحان الآن.'}}
+function setStatus(id,message,type=''){const box=document.getElementById(id);box.className=`status${type?` ${type}`:''}`;box.textContent=message}
+function statusMsg(msg){const loadDiv=document.getElementById('loading');loadDiv.style.display='block';loadDiv.innerText=msg}
+function hideStatus(){document.getElementById('loading').style.display='none'}
+function updateHeroStatus(){const state=getContestAccessState(contestMeta),windowState=getContestWindow(contestMeta),now=Date.now();document.getElementById('contest-title').textContent=contestMeta.title||'امتحان المسابقة';document.getElementById('contest-description').textContent=contestMeta.description||'هذه الصفحة مخصصة للمسجلين فعليًا في المسابقة.';document.getElementById('public-status-title').textContent=state.title;document.getElementById('public-status-text').textContent=state.text;document.getElementById('public-countdown-text').textContent=windowState.startAt?(now<windowState.registrationOpenAt?`الدخول يفتح بعد ${formatDuration(windowState.registrationOpenAt-now)}`:(now<windowState.startAt?`بداية الامتحان بعد ${formatDuration(windowState.startAt-now)}`:(windowState.examEndsAtValue&&now<windowState.examEndsAtValue?`المتبقي على إغلاق الامتحان ${formatDuration(windowState.examEndsAtValue-now)}`:'تم إغلاق المسابقة.'))):'لم يتم تحديد موعد بداية بعد.';document.getElementById('public-duration-text').textContent=`زمن الامتحان ${formatDuration((Number(contestMeta.durationSeconds||1200)||1200)*1000)}.`;const startButton=document.getElementById('start-exam-btn');if(startButton)startButton.disabled=!state.canStart}
+function startContestCountdown(){if(contestCountdownTimer)clearInterval(contestCountdownTimer);updateHeroStatus();contestCountdownTimer=setInterval(()=>{updateHeroStatus();if(examStarted)updateExamTimer()},1000)}
+function renderParticipantBanner(participant){const initials=String(participant?.name||'?').trim().charAt(0)||'?',imageHtml=participant?.image?`<img src="${participant.image}" alt="${participant.name}">`:initials;document.getElementById('participant-avatar').innerHTML=imageHtml;document.getElementById('participant-name').textContent=participant?.name||'متسابق';document.getElementById('participant-code').textContent=participant?.code?`الكود: ${participant.code}`:'الكود: --';document.getElementById('exam-avatar').innerHTML=imageHtml;document.getElementById('exam-participant-name').textContent=participant?.name||'متسابق';document.getElementById('exam-participant-code').textContent=participant?.code?`الكود: ${participant.code}`:'الكود: --'}
+function showSection(sectionId){['gate-shell','intro-shell','exam-shell'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==sectionId))}
+function updateViolationUi(){document.getElementById('exam-violation-count').textContent=`${violationCount} / ${CONTEST_WARN_LIMIT}`}
+function updateProgressUi(){const answeredCount=Object.keys(answers).filter(key=>answers[key]!==null&&answers[key]!==undefined).length;document.getElementById('exam-progress-summary').textContent=`${answeredCount} / ${contestQuestions.length}`}
+function updateTopStatus(message){document.getElementById('exam-top-status').textContent=message}
+function renderProgressGrid(){const grid=document.getElementById('question-progress-grid');grid.innerHTML=contestQuestions.map((_,index)=>{const cls=['qdot',index===currentQuestionIndex?'current':'',answers.hasOwnProperty(index)?'answered':'',markedQuestions[index]?'marked':''].filter(Boolean).join(' ');return `<button class="${cls}" type="button" data-question-index="${index}">${index+1}</button>`}).join('');grid.querySelectorAll('[data-question-index]').forEach(button=>button.addEventListener('click',()=>{currentQuestionIndex=Number(button.getAttribute('data-question-index'));renderCurrentQuestion()}))}
+function renderCurrentQuestion(){const question=contestQuestions[currentQuestionIndex];if(!question)return;const currentAnswer=answers[currentQuestionIndex],isMarked=!!markedQuestions[currentQuestionIndex],card=document.getElementById('question-card');card.innerHTML=`<div class="qhead"><span class="qb">السؤال ${currentQuestionIndex+1} من ${contestQuestions.length}</span><span class="qb">${isMarked?'معلّم للمراجعة':'سؤال مباشر'}</span></div><div class="qtext">${question.q}</div><div>${question.options.map((option,optionIndex)=>`<label class="option ${currentAnswer===optionIndex?'selected':''}" data-option-index="${optionIndex}">${option}<input type="radio" ${currentAnswer===optionIndex?'checked':''}><span class="dot"></span></label>`).join('')}</div>`;card.querySelectorAll('.option').forEach(label=>label.addEventListener('click',()=>{answers[currentQuestionIndex]=Number(label.getAttribute('data-option-index'));persistDraftState();renderCurrentQuestion()}));document.getElementById('prev-question-btn').disabled=currentQuestionIndex===0;document.getElementById('next-question-btn').disabled=currentQuestionIndex===contestQuestions.length-1;document.getElementById('mark-question-btn').textContent=isMarked?'إلغاء المراجعة':'علّم للمراجعة';renderProgressGrid();updateProgressUi()}
+function persistDraftState(){writeDraft();if(contestParticipant?.code){db.ref(`${CONTEST_ROOT}/registrations/${contestParticipant.code}`).update({draftAnswers:answers,markedQuestions,currentQuestionIndex,violations:violationCount}).catch(()=>{})}}
+function restoreDraftState(){if(!contestParticipant?.code)return;const draft=readDraft(contestParticipant.code);answers=draft.answers||{};markedQuestions=draft.markedQuestions||{};currentQuestionIndex=Math.min(Number(draft.currentQuestionIndex||0)||0,Math.max(contestQuestions.length-1,0));violationCount=Number(draft.violationCount||0)||0;updateViolationUi()}
+function updateExamTimer(){const remaining=examEndsAt-Date.now(),timerEl=document.getElementById('exam-timer-value');if(remaining<=0){timerEl.textContent='00:00';updateTopStatus('انتهى الوقت المخصص لهذا الامتحان.');if(examTimer)clearInterval(examTimer);if(!isSubmitting)sendResult({autoSubmit:true,forcedZero:false});return}timerEl.textContent=formatTimerShort(remaining);timerEl.style.color=remaining<=120000?'#fecaca':(remaining<=300000?'#fde68a':'#fff');updateTopStatus(`الوقت المتبقي: ${formatTimerShort(remaining)}`)}
+function startExamTimer(endAt){examEndsAt=Number(endAt||0)||0;if(examTimer)clearInterval(examTimer);updateExamTimer();examTimer=setInterval(updateExamTimer,1000)}
+async function requestExamFullscreen(){const root=document.documentElement;if(document.fullscreenElement)return true;try{if(root.requestFullscreen)await root.requestFullscreen();return !!document.fullscreenElement}catch(error){return false}}
+async function logViolation(reason){violationCount+=1;updateViolationUi();persistDraftState();if(contestParticipant?.code){await db.ref(`${CONTEST_ROOT}/registrations/${contestParticipant.code}/violationLogs`).push({reason,createdAt:Date.now(),count:violationCount}).catch(()=>{})}if(violationCount>=CONTEST_WARN_LIMIT){updateTopStatus('تم تجاوز الحد المسموح من المخالفات.');await sendResult({autoSubmit:true,forcedZero:true});return}alert(`تم تسجيل مخالفة بسبب: ${reason}. المخالفات الحالية: ${violationCount} من ${CONTEST_WARN_LIMIT}.`);updateTopStatus(`تم رصد مخالفة. المتبقي لك ${CONTEST_WARN_LIMIT-violationCount} قبل الإنهاء.`)}
+function readImageAsDataUrl(file){return new Promise((resolve,reject)=>{if(!file){resolve('');return}const reader=new FileReader();reader.onload=(event)=>resolve(event.target.result||'');reader.onerror=reject;reader.readAsDataURL(file)})}
+async function loadContestMeta(){const snapshot=await db.ref(`${CONTEST_ROOT}/meta`).once('value');contestMeta=snapshot.val()||{};contestQuestions=Array.isArray(contestMeta.questions)&&contestMeta.questions.length?contestMeta.questions:DEFAULT_CONTEST_QUESTIONS;startContestCountdown()}
+async function tryResumeParticipant(){const saved=parseStoredJson('hobaContestParticipant');if(!saved?.code){showSection('gate-shell');return}const [participantSnap,registrationSnap]=await Promise.all([db.ref(`${CONTEST_ROOT}/participants/${saved.code}`).once('value'),db.ref(`${CONTEST_ROOT}/registrations/${saved.code}`).once('value')]);if(!participantSnap.exists()||!registrationSnap.exists()){localStorage.removeItem('hobaContestParticipant');showSection('gate-shell');return}const registrationData=registrationSnap.val()||{},sessionToken=getSessionToken();if(!registrationData.sessionToken||registrationData.sessionToken!==sessionToken){localStorage.removeItem('hobaContestParticipant');setStatus('gate-status','هذا الكود مربوط بجهاز آخر بالفعل، ولا يمكن الدخول منه على هذا الجهاز.','error');showSection('gate-shell');return}if(registrationData.status==='finished'){setStatus('gate-status','تم تسليم هذا الامتحان بالفعل بهذا الكود، ولا يمكن إعادة الدخول مرة ثانية.','error');showSection('gate-shell');return}contestParticipant={...participantSnap.val(),...registrationData,code:saved.code};const leftAt=localStorage.getItem(`${getDraftKey(contestParticipant.code)}_left`);if(leftAt){localStorage.removeItem(`${getDraftKey(contestParticipant.code)}_left`);violationCount=CONTEST_WARN_LIMIT;answers={};markedQuestions={};await sendResult({autoSubmit:true,forcedZero:true});return}const accessState=getContestAccessState(contestMeta);if(!accessState.canRegister){setStatus('gate-status',accessState.text,'error');showSection('gate-shell');return}renderParticipantBanner(contestParticipant);restoreDraftState();setStatus('intro-status',accessState.canStart?'تم استرجاع جلستك على هذا الجهاز. اضغط بدء الامتحان للدخول في الوضع الآمن.':'تم استرجاع جلستك. يمكنك الانتظار هنا حتى موعد بداية الامتحان.','ok');showSection('intro-shell')}
+async function authenticateContestParticipant(){const accessState=getContestAccessState(contestMeta);if(!accessState.canRegister){setStatus('gate-status',accessState.text,'error');return}const code=normalizeParticipantCode(document.getElementById('participantCode').value),file=document.getElementById('participantImage').files[0];if(!code){setStatus('gate-status','اكتب كود الدخول أولًا.','error');return}const [participantSnap,registrationSnap]=await Promise.all([db.ref(`${CONTEST_ROOT}/participants/${code}`).once('value'),db.ref(`${CONTEST_ROOT}/registrations/${code}`).once('value')]);if(!participantSnap.exists()){setStatus('gate-status','هذا الكود غير موجود ضمن المشاركين المعتمدين.','error');return}const participant=participantSnap.val()||{},registrationData=registrationSnap.val()||{},sessionToken=getSessionToken(),windowState=getContestWindow(contestMeta);if(registrationData.status==='finished'){setStatus('gate-status','تم تسليم هذا الامتحان بالفعل بهذا الكود، ولا يمكن استخدامه مرة ثانية.','error');return}if(registrationData.sessionToken&&registrationData.sessionToken!==sessionToken){setStatus('gate-status','هذا الكود استُخدم بالفعل من جهاز آخر، ولا يمكن ربطه بجهاز ثانٍ.','error');return}const imageData=file?await readImageAsDataUrl(file):(registrationData.image||participant.image||'');if(!imageData){setStatus('gate-status','ارفع صورتك الشخصية أول مرة حتى تظهر في لوحة المسابقة.','error');return}const examStartedAt=Number(registrationData.examStartedAt||0)||windowState.startAt||Date.now(),examEndsAtValue=Number(registrationData.examEndsAt||0)||(windowState.examEndsAtValue||Date.now()+((Number(contestMeta.durationSeconds||1200)||1200)*1000)),payload={code,name:participant.name||`متسابق ${code}`,image:imageData,sessionToken,status:'ready',registeredAt:registrationData.registeredAt||Date.now(),examStartedAt,examEndsAt:examEndsAtValue};await db.ref(`${CONTEST_ROOT}/registrations/${code}`).update(payload);localStorage.setItem('hobaContestParticipant',stringifySafe(payload));localStorage.setItem('hobaName',payload.name);localStorage.setItem('hobaImg',imageData);contestParticipant={...participant,...payload,code};const draft=readDraft(code);answers=draft.answers||{};markedQuestions=draft.markedQuestions||{};currentQuestionIndex=Number(draft.currentQuestionIndex||0)||0;violationCount=Number(draft.violationCount||0)||0;renderParticipantBanner(contestParticipant);updateViolationUi();setStatus('intro-status',accessState.canStart?'تم اعتماد الكود بنجاح. عند الضغط على بدء سنفعّل الحماية الكاملة للامتحان.':'تم اعتماد الكود بنجاح. انتظر حتى موعد البداية ليتفعّل زر بدء الامتحان.','ok');showSection('intro-shell')}
+async function startExamFlow(){if(!contestParticipant?.code)return;const accessState=getContestAccessState(contestMeta);if(!accessState.canStart){setStatus('intro-status',accessState.text,'error');return}const fullscreenOk=await requestExamFullscreen();if(!fullscreenOk){setStatus('intro-status','يجب السماح بالشاشة الكاملة قبل بدء الامتحان.','error');return}showSection('exam-shell');examStarted=true;const windowState=getContestWindow(contestMeta),examEnds=Number(contestParticipant.examEndsAt||0)||(windowState.examEndsAtValue||Date.now()+((Number(contestMeta.durationSeconds||1200)||1200)*1000));contestParticipant.examEndsAt=examEnds;await db.ref(`${CONTEST_ROOT}/registrations/${contestParticipant.code}`).update({status:'in_progress',examStartedAt:contestParticipant.examStartedAt||windowState.startAt||Date.now(),examEndsAt:examEnds,violations:violationCount});renderCurrentQuestion();startExamTimer(examEnds);updateViolationUi();updateProgressUi()}
+function selectQuestionByOffset(offset){const nextIndex=currentQuestionIndex+offset;if(nextIndex<0||nextIndex>=contestQuestions.length)return;currentQuestionIndex=nextIndex;renderCurrentQuestion();persistDraftState()}
+function toggleQuestionMark(){markedQuestions[currentQuestionIndex]=!markedQuestions[currentQuestionIndex];if(!markedQuestions[currentQuestionIndex])delete markedQuestions[currentQuestionIndex];persistDraftState();renderCurrentQuestion()}
+function collectAnswersAndScore(){const unanswered=contestQuestions.findIndex((_,index)=>!answers.hasOwnProperty(index));if(unanswered!==-1){currentQuestionIndex=unanswered;renderCurrentQuestion();alert('يوجد أسئلة لم تُجب عنها بعد.');return null}const rawTotalPoints=contestQuestions.reduce((sum,question)=>sum+(Math.max(1,Number(question?.points||20)||20)),0),rawEarnedPoints=contestQuestions.reduce((sum,question,index)=>sum+(Number(answers[index])===Number(question.correctIndex)?Math.max(1,Number(question?.points||20)||20):0),0),correctAnswers=contestQuestions.reduce((count,question,index)=>count+(Number(answers[index])===Number(question.correctIndex)?1:0),0),normalizedEarnedPoints=rawTotalPoints?Number(((rawEarnedPoints/rawTotalPoints)*CONTEST_TOTAL_POINTS).toFixed(2)):0;return{totalQuestions:contestQuestions.length,correctAnswers,earnedPoints:normalizedEarnedPoints,totalPoints:CONTEST_TOTAL_POINTS,score:rawTotalPoints?Math.round((rawEarnedPoints/rawTotalPoints)*100):0}}
+async function sendResult({autoSubmit=false,forcedZero=false}={}){if(isSubmitting||!contestParticipant?.code)return;isSubmitting=true;const result=forcedZero?{totalQuestions:contestQuestions.length,correctAnswers:0,earnedPoints:0,totalPoints:CONTEST_TOTAL_POINTS,score:0}:collectAnswersAndScore();if(!result&&!autoSubmit){isSubmitting=false;return}const safeResult=result||{totalQuestions:contestQuestions.length,correctAnswers:0,earnedPoints:0,totalPoints:CONTEST_TOTAL_POINTS,score:0},now=new Date();statusMsg(forcedZero?'تم إنهاء الامتحان بصفر بسبب المخالفات...':(autoSubmit?'انتهى الوقت وجارٍ حفظ النتيجة تلقائيًا...':'جارٍ حفظ النتيجة...'));const payload={code:contestParticipant.code,name:contestParticipant.name||localStorage.getItem('hobaName')||'متسابق',image:contestParticipant.image||localStorage.getItem('hobaImg')||'',score:safeResult.score,correctAnswers:safeResult.correctAnswers,totalQuestions:safeResult.totalQuestions,earnedPoints:safeResult.earnedPoints,totalPoints:safeResult.totalPoints,violations:violationCount,forcedZero:!!forcedZero,finishedAt:Date.now(),date:now.toLocaleDateString('ar-EG'),time:now.toLocaleTimeString('ar-EG')};try{await Promise.all([db.ref(`${CONTEST_ROOT}/results/${contestParticipant.code}`).set(payload),db.ref(`${CONTEST_ROOT}/registrations/${contestParticipant.code}`).update({status:'finished',finishedAt:payload.finishedAt,latestScore:payload.score,earnedPoints:payload.earnedPoints,totalPoints:payload.totalPoints,violations:violationCount,finalAnswers:answers})]);fetch(scriptURL,{method:'POST',mode:'no-cors',cache:'no-cache',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});clearDraft();localStorage.removeItem('hobaContestParticipant');if(examTimer)clearInterval(examTimer);if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});statusMsg(`تم حفظ النتيجة ${payload.score}% (${payload.earnedPoints}/${payload.totalPoints} نقطة) بنجاح. جارٍ تحويلك...`);setTimeout(()=>{location.href='داش 4.html'},1400)}catch(error){console.error(error);hideStatus();isSubmitting=false;alert('حدث خطأ أثناء حفظ النتيجة. حاول مرة أخرى.')}}
+function attachEvents(){document.getElementById('gate-enter-btn').addEventListener('click',()=>authenticateContestParticipant().catch(error=>{console.error(error);setStatus('gate-status','حدث خطأ أثناء التحقق من الكود. حاول مرة أخرى.','error')}));document.getElementById('start-exam-btn').addEventListener('click',()=>startExamFlow().catch(error=>{console.error(error);setStatus('intro-status','تعذر بدء الامتحان الآن. حاول مرة أخرى.','error')}));document.getElementById('back-to-gate-btn').addEventListener('click',()=>showSection('gate-shell'));document.getElementById('prev-question-btn').addEventListener('click',()=>selectQuestionByOffset(-1));document.getElementById('next-question-btn').addEventListener('click',()=>selectQuestionByOffset(1));document.getElementById('mark-question-btn').addEventListener('click',toggleQuestionMark);document.getElementById('submit-btn').addEventListener('click',()=>{if(confirm('هل أنت متأكد أنك تريد إنهاء الامتحان الآن؟'))sendResult({autoSubmit:false,forcedZero:false})});document.addEventListener('visibilitychange',()=>{if(!examStarted||isSubmitting)return;if(document.hidden)logViolation('تغيير التبويب أو إخفاء الصفحة')});document.addEventListener('fullscreenchange',()=>{if(!examStarted||isSubmitting)return;if(!document.fullscreenElement)logViolation('الخروج من وضع الشاشة الكاملة')});window.addEventListener('beforeunload',()=>{if(!examStarted||!contestParticipant?.code)return;localStorage.setItem(`${getDraftKey(contestParticipant.code)}_left`,String(Date.now()))})}
+async function bootstrap(){attachEvents();try{await loadContestMeta();await tryResumeParticipant()}catch(error){console.error(error);setStatus('gate-status','تعذر تحميل المسابقة حاليًا. حاول مرة أخرى بعد قليل.','error')}}
+bootstrap();
+</script>
 </body>
-
 </html>
-
-
-
-
