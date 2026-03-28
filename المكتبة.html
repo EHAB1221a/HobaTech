@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+    <link rel="icon" type="image/png" href="1769979851931.png">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة هوبا تيك</title>
+<script type="module" src="auth-guard.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+
+    * { font-family: 'Tajawal', sans-serif; }
+    
+    .subject-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .subject-card:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+    
+    .lecture-item {
+      transition: all 0.3s ease;
+    }
+    .lecture-item:hover {
+      transform: translateX(-5px);
+    }
+    .lecture-item.active {
+      border-right: 4px solid currentColor;
+    }
+    
+    .btn-action {
+      transition: all 0.3s ease;
+    }
+    .btn-action:hover {
+      transform: scale(1.05);
+    }
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+    
+    .video-container {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    .loading-spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+
+    .toast {
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @keyframes checkmarkPulse {
+      0% { transform: scale(0.5) rotate(-180deg); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .checkmark-badge {
+      animation: checkmarkPulse 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .gradient-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .gradient-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .gradient-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .gradient-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+  
+   /* البلور اللي هيغطي الشاشة كلها */
+#login-overlay {
+    background: rgba(15, 23, 42, 0.6); /* لون غامق شفاف */
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* شكل الكارت نفسه جوه البلور */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.subscription-expired-banner {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 30%),
+      rgba(2, 6, 23, 0.82);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+}
+
+.subscription-expired-card {
+    width: min(92vw, 460px);
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)),
+      linear-gradient(160deg, rgba(15, 23, 42, 0.9), rgba(127, 29, 29, 0.82));
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 30px;
+    padding: 30px 24px;
+    box-shadow:
+      0 30px 80px rgba(15, 23, 42, 0.45),
+      inset 0 1px 0 rgba(255,255,255,0.14);
+    text-align: center;
+    color: #fff;
+}
+
+.subscription-expired-card .expiry-icon {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 18px;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, rgba(248, 113, 113, 0.28), rgba(251, 191, 36, 0.14));
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+    font-size: 28px;
+    color: #ffe4e6;
+}
+
+.subscription-expired-card strong {
+    display: block;
+    font-size: 1.45rem;
+    margin-bottom: 10px;
+}
+
+.subscription-expired-card p {
+    margin: 0;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.9);
+}
+
+.subscription-expired-card .expiry-note {
+    margin-top: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: #fde68a;
+    font-size: 0.92rem;
+}
+  </style>
+
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-auto">
+  <div id="app" class="h-full w-full">
+   <!-- Toast Container -->
+   <div id="toast-container" class="fixed top-4 left-4 z-50 flex flex-col gap-2"></div><!-- Home Page -->
+   <div id="home-page" class="min-h-full">
+    <!-- Header -->
+    <header class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+         <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-4">
+                <div id="secret-trigger" class="cursor-pointer select-none active:opacity-70 transition-all">
+                  <img src="1769979851931.png" alt="Logo" class="w-14 h-14 object-contain">
+                </div>
+           <div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">منصة Hoba Tech</h1>
+            <p class="text-xs text-gray-400">معا نحو الافضل</p>
+           </div>
+          </div>
+          
+          <div id="admin-controls-area" class="flex items-center gap-2"></div>
+         </div>
+        </div>
+       </header>
+    <!-- Hero Section -->
+    <section class="py-12 px-4">
+     <div class="max-w-4xl mx-auto text-center">
+      <h2 id="welcome-message" class="text-3xl md:text-4xl font-bold mb-4 leading-relaxed">🎓 مرحباً بكم في منصة هوبا تيك التعليمية</h2>
+      <p class="text-gray-300 text-lg mb-8">اختر   مادتك  وابدأ رحلتك الان</p>
+   <div class="flex flex-wrap justify-center gap-4 text-sm">
+    <a href="داش 4.html"><div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+            <span class="text-green-400">🏫</span> <span> الرجوع للصفحة الرئيسية</span>
+         </div></a> 
+     <a href="الاختبارت.html"><div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+            <span class="text-green-400">🎓</span> <span> اختبر نفسك</span>
+           </div></a> 
+        
+    <div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+        <span class="text-green-400">✓</span> <span> مواد</span>
+       </div>
+       <div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+        <span class="text-green-400">✓</span> <span> محاضرات</span>
+       </div>
+       <div class="bg-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+        <span class="text-green-400">✓</span> <span>فيديو + صوت + PDF</span>
+       </div>
+      </div>
+     </div>
+    </section><!-- Subjects Grid -->
+    <section class="px-4 pb-12">
+     <div class="max-w-7xl mx-auto">
+      <div id="subjects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+       <!-- Cards will be generated by JS -->
+      </div>
+     </div>
+    </section>
+   </div><!-- Subject Page -->
+   <div id="subject-page" class="min-h-full hidden">
+    <!-- Subject Header -->
+    <header id="subject-header" class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
+     <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center gap-4">
+       <button onclick="goHome()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition"> → </button>
+       <div class="flex items-center gap-3">
+        <div id="subject-icon-header" class="w-10 h-10 rounded-xl flex items-center justify-center text-xl"></div>
+        <h1 id="subject-title-header" class="text-xl font-bold"></h1>
+       </div>
+      </div>
+     </div>
+    </header>
+    <div class="flex flex-col lg:flex-row h-full">
+     <!-- Sidebar -->
+     <aside class="lg:w-80 bg-black/20 border-b lg:border-b-0 lg:border-l border-white/10 p-4 lg:min-h-screen">
+      <div class="sticky top-24">
+       <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><span>📋</span> <span>المحاضرات</span></h3>
+       <div id="lectures-list" class="space-y-2">
+        <!-- Lectures will be generated by JS -->
+        <h1 id="secret-trigger" class="cursor-pointer">Hoba Tech</h1>
+       </div><!-- Progress -->
+       <div class="mt-6 bg-white/5 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+         <span class="text-sm text-gray-400">التقدم</span> <span id="progress-text" class="text-sm font-bold">0/4</span>
+        </div>
+        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+         <div id="progress-bar" class="h-full bg-gradient-to-r from-green-400 to-emerald-500 progress-bar" style="width: 0%"></div>
+        </div>
+       </div>
+      </div>
+     </aside><!-- Main Content -->
+     <main class="flex-1 p-4 lg:p-8">
+      <div id="lecture-content" class="max-w-4xl mx-auto">
+       <!-- Lecture content will be generated by JS -->
+      </div>
+     </main>
+    </div>
+   </div><!-- Admin Login Modal -->
+   <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 class="text-xl font-bold">🔐 تسجيل دخول الإدارة</h3>
+     </div>
+     <div class="p-6 space-y-4">
+      <p class="text-gray-300 text-sm">أدخل كلمة المرور الخاصة بالإدارة للوصول إلى أدوات الإضافة والتعديل</p>
+      <div>
+       <label class="block text-sm text-gray-400 mb-2">كلمة المرور</label> <input type="password" id="admin-password-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" placeholder="أدخل كلمة المرور" onkeypress="if(event.key==='Enter') loginAdmin()">
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="loginAdmin()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-3 rounded-xl font-bold transition"> دخول </button> <button onclick="hideAdminModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Admin Login Modal -->
+   <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 class="text-xl font-bold">🔐 تسجيل دخول الإدارة</h3>
+     </div>
+     <div class="p-6 space-y-4">
+      <p class="text-gray-300 text-sm">أدخل كلمة المرور الخاصة بالإدارة للوصول إلى أدوات الإضافة والتعديل</p>
+      <div>
+       <label class="block text-sm text-gray-400 mb-2">كلمة المرور</label> <input type="password" id="admin-password-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" placeholder="أدخل كلمة المرور" onkeypress="if(event.key==='Enter') loginAdmin()">
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="loginAdmin()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-3 rounded-xl font-bold transition"> دخول </button> <button onclick="hideAdminModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+  
+   </div><!-- Link Modal -->
+   <div id="link-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-lg w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 id="link-modal-title" class="text-xl font-bold"></h3>
+     </div>
+     <div class="p-6 space-y-4">
+      <div>
+       <label class="block text-sm text-gray-400 mb-2">رابط من Google Drive</label> <input type="text" id="link-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 text-sm" placeholder="https://drive.google.com/file/d/FILE_ID/view">
+       <p class="text-xs text-gray-500 mt-2">الرابط يجب أن يكون مشاركاً للجميع</p>
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="saveLinkAndClose()" class="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 px-6 py-3 rounded-xl font-bold transition"> حفظ </button> <button onclick="hideLinkModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Description Modal -->
+   <div id="description-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl max-w-2xl w-full">
+     <div class="p-6 border-b border-white/10">
+      <h3 class="text-xl font-bold">📝 تعديل شرح المحاضرة</h3>
+      // جوه دالة openSubject أو في الـ HTML الثابت، ضيف الزرار ده جنب اسم المادة:
+${isAdminLoggedIn ? `
+    <button id="sync-btn" onclick="syncWithFirebase()" 
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full font-bold shadow-xl animate-pulse">
+        💾 حفظ التغييرات النهائي
+    </button>
+` : ''}
+     </div>
+     
+     <div class="p-6 space-y-4">
+      <textarea id="description-input" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 text-sm h-48 resize-none" placeholder="أدخل شرح المحاضرة بالتفصيل..."></textarea>
+      <div class="flex gap-3">
+       <button onclick="saveDescriptionAndClose()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-3 rounded-xl font-bold transition"> حفظ </button> <button onclick="hideDescriptionModal()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition"> إلغاء </button>
+      </div>
+     </div>
+    </div>
+   </div>
+   <script> 
+// ============================================
+// 1. Firebase Configuration
+// ============================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAjpqfDdoxYs8rRBw4UKOrvtMoqBDB0Z_s",
+  authDomain: "hoba-tech.firebaseapp.com",
+  databaseURL: "https://hoba-tech-default-rtdb.firebaseio.com",
+  projectId: "hoba-tech",
+  storageBucket: "hoba-tech.firebasestorage.app",
+  messagingSenderId: "465948708700",
+  appId: "1:465948708700:web:dac008d1cb9f8caa50fb99",
+  measurementId: "G-EBHF8FEDB2"
+};
+
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const db = firebase.firestore();
+
+// ============================================
+// 2. State & Variables
+// ============================================
+let subjects = [
+  { id: 'international-orgs', title: 'المنظمات الدولية', icon: '🌍', gradient: 'gradient-1', color: '#667eea', description: 'دراسة المنظمات الدولية وأدوارها', lectures: [] },
+  { id: 'constitutional-law', title: 'القانون الدستوري', icon: '📜', gradient: 'gradient-2', color: '#f5576c', description: 'أساسيات القانون الدستوري', lectures: [] },
+  { id: 'french-terms', title: 'المصطلحات الفرنسية', icon: '🇫🇷', gradient: 'gradient-3', color: '#00f2fe', description: 'المصطلحات القانونية بالفرنسية', lectures: [] },
+  { id: 'legal-history', title: 'تاريخ النظم القانونية والاجتماعية', icon: '📚', gradient: 'gradient-4', color: '#38f9d7', description: 'تطور النظم القانونية', lectures: [] },
+  { id: 'social-issues', title: 'قضايا مجتمعية', icon: '🏛️', gradient: 'gradient-5', color: '#fee140', description: 'قضايا من منظور قانوني', lectures: [] },
+  { id: 'environmental-law', title: 'حماية البيئة', icon: '🌱', gradient: 'gradient-6', color: '#a8edea', description: 'تشريعات البيئة', lectures: [] }
+];
+
+let currentSubject = null;
+let currentLecture = null;
+let isAdminLoggedIn = false;
+let adminPassword = 'admin123hoba';
+let currentEditingLink = null;
+let completedLectures = JSON.parse(localStorage.getItem('completedLectures') || '{}');
+const LIBRARY_VIEW_STATE_KEY = 'hoba_library_view_state';
+let subscriptionCheckInterval = null;
+let subscriptionExpiryHandled = false;
+
+function clearLibrarySession() {
+  [
+    'hoba_student_auth',
+    'hoba_user_id',
+    'hoba_user_name',
+    'isLoggedIn',
+    'userSerial',
+    'subscriberName',
+    'currentUser',
+    'user_data'
+  ].forEach((key) => localStorage.removeItem(key));
+}
+
+function showSubscriptionExpiryNotice() {
+  if (document.getElementById('subscription-expired-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'subscription-expired-banner';
+  banner.className = 'subscription-expired-banner';
+  banner.innerHTML = `
+    <div class="subscription-expired-card">
+      <div class="expiry-icon">⏳</div>
+      <strong>تم انتهاء الاشتراك</strong>
+      <p>لتجديد الاشتراك تواصل مع الإدارة. سيتم تحويلك الآن إلى شاشة التسجيل خلال 3 ثوانٍ.</p>
+      <div class="expiry-note">
+        <span>جارٍ التحويل التلقائي الآن</span>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(banner);
+}
+
+function handleExpiredSubscription(message) {
+  if (subscriptionExpiryHandled) return;
+  subscriptionExpiryHandled = true;
+
+  if (subscriptionCheckInterval) {
+    clearInterval(subscriptionCheckInterval);
+    subscriptionCheckInterval = null;
+  }
+
+  showSubscriptionExpiryNotice();
+  clearLibrarySession();
+  if (message) {
+    console.warn(message);
+  }
+
+  setTimeout(() => {
+    window.location.href = 'التسجيل.html';
+  }, 3000);
+}
+
+function saveLibraryViewState(state = {}) {
+  try {
+    localStorage.setItem(LIBRARY_VIEW_STATE_KEY, JSON.stringify({
+      subjectId: state.subjectId || currentSubject?.id || '',
+      lectureId: state.lectureId || currentLecture?.id || null,
+      screen: state.screen || (currentSubject ? 'subject' : 'home')
+    }));
+  } catch (error) {
+    console.error('Failed to save library state', error);
+  }
+}
+
+function readLibraryViewState() {
+  try {
+    return JSON.parse(localStorage.getItem(LIBRARY_VIEW_STATE_KEY) || 'null');
+  } catch (error) {
+    return null;
+  }
+}
+
+function getLibraryUserCode() {
+  try {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    const userData = JSON.parse(localStorage.getItem('user_data') || 'null');
+    return (
+      localStorage.getItem('hoba_user_id') ||
+      currentUser?.code ||
+      userData?.code ||
+      localStorage.getItem('userSerial') ||
+      ''
+    );
+  } catch (error) {
+    console.error('Unable to read library user code', error);
+    return localStorage.getItem('hoba_user_id') || localStorage.getItem('userSerial') || '';
+  }
+}
+
+function lectureProgressKey(subjectId, lectureId) {
+  return `${subjectId}_${lectureId}`;
+}
+
+function isLectureCompleted(subjectId, lectureId) {
+  return !!completedLectures[lectureProgressKey(subjectId, lectureId)];
+}
+
+async function loadCompletedLecturesFromFirebase() {
+  const userCode = getLibraryUserCode();
+  if (!userCode) return;
+
+  try {
+    const snapshot = await rtdb.ref(`library_progress/${userCode}`).once('value');
+    const progressData = snapshot.val() || {};
+    const mergedProgress = { ...completedLectures };
+
+    Object.entries(progressData).forEach(([subjectId, lectures]) => {
+      if (!lectures || typeof lectures !== 'object') return;
+
+      Object.entries(lectures).forEach(([lectureId, isDone]) => {
+        if (isDone) {
+          mergedProgress[lectureProgressKey(subjectId, lectureId)] = true;
+        }
+      });
+    });
+
+    completedLectures = mergedProgress;
+    localStorage.setItem('completedLectures', JSON.stringify(completedLectures));
+
+    if (currentSubject) {
+      renderLecturesList(currentSubject);
+      if (currentLecture) renderLectureContent(currentSubject, currentLecture);
+    }
+  } catch (error) {
+    console.error('Failed to load library progress', error);
+  }
+}
+
+// ============================================
+// 3. Admin & Auth
+// ============================================
+function toggleAdminPanel() { isAdminLoggedIn ? logoutAdmin() : showAdminModal(); }
+function showAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
+function hideAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+function loginAdmin() {
+  const password = document.getElementById('admin-password-input').value;
+  if (password === adminPassword) {
+    isAdminLoggedIn = true;
+    localStorage.setItem('adminLoggedIn', 'true');
+    hideAdminModal();
+    updateAdminButtonUI();
+    renderSubjectsGrid();
+    if (currentSubject) openSubject(currentSubject.id);
+    alert(' حمدالله بالسلامه ي مستشار طبت وطاب ممشاك✅');
+} else { alert('❌ الباسورد غلط يا ريس'); }
+}
+
+function logoutAdmin() {
+  isAdminLoggedIn = false;
+  localStorage.removeItem('adminLoggedIn');
+  location.reload();
+}
+
+
+// 1. دالة تسجيل الخروج (المحرك)
+function logoutAdmin() {
+    // إلغاء حالة الأدمن
+    isAdminLoggedIn = false;
+    
+    // مسح التصريح من ذاكرة المتصفح
+    localStorage.removeItem('adminLoggedIn');
+    
+    // تحديث شكل الزرار فوراً ليرجع "دخول"
+    updateAdminButtonUI();
+    
+    // تحديث المحتوى (المواد) لإخفاء أدوات التحكم (التعديل والحذف)
+    if (typeof renderSubjectsGrid === "function") {
+        renderSubjectsGrid();
+    }
+
+    // لو عايز الصفحة تعمل ريفريش كامل عشان تنظف أي داتا (اختياري)
+    // location.reload();
+
+    alert('👋 تم تسجيل الخروج بنجاح.. تم الاعادة لوضع الطالب');
+}
+
+// 2. تحديث دالة الـ UI للتأكد من ربط الأزرار
+function updateAdminButtonUI() {
+    // 1. بنمسك الحاوية اللي أنت بعتها (admin-controls-area)
+    const container = document.getElementById('admin-controls-area'); 
+    
+    if (container) {
+        if (isAdminLoggedIn) {
+            // 2. لو أدمن: بنرسم زرار الخروج جوه الحاوية
+            container.innerHTML = `
+                <button onclick="logoutAdmin()" 
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold shadow-lg transition-all active:scale-95 text-[12px]">
+                    <span>🔓</span> خروج من وضع الإدارة 
+                </button>
+            `;
+        } else {
+            // 3. لو طالب: بنرسم زرار الدخول جوه نفس الحاوية
+            container.innerHTML = `
+               
+            `;
+        }
+    } else {
+        console.error("يا ريس الـ div اللي اسمه admin-controls-area مش موجود في الـ HTML!");
+    }
+}
+// ============================================
+// 4. الـ CRUD (إضافة، حذف، تعديل)
+// ============================================
+
+// --- إضافة محاضرة جديدة ---
+async function showAddLectureModal() {
+    const title = prompt("اسم المحاضرة الجديدة:");
+    const duration = prompt("مدة المحاضرة (مثلاً: 30 دقيقة):", "45 دقيقة");
+    if (!title) return;
+
+    const newId = currentSubject.lectures.length + 1;
+    const newLecture = { id: newId, title, duration, videoUrl: "", audioUrl: "", pdfUrl: "", description: "" };
+
+    try {
+        currentSubject.lectures.push(newLecture);
+        await db.collection('subjects').doc(currentSubject.id).set({ lectures: currentSubject.lectures }, { merge: true });
+        alert('✅ تم إضافة المحاضرة');
+        renderLecturesList(currentSubject);
+        selectLecture(newId);
+    } catch (e) { alert('❌ فشل في السيرفر'); }
+}
+
+// --- حذف محاضرة ---
+async function deleteLecture(lectureId) {
+    if (!confirm('سيتم حذف المحاضرة وكل محتواها.. متأكد؟')) return;
+    try {
+        currentSubject.lectures = currentSubject.lectures.filter(l => l.id !== lectureId);
+        // إعادة الترقيم
+        currentSubject.lectures.forEach((l, i) => l.id = i + 1);
+        await db.collection('subjects').doc(currentSubject.id).update({ lectures: currentSubject.lectures });
+        alert('🗑️ تم الحذف');
+        currentLecture = currentSubject.lectures[0] || null;
+        renderLecturesList(currentSubject);
+        if (currentLecture) renderLectureContent(currentSubject, currentLecture);
+        else location.reload();
+    } catch (e) { alert('❌ فشل الحذف'); }
+}
+async function markLectureComplete() {
+    if (!currentSubject || !currentLecture) return;
+
+    const key = lectureProgressKey(currentSubject.id, currentLecture.id);
+    const userCode = getLibraryUserCode();
+
+    completedLectures[key] = true;
+
+    localStorage.setItem(
+        "completedLectures",
+        JSON.stringify(completedLectures)
+    );
+
+    try {
+        const today = new Date();
+        const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const missionStorageKey = `hoba_daily_missions_${userCode || 'guest'}`;
+        const dailyState = JSON.parse(localStorage.getItem(missionStorageKey) || 'null') || {};
+        localStorage.setItem(missionStorageKey, JSON.stringify({
+            date: todayKey,
+            libraryDone: true,
+            examDone: !!dailyState.examDone && dailyState.date === todayKey,
+            libraryMeta: {
+                subjectId: currentSubject.id,
+                lectureId: currentLecture.id
+            },
+            examMeta: dailyState.date === todayKey ? (dailyState.examMeta || null) : null
+        }));
+    } catch (error) {
+        console.warn('Failed to update daily mission for library', error);
+    }
+
+    renderLecturesList(currentSubject);
+    renderLectureContent(currentSubject, currentLecture);
+
+    if (!userCode) {
+        alert("تم حفظ المحاضرة على هذا الجهاز، لكن لم نجد كود الطالب للربط مع Firebase.");
+        return;
+    }
+
+    try {
+        await rtdb.ref(`library_progress/${userCode}/${currentSubject.id}/${currentLecture.id}`).set(true);
+        alert("تم حفظ إنهاء المحاضرة بنجاح .");
+    } catch (error) {
+        console.error("Failed to save library progress", error);
+        alert("تم تعليم المحاضرة محليًا، لكن حدثت مشكلة أثناء الحفظ على Firebase.");
+    }
+}
+// --- تعديل الروابط والشرح ---
+async function saveLinkAndClose() {
+    const value = document.getElementById('link-input').value.trim();
+    const type = currentEditingLink.type;
+    const fieldName = `${type}Url`;
+    try {
+        const idx = currentSubject.lectures.findIndex(l => l.id === currentLecture.id);
+        currentSubject.lectures[idx][fieldName] = value;
+        await db.collection('subjects').doc(currentSubject.id).update({ lectures: currentSubject.lectures });
+        alert('✅ تم تحديث الرابط');
+        hideLinkModal();
+        renderLectureContent(currentSubject, currentLecture);
+    } catch (e) { alert('❌ خطأ في الحفظ'); }
+}
+
+async function saveDescriptionAndClose() {
+    const value = document.getElementById('description-input').value.trim();
+    try {
+        const idx = currentSubject.lectures.findIndex(l => l.id === currentLecture.id);
+        currentSubject.lectures[idx].description = value;
+        await db.collection('subjects').doc(currentSubject.id).update({ lectures: currentSubject.lectures });
+        alert('✅ تم حفظ الشرح');
+        hideDescriptionModal();
+        renderLectureContent(currentSubject, currentLecture);
+    } catch (e) { alert('❌ خطأ'); }
+}
+
+// ============================================
+// 5. Rendering & UI
+// ============================================
+function renderSubjectsGrid() {
+  const grid = document.getElementById('subjects-grid');
+  grid.innerHTML = subjects.map(s => `
+    <div class="subject-card ${s.gradient} rounded-2xl p-6 cursor-pointer relative" onclick="openSubject('${s.id}')">
+      <div class="text-5xl mb-4">${s.icon}</div>
+      <h3 class="text-xl font-bold text-white">${s.title}</h3>
+      <p class="text-white/80 text-sm mb-4">${s.description}</p>
+      ${isAdminLoggedIn ? '<span class="absolute top-2 right-2 bg-black/20 text-[10px] p-1 rounded">ADMIN MODE</span>' : ''}
+    </div>
+  `).join('');
+}
+
+async function openSubject(subjectId) {
+  currentSubject = subjects.find(s => s.id === subjectId);
+  saveLibraryViewState({ subjectId, screen: 'subject' });
+  await loadCompletedLecturesFromFirebase();
+  try {
+    const doc = await db.collection('subjects').doc(subjectId).get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data.lectures) currentSubject.lectures = data.lectures;
+    }
+  } catch (e) { console.log("Offline"); }
+
+  currentLecture = currentSubject.lectures[0] || null;
+  saveLibraryViewState({ subjectId: currentSubject.id, lectureId: currentLecture?.id, screen: 'subject' });
+  document.getElementById('home-page').classList.add('hidden');
+  document.getElementById('subject-page').classList.remove('hidden');
+  document.getElementById('subject-title-header').textContent = currentSubject.title;
+  renderLecturesList(currentSubject);
+  if (currentLecture) renderLectureContent(currentSubject, currentLecture);
+  else document.getElementById('lecture-content').innerHTML = `
+     <div class="text-center py-20">
+        <p class="text-gray-500 mb-4">لا يوجد محاضرات مضافة بعد</p>
+        ${isAdminLoggedIn ? `<button onclick="showAddLectureModal()" class="bg-green-600 px-4 py-2 rounded-lg font-bold">➕ أضف أول محاضرة</button>` : ''}
+     </div>`;
+}
+
+function renderLecturesList(subject) {
+  const list = document.getElementById('lectures-list');
+  const total = subject.lectures.length;
+  const done = subject.lectures.filter(l => isLectureCompleted(subject.id, l.id)).length;
+  
+  // تحديث العداد
+  document.getElementById('progress-text').textContent = `${done}/${total}`;
+  document.getElementById('progress-bar').style.width = total > 0 ? `${(done/total)*100}%` : '0%';
+
+  list.innerHTML = subject.lectures.map(l => {
+    const isDone = isLectureCompleted(subject.id, l.id);
+    const isActive = currentLecture?.id === l.id;
+
+    return `
+    <div class="group relative p-4 mb-2 ${isDone ? 'bg-emerald-500/12 border border-emerald-400/40 shadow-[0_0_0_1px_rgba(16,185,129,0.08)]' : isActive ? 'bg-amber-500/20 border border-amber-500/50' : 'bg-white/5'} rounded-xl cursor-pointer hover:bg-white/10" onclick="selectLecture(${l.id})">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-3">
+           ${isDone ? '<span class="checkmark-badge inline-flex w-7 h-7 items-center justify-center rounded-full bg-emerald-500 text-white font-black shadow-lg">✓</span>' : '<span class="inline-flex w-7 h-7 items-center justify-center rounded-full bg-white/10 text-gray-300 text-xs">▶</span>'}
+           <div>
+             <h4 class="text-sm font-bold ${isDone ? 'text-emerald-200' : 'text-white'}">${l.title}</h4>
+             <p class="text-[10px] text-gray-400">${l.duration}</p>
+           </div>
+        </div>
+        ${isAdminLoggedIn ? `<button onclick="event.stopPropagation(); deleteLecture(${l.id})" class="hidden group-hover:block text-red-500 text-xs">🗑️</button>` : ''}
+      </div>
+      ${isDone ? '<div class="mt-3 text-[11px] text-emerald-300 font-bold">تم إنهاء هذه المحاضرة</div>' : ''}
+    </div>
+  `;
+  }).join('');
+}
+
+function renderLectureContent(subject, lecture) {
+  const content = document.getElementById('lecture-content');
+  const isDone = isLectureCompleted(subject.id, lecture.id);
+  
+  // الروابط بنسحبها من بيانات المحاضرة اللي جاية من السيرفر
+  const video = convertGoogleDriveLink(lecture.videoUrl);
+  const description = lecture.description || 'سيتم إضافة الشرح المكتوب قريباً';
+  const audio = convertGoogleDriveLink(lecture.audioUrl);
+  const pdf = convertGoogleDriveLink(lecture.pdfUrl);
+
+  content.innerHTML = `
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-amber-400">${lecture.title}</h2>
+      ${isAdminLoggedIn ? `<button onclick="showAddLectureModal()" class="bg-white/10 px-3 py-1 rounded-lg text-xs border border-white/20">+ إضافة محاضرة</button>` : ''}
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>🎥 فيديو الشرح</span>
+        ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'video')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الرابط</button>` : ''}
+      </div>
+      ${video ? `<iframe src="https://drive.google.com/file/d/${video.fileId}/preview" width="100%" height="400" class="rounded-xl border-0" allow="autoplay"></iframe>` : '<p class="text-center py-10 text-gray-500 text-xs italic">قريباً: فيديو المحاضرة</p>'}
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-2xl mb-10 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>📝شرح المحاضرة</span>
+        ${isAdminLoggedIn ? `<button onclick="showDescriptionModal()" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل النص</button>` : ''}
+      </div>
+      <div class="text-gray-300 text-sm leading-relaxed">${(lecture.description || 'سيتم إضافة الشرح المكتوب قريباً').replace(/\n/g, '<br>')}</div>
+    </div>
+    
+    <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>🎙️ الشرح الصوتي</span>
+        ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'audio')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الرابط</button>` : ''}
+      </div>
+      ${audio ? `<iframe src="https://drive.google.com/file/d/${audio.fileId}/preview" width="100%" height="100" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-4 text-gray-500 text-xs">لا يوجد تسجيل صوتي حالياً</p>'}
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-2xl mb-5 border border-white/5">
+      <div class="flex justify-between mb-3 text-sm font-bold">
+        <span>📄 مذكرة PDF</span>
+        <div class="flex gap-2">
+           ${pdf ? `<a href="https://drive.google.com/uc?export=download&id=${pdf.fileId}" target="_blank" class="bg-green-600 px-2 py-1 rounded text-[10px] text-white">⬇️ تحميل</a>` : ''}
+           ${isAdminLoggedIn ? `<button onclick="showLinkModal('${subject.id}', ${lecture.id}, 'pdf')" class="bg-blue-600 px-2 py-1 rounded text-[10px]">تعديل الملف</button>` : ''}
+        </div>
+      </div>
+      ${pdf ? `<iframe src="https://drive.google.com/file/d/${pdf.fileId}/preview" width="100%" height="500" class="rounded-xl border-0"></iframe>` : '<p class="text-center py-10 text-gray-500 text-xs italic">الملخص غير متوفر حالياً</p>'}
+    </div>
+    <div class="text-center mt-6">
+<button onclick="markLectureComplete()" 
+class="${isDone ? 'bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 cursor-default' : 'bg-green-600 hover:bg-green-700 text-white'} px-6 py-3 rounded-xl font-bold transition"
+${isDone ? 'disabled' : ''}>
+${isDone ? '✓ تم إنهاء هذه المحاضرة ' : 'الحمدلله انتهيت من هذه المحاضرة'}
+</button>
+<p class="mt-3 text-sm ${isDone ? 'text-emerald-300' : 'text-gray-400'}">
+${isDone ? '' : 'بعد الضغط سيتم حفظ الإنجاز في حساب الطالب وإظهار علامة خضراء تلقائيًا.'}
+</p>
+</div>
+  `;
+}
+// ============================================
+// 6. Helpers
+// ============================================
+function selectLecture(id) {
+  currentLecture = currentSubject.lectures.find(l => l.id === id);
+  saveLibraryViewState({ subjectId: currentSubject?.id, lectureId: id, screen: 'subject' });
+  renderLecturesList(currentSubject);
+  renderLectureContent(currentSubject, currentLecture);
+}
+
+function convertGoogleDriveLink(url) {
+  if (!url) return null;
+  let fileId = null;
+  if (url.includes('/file/d/')) fileId = url.split('/file/d/')[1]?.split('/')[0];
+  else if (url.includes('id=')) fileId = url.split('id=')[1]?.split('&')[0];
+  return fileId ? { fileId } : null;
+}
+
+function showLinkModal(sId, lId, type) { currentEditingLink = { sId, lId, type }; document.getElementById('link-modal').classList.remove('hidden'); }
+function hideLinkModal() { document.getElementById('link-modal').classList.add('hidden'); }
+function showDescriptionModal() { document.getElementById('description-modal').classList.remove('hidden'); }
+function hideDescriptionModal() { document.getElementById('description-modal').classList.add('hidden'); }
+function goHome() {
+  saveLibraryViewState({ subjectId: '', lectureId: null, screen: 'home' });
+  location.reload();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('adminLoggedIn') === 'true') {
+    isAdminLoggedIn = true;
+    updateAdminButtonUI();
+  }
+  loadCompletedLecturesFromFirebase();
+  renderSubjectsGrid();
+});
+// دالة لتجهيز الرابط في الذاكرة المؤقتة (بدون رفع للسيرفر)
+function prepareLink() {
+    const value = document.getElementById('link-input').value.trim();
+    const type = currentEditingLink.type;
+    const fieldName = `${type}Url`;
+    
+    // تحديث البيانات في المصفوفة المحلية فقط
+    const idx = currentSubject.lectures.findIndex(l => l.id === currentLecture.id);
+    currentSubject.lectures[idx][fieldName] = value;
+    
+    alert('⚠️ تم التعديل محلياً.. لا تنسى الضغط على "حفظ التغييرات النهائي"');
+    hideLinkModal();
+    renderLectureContent(currentSubject, currentLecture);
+}
+
+// دالة الرفع النهائي للسيرفر (الزرار اللي هتدوس عليه بنفسك)
+async function syncWithFirebase() {
+    if (!isAdminLoggedIn) return;
+    
+    const btn = document.getElementById('sync-btn');
+    btn.innerHTML = "⏳ جاري الرفع...";
+    btn.disabled = true;
+
+    try {
+        await db.collection('subjects').doc(currentSubject.id).update({
+            lectures: currentSubject.lectures
+        });
+        alert('✅ تم الحفظ في السيرفر بنجاح! كل الطلاب هيشوفوا التعديل دلوقتي.');
+    } catch (e) {
+        console.error(e);
+        alert('❌ فشل الرفع.. اتأكد من النت');
+    } finally {
+        btn.innerHTML = "💾 حفظ التغييرات النهائي";
+        btn.disabled = false;
+    }
+}
+
+let clickCount = 0;
+document.getElementById('secret-trigger').addEventListener('click', () => {
+    clickCount++;
+    if (clickCount === 3) { // لو دوست 3 مرات ورا بعض
+        showAdminModal();
+        clickCount = 0; // صفر العداد تاني
+    }
+    // يصفر العداد لو مكملتش الـ 3 ضغطات في وقت قصير
+    setTimeout(() => { clickCount = 0; }, 2000); 
+});
+
+// وتعدل زرار تسجيل الدخول القديم في الـ CSS تخليه:
+// display: none; أو تحذفه خالص من الـ HTML
+  
+  // 1. كود كشف الضغطات الـ 3 على الميزان
+let secretClicks = 0;
+const secretBtn = document.getElementById('secret-trigger');
+
+if (secretBtn) {
+    secretBtn.addEventListener('click', () => {
+        secretClicks++;
+        if (secretClicks === 3) {
+            showAdminModal(); // بيفتح لك المربع اللي بتكتب فيه الباسورد
+            secretClicks = 0;
+        }
+        setTimeout(() => { secretClicks = 0; }, 1000); // يصفر العداد لو الـ 3 ضغطات مش ورا بعض بسرعة
+    });
+}
+
+// 2. الدالة اللي بتتحكم في ظهور الزراير (حطها زي ما هي)
+function updateAdminHeader() {
+    const area = document.getElementById('admin-controls-area');
+    if (!area) return;
+
+    if (isAdminLoggedIn) {
+        area.innerHTML = `
+            <button onclick="syncWithFirebase()" id="sync-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full font-bold shadow-xl animate-pulse text-[10px]">
+                💾 حفظ نهائي
+            </button>
+            <button onclick="logoutAdmin()" class="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] border border-white/10">
+                خروج
+            </button>
+        `;
+    } else {
+        area.innerHTML = ''; // لو مش أدمن بيمسح أي حاجة عشان الطالب ميشوفش حاجة
+    }
+}
+
+// 3. ⚠️ أهم سطر: لازم تنادي على الدالة دي عشان تشتغل أول ما الصفحة تفتح
+updateAdminHeader();
+const rtdb = firebase.database();
+
+// 1. دالة الواتر مارك (الاسم وتحته الكود - حركة كل دقيقتين)
+function startWatermark(studentName, studentPhone) {
+    const oldWatermark = document.getElementById('hoba-watermark');
+    if (oldWatermark) oldWatermark.remove();
+
+    const watermark = document.createElement('div');
+    watermark.id = 'hoba-watermark';
+    watermark.style.cssText = `
+        position: fixed; top: 30%; left: 30%;
+        pointer-events: none; z-index: 999999;
+        color: rgba(255, 255, 255, 0.12); /* شفافية هادية */
+        font-size: 15px; font-family: sans-serif; font-weight: bold;
+        text-align: center; line-height: 1.4; /* لضبط المسافة بين السطرين */
+        user-select: none;
+        transition: all 4s ease-in-out; /* حركة انسيابية جداً */
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    `;
+    
+    // التعديل: الاسم وتحته الكود
+    watermark.innerHTML = `${studentName} <br> ${studentPhone}`;
+    document.body.appendChild(watermark);
+
+    // الحركة كل دقيقتين (120000 مللي ثانية)
+    setInterval(() => {
+        const x = Math.random() * (window.innerWidth - 180);
+        const y = Math.random() * (window.innerHeight - 100);
+        watermark.style.left = x + 'px';
+        watermark.style.top = y + 'px';
+    }, 120000); 
+}
+
+// 2. دالة التحقق من الكود (الزرار)
+async function checkActivationCode() {
+    const userCode = document.getElementById('activation-code-input').value.trim();
+    const userPass = document.getElementById('activation-pass-input').value.trim();
+    const btn = document.querySelector('#login-overlay button');
+
+    if (!userCode || !userPass) { 
+        alert("بياناتك يا مستشار 🧐"); 
+        return; 
+    }
+
+    btn.innerHTML = "⏳ جاري التحقق...";
+    btn.disabled = true;
+
+    try {
+        const snapshot = await rtdb.ref('codes/' + userCode).once('value');
+        const studentData = snapshot.val();
+
+        if (studentData) {
+            if (studentData.pass === userPass) {
+                // التحقق من تاريخ انتهاء الاشتراك
+const now = new Date();
+const expiry = new Date(studentData.expiryDate);
+
+if (now > expiry) {
+    handleExpiredSubscription("انتهت صلاحية اشتراكك أثناء تسجيل الدخول.");
+    return;
+}
+                // بصمة الجهاز الحالية
+                const currentFP = btoa(`${screen.width}x${screen.height}-${navigator.platform}`);
+                const d1 = studentData.device || "";
+                const d2 = studentData.device2 || "";
+
+                // 1. لو الجهاز سليم (الأول أو الثاني)
+                if (currentFP === d1 || currentFP === d2) {
+                    proceedLogin(studentData.name, userCode);
+                } 
+                // 2. لو لسه مفيش ولا جهاز متسجل
+                else if (d1 === "") {
+                    await rtdb.ref('codes/' + userCode).update({ device: currentFP });
+                    proceedLogin(studentData.name, userCode);
+                } 
+                // 3. لو الجهاز الأول متسجل والتاني فاضي
+                else if (d2 === "") {
+                    await rtdb.ref('codes/' + userCode).update({ device2: currentFP });
+                    proceedLogin(studentData.name, userCode);
+                } 
+                // 4. لو الكود مسجل على جهازين وأنت داخل بجهاز تالت
+                else {
+                    alert("❌ تم تسجيل هذا الكود علي جهاز اخر من قبل!");
+                    btn.innerHTML = "دخول للمكتبة";
+                    btn.disabled = false;
+                }
+            } else { 
+                alert("❌ كلمة السر غير صحيحة."); 
+                btn.disabled = false; 
+                btn.innerHTML = "دخول"; 
+            }
+        } else { 
+            alert("❌ هذا الكود غير مسجل لدينا تواصل مع الدعم الفني."); 
+            btn.disabled = false; 
+            btn.innerHTML = "دخول"; 
+        }
+    } catch (error) { 
+        console.error(error);
+        alert("خطأ في السيرفر."); 
+        btn.disabled = false; 
+        btn.innerHTML = "دخول";
+    }
+}
+
+// الدالة دي لازم تكون موجودة عشان تشغل الدخول
+function proceedLogin(name, code) {
+    localStorage.setItem('hoba_student_auth', 'true');
+    localStorage.setItem('hoba_user_name', name);
+    localStorage.setItem('hoba_user_id', code);
+
+    startSubscriptionChecker(); // تشغيل فحص الاشتراك
+
+    showWelcomeAndEntry(name, code);
+}
+// 3. دالة الترحيب والدخول
+// 2. دالة الترحيب (مظبوطة)
+function showWelcomeAndEntry(name, code){
+    const card = document.querySelector('.glass-panel');
+    card.innerHTML = `
+        <div class="welcome-anim">
+            <div class="text-6xl mb-4">🎓</div>
+            <h2 class="text-3xl font-bold mb-2 text-amber-400">أهلاً بك</h2>
+            <p class="text-xl text-white mb-6">${name}</p>
+            <div class="loading-spinner mx-auto"></div>
+            <p class="text-sm text-gray-400 mt-4">جاري فتح مكتبتك الخاصة...</p>
+        </div>
+    `;
+    
+    
+    setTimeout(() => {
+        const overlay = document.getElementById('login-overlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.remove();
+                document.getElementById('home-page').classList.remove('hidden');
+                startWatermark(name, code); // تشغيل البصمة
+            }, 500);
+        }
+    }, 2000);
+}
+// 2. دالة إظهار الواجهة الجزاز (كاملة كما أرسلتها مع تعديل بسيط للربط)
+function showLoginOverlay() {
+    if (document.getElementById('login-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = "login-overlay";
+    // إضافة الـ Backdrop Blur هنا عشان يسود ويغبش اللي وراه بجد
+    overlay.className = "fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-700 bg-slate-950/60 backdrop-blur-2xl";
+    
+    overlay.innerHTML = `
+        <div class="glass-panel max-w-sm w-full text-center welcome-anim p-8 border border-white/10 rounded-[2rem] bg-white/5 shadow-2xl">
+            <div class="relative inline-block mb-8">
+                <div class="absolute inset-0 bg-amber-500 blur-3xl opacity-30 animate-pulse"></div>
+                <img src="1769979851931.png" class="w-20 h-20 mx-auto relative z-10">
+            </div>
+            
+            <h2 class="text-3xl font-extrabold mb-2 text-white tracking-tight">منصة هوبا تيك</h2>
+            <p class="text-amber-200/70 text-sm mb-8 font-medium">معا نحو الافضل</p>
+            
+            <div class="space-y-4">
+                <input type="text" id="activation-code-input" 
+                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
+                       placeholder="رقم الكود">
+                
+                <input type="password" id="activation-pass-input" 
+                       class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all" 
+                       placeholder="كلمة السر">
+
+                <button onclick="checkActivationCode()" 
+                        class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 py-4 rounded-2xl font-bold text-lg text-slate-900 shadow-xl hover:shadow-amber-500/20 active:scale-95 transition-all mt-4">
+                    دخول للمكتبة
+                </button>
+            </div>
+            
+            <p class="text-[11px] text-gray-400 mt-8">جميع الحقوق محفوظة لمنصة هوبا تيك</p>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+
+// 3. منطق الدخول والتحقق عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', async () => {
+    const homePage = document.getElementById('home-page');
+    const isAuth = localStorage.getItem('hoba_student_auth');
+    const savedCode = localStorage.getItem('hoba_user_id');
+    const savedName = localStorage.getItem('hoba_user_name');
+
+// 5. التشغيل عند تحميل الصفح
+if (isAuth === 'true' && savedCode && savedName) {
+    homePage.classList.remove('hidden');
+    startWatermark(savedName, savedCode);
+    startSubscriptionChecker();
+    loadCompletedLecturesFromFirebase();
+    const savedView = readLibraryViewState();
+    if (savedView?.screen === 'subject' && savedView.subjectId) {
+        await openSubject(savedView.subjectId);
+        if (savedView.lectureId) {
+            const lectureId = Number(savedView.lectureId);
+            if (!Number.isNaN(lectureId) && currentSubject?.lectures?.some(l => Number(l.id) === lectureId)) {
+                selectLecture(lectureId);
+            }
+        }
+    }
+} else {
+    showLoginOverlay(); // 🔥 دي اللي ناقصة
+}
+});
+// التحقق الدوري من صلاحية الاشتراك
+function startSubscriptionChecker() {
+if (subscriptionCheckInterval) {
+    clearInterval(subscriptionCheckInterval);
+    subscriptionCheckInterval = null;
+}
+
+const userCode = localStorage.getItem('hoba_user_id');
+if (!userCode) return;
+
+const checkSubscriptionNow = async () => {
+    try {
+        const snapshot = await rtdb.ref('codes/' + userCode).once('value');
+        const data = snapshot.val();
+
+        if (!data) return;
+
+        const now = new Date();
+        const expiry = new Date(data.expiryDate);
+
+        if (now > expiry) {
+            handleExpiredSubscription("انتهت فترة الاشتراك أثناء استخدام المكتبة.");
+        }
+
+    } catch (e) {
+        console.log("خطأ في فحص الاشتراك", e);
+    }
+
+};
+
+checkSubscriptionNow();
+subscriptionCheckInterval = setInterval(checkSubscriptionNow, 15000);
+}
+  </script>
+  </div>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d86545e61649e89',t:'MTc3Mjg1MjIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
