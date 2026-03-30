@@ -145,6 +145,337 @@
             justify-content: center;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);
         }
+
+.exam-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px;
+  padding: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(34,211,238,0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(168,85,247,0.18), transparent 32%),
+    linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)),
+    linear-gradient(160deg, rgba(8,15,40,0.96), rgba(22,28,63,0.96));
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 25px 60px rgba(6,10,30,0.35);
+}
+
+.exam-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -8% -35% auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,130,246,0.24), transparent 70%);
+  pointer-events: none;
+}
+
+.exam-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.exam-overview-item {
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.exam-overview-item strong {
+  display: block;
+  color: #fff;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.exam-overview-item span {
+  color: rgba(255,255,255,0.66);
+  line-height: 1.7;
+  font-size: .9rem;
+}
+
+.subject-shell-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+}
+
+.subject-shell-card .gradient-border-inner {
+  height: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.subject-icon-wrap {
+  width: 74px;
+  height: 74px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  background: linear-gradient(145deg, rgba(34,211,238,0.18), rgba(124,58,237,0.16));
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  font-size: 2rem;
+}
+
+.subject-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.subject-mini-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.76);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.subject-mini-badge.live {
+  background: rgba(16,185,129,0.12);
+  color: #86efac;
+}
+
+.subject-mini-badge.ready {
+  background: rgba(34,211,238,0.12);
+  color: #a5f3fc;
+}
+
+.exam-panel-card {
+  border-radius: 26px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)),
+    linear-gradient(160deg, rgba(8,15,40,0.94), rgba(17,24,39,0.94));
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 18px 48px rgba(6,10,30,0.3);
+}
+
+.exam-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.exam-list-header p {
+  color: rgba(255,255,255,0.62);
+  margin: 0;
+}
+
+
+:root {
+  --exam-bg-top: #050816;
+  --exam-bg-mid: #120f2f;
+  --exam-bg-bottom: #090b1f;
+  --exam-ink: #f8fbff;
+  --exam-muted: #b7bfd8;
+  --exam-card: rgba(11, 16, 42, 0.52);
+  --exam-card-strong: rgba(16, 22, 56, 0.74);
+  --exam-line: rgba(137, 92, 246, 0.22);
+  --exam-accent: #53d8fb;
+  --exam-accent-2: #9b5cff;
+  --exam-shadow: rgba(10, 12, 35, 0.34);
+}
+
+body,
+body.h-full {
+  background:
+    radial-gradient(circle at top right, rgba(83, 216, 251, 0.14), transparent 20%),
+    radial-gradient(circle at top left, rgba(155, 92, 255, 0.16), transparent 24%),
+    radial-gradient(circle at bottom center, rgba(34, 197, 94, 0.08), transparent 26%),
+    linear-gradient(180deg, var(--exam-bg-top), var(--exam-bg-mid) 46%, var(--exam-bg-bottom));
+  color: var(--exam-ink);
+}
+
+.gradient-border {
+  background: linear-gradient(135deg, rgba(83, 216, 251, 0.62), rgba(155, 92, 255, 0.58));
+  padding: 1px;
+  border-radius: 26px;
+  box-shadow: 0 18px 40px var(--exam-shadow);
+}
+
+.gradient-border-inner {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03)),
+    var(--exam-card);
+  border-radius: 25px;
+  color: var(--exam-ink);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+}
+
+header.bg-\[\#0f0f23\]\/90 {
+  background: rgba(10, 14, 38, 0.68) !important;
+  border-bottom-color: rgba(137, 92, 246, 0.18) !important;
+  box-shadow: 0 10px 30px rgba(8, 10, 26, 0.24);
+}
+
+.exam-hero {
+  background:
+    radial-gradient(circle at top left, rgba(83,216,251,0.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(155,92,255,0.18), transparent 28%),
+    linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03)),
+    linear-gradient(160deg, rgba(10,14,38,0.76), rgba(16,20,48,0.72));
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 26px 60px rgba(8, 10, 26, 0.28);
+}
+
+.exam-hero h2,
+.exam-hero strong,
+.exam-overview-item strong,
+#subject-title,
+#exam-title,
+#result-title,
+#result-header-title {
+  color: #f8fbff !important;
+}
+
+.exam-hero p,
+.exam-overview-item span,
+.exam-list-header p,
+.text-gray-400,
+.text-gray-500 {
+  color: var(--exam-muted) !important;
+}
+
+.exam-overview-item,
+.exam-panel-card .gradient-border-inner,
+#result-screen .gradient-border-inner,
+#result-summary-screen .gradient-border-inner,
+#review-screen .gradient-border-inner {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03)),
+    linear-gradient(160deg, rgba(10,14,38,0.68), rgba(13,18,44,0.64));
+  border: 1px solid var(--exam-line);
+  box-shadow: 0 16px 34px rgba(8, 10, 26, 0.22);
+}
+
+.subject-shell-card .gradient-border-inner {
+  background:
+    radial-gradient(circle at top, rgba(83,216,251,0.1), transparent 28%),
+    linear-gradient(160deg, rgba(10,14,38,0.7), rgba(14,19,48,0.66));
+}
+
+.subject-shell-card h3,
+#display-name,
+#main-title {
+  color: #f8fbff !important;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.015);
+  box-shadow: 0 22px 44px rgba(12, 16, 42, 0.28);
+}
+
+.subject-shell-card .text-green-400,
+.text-green-400 {
+  color: #5eead4 !important;
+}
+
+.subject-shell-card .bg-green-400 {
+  background-color: #5eead4 !important;
+}
+
+.exam-panel-card h2,
+.exam-list-header h2,
+.font-bold.text-cyan-400,
+.text-cyan-400 {
+  color: #67e8f9 !important;
+}
+
+.bg-\[\#1a1a3a\],
+.bg-\[\#1a1a3a\]\/80 {
+  background: rgba(255,255,255,0.08) !important;
+  color: var(--exam-ink) !important;
+  border-color: rgba(137, 92, 246, 0.16) !important;
+}
+
+input,
+textarea {
+  color: var(--exam-ink) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+.bg-gradient-to-r.from-cyan-500.via-purple-600.to-pink-500,
+.bg-gradient-to-r.from-cyan-500.to-purple-600,
+.bg-gradient-to-r.from-cyan-400.to-purple-500 {
+  background: linear-gradient(135deg, #53d8fb, #9b5cff) !important;
+  color: #fff !important;
+}
+
+.bg-gradient-to-r.from-yellow-500.to-orange-600 {
+  background: linear-gradient(135deg, #f59e0b, #ec4899) !important;
+  color: #fff !important;
+}
+
+.bg-gradient-to-r.from-green-500.to-emerald-600 {
+  background: linear-gradient(135deg, #34d399, #10b981) !important;
+  color: #fff !important;
+}
+
+#timer {
+  background: rgba(83, 216, 251, 0.08) !important;
+  border: 1px solid rgba(83, 216, 251, 0.14);
+}
+
+#timer span {
+  color: #67e8f9 !important;
+}
+
+.neon-glow,
+.gold-glow {
+  box-shadow:
+    0 16px 40px rgba(12, 16, 42, 0.26),
+    0 0 30px rgba(83, 216, 251, 0.12);
+}
+
+.exam-hero,
+.gradient-border-inner,
+.exam-overview-item {
+  position: relative;
+}
+
+.exam-hero::before,
+.gradient-border-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.12) 45%, transparent 70%);
+  transform: translateX(-120%);
+  animation: hologramSweep 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hologramSweep {
+  0%, 100% { transform: translateX(-120%); opacity: 0; }
+  20% { opacity: .55; }
+  55% { transform: translateX(120%); opacity: .22; }
+  100% { opacity: 0; }
+}
 /* الفكرة: كل شاشة تكون hidden أو visible مع fade */
 .screen {
   position: absolute;
@@ -286,9 +617,39 @@ button {
      <p class="text-gray-400">اضغط على أي مادة لبدء الامتحانات</p>
       <a href="داش 4.html"><p class="text-gray-400">الصفحة الرئيسية</p></a>
     </div><!-- كروت المواد -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjects-grid">
+     <div class="exam-hero mb-10">
+      <div class="flex items-start justify-between gap-6 flex-wrap">
+       <div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-300/20 text-purple-200 text-sm font-bold mb-4">
+         <i class="fas fa-lightbulb"></i>
+         <span>نصائح قبل الامتحان</span>
+        </div>
+        <h2 class="text-4xl font-black mb-3">ادخل على الامتحان وأنت جاهز</h2>
+        <p class="text-gray-300 max-w-3xl leading-8">اختر المادة المناسبة، اقرأ كل سؤال بهدوء، وراجع إجاباتك قبل التسليم. كل ما تحتاجه موجود هنا بشكل منظم وسريع على اللابتوب والموبايل.</p>
+       </div>
+       <a href="داش 4.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/6 hover:bg-white/10 border border-white/10 transition-all text-white no-underline">
+        <i class="fas fa-grid-2"></i>
+        <span>العودة للهوم</span>
+       </a>
+      </div>
+      <div class="exam-overview-grid">
+       <div class="exam-overview-item">
+        <strong>ابدأ بالمادة الأقرب لك</strong>
+        <span>اختيار مادة أنت مراجعها مؤخرًا يساعدك تدخل الامتحان بثقة وتحقق أفضل نتيجة.</span>
+       </div>
+       <div class="exam-overview-item">
+        <strong>اقرأ السؤال كاملًا</strong>
+        <span>لا تتسرع في الاختيار من أول سطر، وخذ ثانية إضافية قبل تثبيت الإجابة النهائية.</span>
+       </div>
+       <div class="exam-overview-item">
+        <strong>راجع قبل التسليم</strong>
+        <span>لو خلصت بدري، ارجع للأسئلة التي ترددت فيها لأن المراجعة السريعة تصنع فرقًا كبيرًا.</span>
+       </div>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjects-grid">
      <!-- القانون الإداري -->
-     <div onclick="openSubject('administrative')" class="gradient-border card-hover cursor-pointer relative overflow-hidden">
+     <div onclick="openSubject('administrative')" class="gradient-border card-hover cursor-pointer relative overflow-hidden subject-shell-card">
       <div class="gradient-border-inner p-6">
        <div class="text-5xl mb-4 text-center">
         🏛️
@@ -300,7 +661,7 @@ button {
        </div>
       </div>
      </div><!-- القانون الدستوري -->
-     <div onclick="openSubject('constitutional')" class="gradient-border card-hover cursor-pointer relative overflow-hidden">
+     <div onclick="openSubject('constitutional')" class="gradient-border card-hover cursor-pointer relative overflow-hidden subject-shell-card">
       <div class="gradient-border-inner p-6">
        <div class="text-5xl mb-4 text-center">
         📜
@@ -313,7 +674,7 @@ button {
     
       </div>
      </div><!-- قانون البيئة - قريباً -->
-     <div onclick="openSubject('environment')" class="gradient-border card-hover cursor-pointer relative overflow-hidden">
+     <div onclick="openSubject('environment')" class="gradient-border card-hover cursor-pointer relative overflow-hidden subject-shell-card">
         <div class="gradient-border-inner p-6">
           <div class="text-5xl mb-4 text-center">🌿</div>
           <h3 class="text-xl font-bold text-center text-cyan-400 mb-2">تشريعات حماية البيئة</h3>
@@ -323,7 +684,7 @@ button {
           </div>
         </div>
      </div><!-- القانون الجنائي - قريباً -->
-      <div onclick="openSubject('const_law')" class="gradient-border card-hover cursor-pointer relative overflow-hidden">
+      <div onclick="openSubject('const_law')" class="gradient-border card-hover cursor-pointer relative overflow-hidden subject-shell-card">
         <div class="gradient-border-inner p-6">
             <div class="text-5xl mb-4 text-center">
                 🇫🇷
@@ -335,32 +696,32 @@ button {
        </div>
      </div>
      </div><!-- القانون المدني - قريباً -->
-     <div class="gradient-border card-hover cursor-not-allowed relative overflow-hidden opacity-70">
-      <div class="coming-soon-ribbon">
+      <div onclick="openSubject('societal')" class="gradient-border card-hover cursor-pointer relative overflow-hidden subject-shell-card">
+<div class="coming-soon-ribbon hidden">
        قريباً
       </div>
       <div class="gradient-border-inner p-6">
-       <div class="text-5xl mb-4 text-center grayscale">
+       <div class="text-5xl mb-4 text-center">
         📋
        </div>
        <h3 class="text-xl font-bold text-center text-gray-400 mb-2">القضايا المجتمعية</h3>
        <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-       <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
+        <div class="flex items-center justify-center gap-2 text-green-400 text-sm">
         <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
        </div>
       </div>
      </div><!-- القانون التجاري - قريباً -->
-     <div class="gradient-border card-hover cursor-not-allowed relative overflow-hidden opacity-70">
-        <div class="coming-soon-ribbon">
+      <div onclick="openSubject('history')" class="gradient-border card-hover cursor-pointer relative overflow-hidden subject-shell-card">
+<div class="coming-soon-ribbon hidden">
          قريباً
         </div>
         <div class="gradient-border-inner p-6">
-         <div class="text-5xl mb-4 text-center grayscale">
+         <div class="text-5xl mb-4 text-center">
           💼
          </div>
          <h3 class="text-xl font-bold text-center text-gray-400 mb-2">تاريخ النظم القانونية</h3>
          <p class="text-gray-500 text-center text-sm mb-4">جاري التحضير</p>
-         <div class="flex items-center justify-center gap-2 text-orange-400 text-sm">
+          <div class="flex items-center justify-center gap-2 text-green-400 text-sm">
           <span class="w-2 h-2 bg-orange-400 rounded-full"></span> قريباً جداً
          </div>
         </div>
@@ -390,7 +751,7 @@ button {
     
     <span class="text-xs text-red-400 font-bold hidden group-hover:block transition-all duration-300">
         خروج
-    </span
+    </span>
 </button>      </div>
      </div>
     </div>
@@ -399,13 +760,18 @@ button {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
      <!-- قائمة الامتحانات -->
      <div class="lg:col-span-2">
-      <h2 class="text-2xl font-bold mb-6 flex items-center gap-2"><span>📝</span> <span>قائمة الامتحانات</span></h2>
+      <div class="exam-list-header">
+       <div>
+        <h2 class="text-2xl font-bold flex items-center gap-2"><span>📝</span> <span>قائمة الامتحانات</span></h2>
+        <p>اختر الامتحان المناسب وابدأ مباشرة، وستظهر العلامات الخضراء على ما أنهيته.</p>
+       </div>
+      </div>
       <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="exams-list">
        <!-- سيتم ملؤها بـ JavaScript -->
       </div>
      </div><!-- لوحة الشرف -->
      <div class="lg:col-span-1">
-      <div class="gradient-border sticky top-24">
+      <div class="gradient-border sticky top-24 exam-panel-card">
        <div class="gradient-border-inner p-6">
         <h2 class="text-xl font-bold text-center mb-4 flex items-center justify-center gap-2"><span class="text-yellow-400">🏆</span> <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">لوحة الشرف</span></h2>
         <div id="leaderboard" class="space-y-2 max-h-96 overflow-y-auto scrollbar-thin">
@@ -442,7 +808,7 @@ button {
      </div>
     </header>
     <main class="max-w-4xl mx-auto px-4 py-8">
-     <div class="gradient-border">
+     <div class="gradient-border exam-panel-card">
       <div class="gradient-border-inner p-8">
        <div id="question-container">
         <h2 id="question-text" class="text-xl font-bold mb-6 leading-relaxed">نص السؤال هنا...</h2>
@@ -574,11 +940,69 @@ button {
 
         let config = { ...defaultConfig };
         let allResults = [];
-        let currentUser = null; // نخليه فاضي تماماً في البداية        let currentExamNumber = null;
+        let currentUser = null; // نخليه فاضي تماماً في البداية
+        let currentSubject = null;
+        let currentExamNumber = null;
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let examStartTime = null;
         let timerInterval = null;
+        const EXAMS_VIEW_STATE_KEY = 'hoba_exams_view_state';
+
+        function getCurrentExamSubjectId(subject = currentSubject) {
+            if (!subject) return '';
+            if (typeof subject === 'string') return subject;
+            return subject.id || '';
+        }
+
+        function saveExamViewState(state = {}) {
+            try {
+                localStorage.setItem(EXAMS_VIEW_STATE_KEY, JSON.stringify({
+                    screenId: state.screenId || 'dashboard-screen',
+                    subjectId: state.subjectId ?? getCurrentExamSubjectId(),
+                    examNumber: state.examNumber ?? currentExamNumber ?? null
+                }));
+            } catch (error) {
+                console.error('Failed to save exam state', error);
+            }
+        }
+
+        function readExamViewState() {
+            try {
+                return JSON.parse(localStorage.getItem(EXAMS_VIEW_STATE_KEY) || 'null');
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function clearExamViewState() {
+            localStorage.removeItem(EXAMS_VIEW_STATE_KEY);
+        }
+
+        function buildExamHistoryState(state = {}) {
+            return {
+                examNav: true,
+                screenId: state.screenId || 'dashboard-screen',
+                subjectId: state.subjectId ?? getCurrentExamSubjectId(),
+                examNumber: state.examNumber ?? currentExamNumber ?? null
+            };
+        }
+
+        function commitExamHistoryState(state = {}, mode = 'push') {
+            const nextState = buildExamHistoryState(state);
+            const currentState = window.history.state;
+            const isSameState = currentState?.examNav &&
+                currentState.screenId === nextState.screenId &&
+                currentState.subjectId === nextState.subjectId &&
+                (currentState.examNumber ?? null) === (nextState.examNumber ?? null);
+
+            if (isSameState && mode !== 'replace') {
+                return;
+            }
+
+            const method = mode === 'replace' ? 'replaceState' : 'pushState';
+            window.history[method](nextState, '', window.location.href);
+        }
 
         // ========== بيانات المواد والامتحانات ==========
        // 1. تعريف المواد (تأكد أن الـ ID يطابق الموجود في الفايربيس)
@@ -620,6 +1044,7 @@ const subjects = {
         exams: generateExams('history') 
     }
 };
+
 
 // 2. توليد هيكل الامتحانات (بدون أسئلة في البداية)
 function generateExams(subjectId) {
@@ -831,17 +1256,89 @@ async function loadQuestionsFromFirebase(subjectId, examNumber) {
         // محاولة الاتصال فوراً
         setTimeout(initFirebase, 100);
 
+function enhanceSubjectCards() {
+            const subjectTweaks = [
+                {
+                    id: 'societal',
+                    title: 'القضايا المجتمعية',
+                    description: 'ابدأ الآن',
+                    status: 'متاح الآن'
+                },
+                {
+                    id: 'history',
+                    title: 'تاريخ النظم القانونية',
+                    description: 'ابدأ الآن',
+                    status: 'متاح الآن'
+                }
+            ];
+
+            subjectTweaks.forEach((item) => {
+                const card = document.querySelector(`[onclick="openSubject('${item.id}')"]`);
+                if (!card) return;
+
+                const titleEl = card.querySelector('h3');
+                const descEl = card.querySelector('p');
+                const statusWrap = card.querySelector('.flex.items-center.justify-center');
+                const ribbon = card.querySelector('.coming-soon-ribbon');
+                const iconWrap = card.querySelector('.grayscale');
+                const dot = statusWrap?.querySelector('span');
+
+                if (titleEl) {
+                    titleEl.textContent = item.title;
+                    titleEl.classList.remove('text-gray-400');
+                    titleEl.classList.add('text-cyan-400');
+                }
+
+                if (descEl) {
+                    descEl.textContent = item.description;
+                    descEl.classList.remove('text-gray-500');
+                    descEl.classList.add('text-gray-400');
+                }
+
+                if (statusWrap) {
+                    statusWrap.classList.remove('text-orange-400');
+                    statusWrap.classList.add('text-green-400');
+                    statusWrap.childNodes[1].nodeValue = ` ${item.status}`;
+                }
+
+                if (dot) {
+                    dot.classList.remove('bg-orange-400');
+                    dot.classList.add('bg-green-400', 'animate-pulse');
+                }
+
+                if (iconWrap) iconWrap.classList.remove('grayscale');
+                if (ribbon) ribbon.classList.add('hidden');
+            });
+        }
+        setTimeout(enhanceSubjectCards, 200);
+
         // ========== وظائف التنقل ==========
-        function showScreen(screenId) {
+        function showScreen(screenId, options = {}) {
+    const {
+        updateHistory = !!currentUser && screenId !== 'login-screen',
+        historyMode = 'push',
+        persistState = true,
+        subjectId = getCurrentExamSubjectId(),
+        examNumber = currentExamNumber ?? null
+    } = options;
+
     ['login-screen', 'dashboard-screen', 'exams-center', 'exam-screen', 'result-screen', 'result-summary-screen', 'review-screen'].forEach(id => {
         document.getElementById(id).classList.add('hidden');
     });
     document.getElementById(screenId).classList.remove('hidden');
+
+    if (persistState) {
+        saveExamViewState({ screenId, subjectId, examNumber });
+    }
+
+    if (updateHistory) {
+        commitExamHistoryState({ screenId, subjectId, examNumber }, historyMode);
+    }
 }
 
 // أمثلة على الأزرار
 function showReviewScreen() { showScreen('review-screen'); }
-function backToResult() { showScreen('result-summary-screen'); }
+function backToResult() { showScreen('result-screen'); }
 function backToExamsList() { showScreen('exams-center'); }
 function backToDashboard() { showScreen('dashboard-screen'); }
 
@@ -925,18 +1422,19 @@ function backToDashboard() { showScreen('dashboard-screen'); }
 // كود الطوارئ لضمان حفظ المستخدم
 const originalShowScreen = typeof showScreen === 'function' ? showScreen : null;
 if (originalShowScreen) {
-    showScreen = function(screenId) {
+    showScreen = function(screenId, options = {}) {
         // لو المستخدم لسه داخل وشاشة الداشبورد فتحت، نحفظه فوراً
         if (screenId === 'dashboard-screen' && currentUser) {
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             console.log("💾 تم حفظ بيانات المستشار في الذاكرة بنجاح");
         }
-        originalShowScreen(screenId);
+        originalShowScreen(screenId, options);
     };
 }
 function handleLogout() {
     // 1️⃣ مسح بيانات المستخدم من LocalStorage
     localStorage.removeItem('user_data');
+    clearExamViewState();
 
     // 2️⃣ إعادة المتغيرات المهمة للصفر
     currentUser = null;
@@ -966,8 +1464,10 @@ const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
 
-        function openSubject(subjectId) {
+        function openSubject(subjectId, options = {}) {
+    const { updateHistory = true, historyMode = 'push' } = options;
     currentSubject = subjects[subjectId];
+    if (!currentSubject) return;
     document.getElementById('subject-title').textContent = currentSubject.name;
     
     // التعديل السحري: تأكيد الاسم في الهيدر عند دخول أي مادة
@@ -978,22 +1478,130 @@ if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
     renderExamsList();
     updateLeaderboard();
-    showScreen('exams-center');
+    showScreen('exams-center', {
+        updateHistory,
+        historyMode,
+        subjectId,
+        examNumber: null
+    });
 }
 
 
         function backToDashboard() {
             currentSubject = null;
             stopTimer();
-            showScreen('dashboard-screen');
+            showScreen('dashboard-screen', {
+                subjectId: '',
+                examNumber: null
+            });
         }
 
         function backToExamsList() {
             stopTimer();
             renderExamsList();
             updateLeaderboard();
-            showScreen('exams-center');
+            showScreen('exams-center', {
+                subjectId: getCurrentExamSubjectId(),
+                examNumber: null
+            });
         }
+
+        async function restoreExamHistoryState(state = {}) {
+            if (!state?.examNav) {
+                return;
+            }
+
+            const targetScreenId = state.screenId || 'dashboard-screen';
+            const targetSubjectId = state.subjectId || '';
+            const targetExamNumber = state.examNumber ?? null;
+
+            if (targetScreenId !== 'exam-screen') {
+                stopTimer();
+            }
+
+            if (targetScreenId === 'dashboard-screen' || !targetSubjectId || !subjects[targetSubjectId]) {
+                currentSubject = null;
+                showScreen('dashboard-screen', {
+                    updateHistory: false,
+                    historyMode: 'replace',
+                    subjectId: '',
+                    examNumber: null
+                });
+                return;
+            }
+
+            if (!currentSubject || getCurrentExamSubjectId() !== targetSubjectId) {
+                openSubject(targetSubjectId, {
+                    updateHistory: false,
+                    historyMode: 'replace'
+                });
+            } else {
+                document.getElementById('subject-title').textContent = currentSubject.name;
+                renderExamsList();
+                updateLeaderboard();
+            }
+
+            if (targetScreenId === 'exams-center') {
+                showScreen('exams-center', {
+                    updateHistory: false,
+                    historyMode: 'replace',
+                    subjectId: targetSubjectId,
+                    examNumber: null
+                });
+                return;
+            }
+
+            if (targetScreenId === 'exam-screen' && targetExamNumber) {
+                if (currentExamNumber === targetExamNumber && userAnswers.length) {
+                    showScreen('exam-screen', {
+                        updateHistory: false,
+                        historyMode: 'replace',
+                        subjectId: targetSubjectId,
+                        examNumber: targetExamNumber
+                    });
+                    renderQuestion();
+                } else {
+                    await startExam(targetExamNumber, {
+                        updateHistory: false,
+                        historyMode: 'replace'
+                    });
+                }
+                return;
+            }
+
+            if (targetScreenId === 'result-screen' && currentExamNumber === targetExamNumber) {
+                showScreen('result-screen', {
+                    updateHistory: false,
+                    historyMode: 'replace',
+                    subjectId: targetSubjectId,
+                    examNumber: targetExamNumber
+                });
+                return;
+            }
+
+            if (targetScreenId === 'review-screen' && currentExamNumber === targetExamNumber) {
+                showReviewScreen({
+                    updateHistory: false,
+                    historyMode: 'replace'
+                });
+                return;
+            }
+
+            showScreen('exams-center', {
+                updateHistory: false,
+                historyMode: 'replace',
+                subjectId: targetSubjectId,
+                examNumber: null
+            });
+        }
+
+        window.addEventListener('popstate', async (event) => {
+            if (!event.state?.examNav) {
+                return;
+            }
+
+            await restoreExamHistoryState(event.state);
+        });
 
         // ========== عرض قائمة الامتحانات ==========
       // 1. الدالة المعدلة لرسم القائمة (بتجيب البيانات الأول)
@@ -1059,11 +1667,17 @@ function checkExamCompleted(subjectId, examNumber) {
         r.exam_number === examNumber
     );
 }
-function showReviewScreen() {
+function showReviewScreen(options = {}) {
 
-showScreen("review-screen");
+showScreen("review-screen", {
+    updateHistory: options.updateHistory !== false,
+    historyMode: options.historyMode || 'push',
+    subjectId: getCurrentExamSubjectId(),
+    examNumber: currentExamNumber ?? null
+});
 
-const exam = subjects[currentSubject].exams[currentExamNumber - 1];
+const exam = currentSubject?.exams?.[currentExamNumber - 1];
+if (!exam) return;
 const questions = exam.questions;
 
 const reviewList = document.getElementById("review-list");
@@ -1287,7 +1901,11 @@ function saveResultToFirebase(score, total, percentage) {
         }
 
         // ========== الامتحان ==========
-        async function startExam(examNumber) {
+        async function startExam(examNumber, options = {}) {
+const {
+    updateHistory = true,
+    historyMode = 'push'
+} = options;
 
 try {
 
@@ -1304,8 +1922,12 @@ try {
     currentExamNumber = examNumber;
     currentQuestionIndex = 0;
     userAnswers = [];
-
-    showScreen('exam-screen');
+    showScreen('exam-screen', {
+        updateHistory,
+        historyMode,
+        subjectId: getCurrentExamSubjectId(),
+        examNumber
+    });
 
     document.getElementById('exam-title').textContent =
         `${currentSubject.name} - امتحان ${examNumber}`;
@@ -1333,7 +1955,7 @@ try {
             const exam = currentSubject.exams[currentExamNumber - 1];
             const question = exam.questions[currentQuestionIndex];
             
-            document.getElementById('exam-progress').textContent = `السؤال ${currentQuestionIndex + 1} من 25`;
+            document.getElementById('exam-progress').textContent = `السؤال ${currentQuestionIndex + 1} من ${exam.questions.length}`;
             document.getElementById('question-text').textContent = question.text;
             
             const optionsContainer = document.getElementById('options-container');
@@ -1455,10 +2077,48 @@ try {
             }
             
             // عرض النتيجة
+            try {
+                const today = new Date();
+                const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                const missionStorageKey = `hoba_daily_missions_${currentUser?.code || 'guest'}`;
+                const dailyState = JSON.parse(localStorage.getItem(missionStorageKey) || 'null') || {};
+                localStorage.setItem(missionStorageKey, JSON.stringify({
+                    date: todayKey,
+                    libraryDone: !!dailyState.libraryDone && dailyState.date === todayKey,
+                    examDone: true,
+                    libraryMeta: dailyState.date === todayKey ? (dailyState.libraryMeta || null) : null,
+                    examMeta: {
+                        subjectId: currentSubject?.id || null,
+                        examNumber: currentExamNumber
+                    }
+                }));
+            } catch (error) {
+                console.warn('Daily exam mission update failed', error);
+            }
+
+            try {
+                const contestParticipant = JSON.parse(localStorage.getItem('hobaContestParticipant') || 'null');
+                if (firebase_db && contestParticipant?.code) {
+                    await firebase_db.ref(`contest_hub/active_contest/results/${contestParticipant.code}`).update({
+                        code: contestParticipant.code,
+                        name: contestParticipant.name || currentUser?.name || 'متسابق',
+                        image: contestParticipant.image || localStorage.getItem('hobaImg') || '',
+                        score: score,
+                        correctAnswers: correctCount,
+                        totalQuestions: 25,
+                        subjectId: currentSubject?.id || null,
+                        examNumber: currentExamNumber,
+                        finishedAt: Date.now()
+                    });
+                }
+            } catch (error) {
+                console.warn('Contest result sync failed', error);
+            }
+
             showResult(score, correctCount);
         }
 
-        function showResult(score, correctCount) {
+        function showResult(score, correctCount, options = {}) {
             let emoji, title, message;
             
             if (score >= 90) {
@@ -1483,7 +2143,12 @@ try {
            // عرض مراجعة الأسئلة
            displayReviewList();
             
-            showScreen('result-screen');
+            showScreen('result-screen', {
+                updateHistory: options.updateHistory !== false,
+                historyMode: options.historyMode || 'push',
+                subjectId: getCurrentExamSubjectId(),
+                examNumber: currentExamNumber ?? null
+            });
         }
 
 
@@ -1712,6 +2377,16 @@ async function initializeApp() {
             // تحديث درجاتك وعلامات الصح
             if (typeof refreshUserProgress === 'function') {
                 await refreshUserProgress(currentUser.code);
+            }
+
+            const savedView = readExamViewState();
+            if (savedView?.subjectId && subjects[savedView.subjectId]) {
+                openSubject(savedView.subjectId);
+                if (savedView.screenId === 'exam-screen' && savedView.examNumber) {
+                    await startExam(savedView.examNumber);
+                } else if (savedView.screenId === 'exams-center') {
+                    showScreen('exams-center');
+                }
             }
 
         } else {
