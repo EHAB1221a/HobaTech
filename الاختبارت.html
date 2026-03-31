@@ -146,6 +146,17 @@
   box-shadow: 0 25px 60px rgba(6,10,30,0.35);
 }
 
+/* ضبط شاشة الامتحان للموبايل: منع أي تمدد أفقي */
+#exam-screen,
+#exam-screen main,
+#exam-screen .gradient-border,
+#exam-screen .gradient-border-inner,
+#exam-screen .exam-hero {
+  max-width: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 .exam-hero::after {
   content: "";
   position: absolute;
